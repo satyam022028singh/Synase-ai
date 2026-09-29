@@ -1,6 +1,6 @@
-# SYNASE AI frontend — Phases 0–3
+# SYNASE AI frontend — Phases 0–4
 
-Implemented frontend foundation, design system/application shell, mock-backed Auth + Workspace + Projects, Repository, and Multimodal Input.
+Implemented frontend foundation, design system/application shell, mock-backed Auth + Workspace + Projects, Repository, Multimodal Input, Conversation, and Analysis Request composition.
 
 ## Run
 
@@ -26,9 +26,13 @@ Open `http://localhost:4173`.
 - Initiate → mock transfer → complete upload sequence
 - Distinct processing, security-scan, and extraction states
 - User-triggered deterministic processing transitions
+- Project-scoped conversation sessions and message thread
+- Safe asset/repository context references
+- Typed analysis composer and explicit queued request receipts
+- Analysis request history and authoritative mock cancellation
 - Honest future-phase placeholders
 - Mock contract tests and build manifest
 
 ## Important
 
-The live backend is intentionally not connected. Authentication, workspace/input route finalization, pagination, signed-upload fields, provider authorization, and several mutation contracts remain unresolved in the source documentation. The prototype labels mock behavior and does not simulate AI execution, repository access, or file processing.
+The live backend is intentionally not connected. Authentication, workspace/input/conversation route finalization, pagination, signed-upload fields, provider authorization, message retry, and analysis option contracts remain unresolved. The prototype labels mock behavior and does not simulate AI execution, workflow progress, repository access, or file processing.

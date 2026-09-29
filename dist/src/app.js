@@ -12,6 +12,11 @@ const state = {
   dashboard: null,
   repositories: [],
   assets: [],
+  conversations: [],
+  messages: [],
+  analysisRequests: [],
+  conversationId: "",
+  analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
   repositoryDetailId: "",
   repositorySnapshots: [],
@@ -110,6 +115,7 @@ function shell(content) {
           ${navLink(routes.projects, "◇", "Projects", true)}
           ${navLink(projectRoute("repository"), "⌘", "Repository")}
           ${navLink(projectRoute("inputs"), "＋", "Inputs")}
+          ${navLink(projectRoute("analysis"), "↳", "Conversation & Analysis")}
           ${navLink(routes.members, "◎", "Members")}
         </div>
         <div class="nav-section">
@@ -124,7 +130,7 @@ function shell(content) {
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–3 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–4 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -340,6 +346,86 @@ function inputsPage(projectId) {
     </section>`;
 }
 
+function contextOptions(items, selected = []) {
+  return items.map((item) => `<option value="${item.id}" ${selected.includes(item.id) ? "selected" : ""}>${escapeHtml(item.name || item.fullName)}</option>`).join("");
+}
+
+function messageThread() {
+  if (!state.conversationId) return `<div class="empty"><div><div class="empty-icon">💬</div><h2>Select a conversation</h2><p>Choose an active project conversation or create a new one.</p></div></div>`;
+  if (!state.messages.length) return `<div class="empty"><div><div class="empty-icon">＋</div><h2>No messages yet</h2><p>Add project context or start a typed analysis request.</p></div></div>`;
+  return `<div class="message-thread">${state.messages.map((message) => `
+    <article class="message ${message.role}">
+      <div class="message-meta"><span>${escapeHtml(message.role)}</span>${message.mock ? `<b>Mock receipt</b>` : ""}<time>${new Date(message.createdAt).toLocaleString()}</time></div>
+      <p>${escapeHtml(message.text || "")}</p>
+      ${(message.assetIds?.length || message.repositoryIds?.length) ? `<div class="message-refs">${message.assetIds.map((id) => `<span>Asset · ${escapeHtml(state.assets.find((item) => item.id === id)?.name || id)}</span>`).join("")}${message.repositoryIds.map((id) => `<span>Repository · ${escapeHtml(state.repositories.find((item) => item.id === id)?.fullName || id)}</span>`).join("")}</div>` : ""}
+      <div class="message-status">${status(message.status)}</div>
+    </article>`).join("")}</div>`;
+}
+
+function conversationWorkspace(projectId) {
+  const active = state.conversations.find((item) => item.id === state.conversationId);
+  return `<div class="conversation-layout">
+    <aside class="conversation-sidebar card">
+      <div class="card-head"><div><h2>Conversations</h2><span class="small subtle">${state.conversations.length} sessions</span></div><button class="icon-btn" data-action="toggle-conversation-form" aria-label="New conversation">＋</button></div>
+      <form id="new-conversation-form" class="mini-form hidden-panel"><input name="title" placeholder="Conversation title" required><button class="button primary" type="submit">Create</button></form>
+      <div class="conversation-list">${state.conversations.length ? state.conversations.map((session) => `<button class="conversation-item ${session.id === state.conversationId ? "active" : ""}" data-action="select-conversation" data-conversation-id="${session.id}"><strong>${escapeHtml(session.title || "Untitled")}</strong><span>${escapeHtml(session.status)} · ${new Date(session.updatedAt).toLocaleDateString()}</span></button>`).join("") : `<div class="card-body small muted">No conversation sessions.</div>`}</div>
+    </aside>
+    <section class="card conversation-main">
+      <div class="card-head"><div><h2>${escapeHtml(active?.title || "Conversation")}</h2><span class="small subtle">Project-scoped context discussion</span></div>${active ? status(active.status) : ""}</div>
+      ${messageThread()}
+      ${active ? `<form id="message-form" class="message-composer">
+        <div class="field"><label for="message-text">Message</label><textarea id="message-text" name="text" required placeholder="Describe the product or engineering decision to explore"></textarea></div>
+        <div class="attachment-grid">
+          <div class="field"><label for="message-assets">Asset references</label><select id="message-assets" name="assetIds" multiple>${contextOptions(state.assets)}</select></div>
+          <div class="field"><label for="message-repositories">Repository references</label><select id="message-repositories" name="repositoryIds" multiple>${contextOptions(state.repositories)}</select></div>
+        </div>
+        <div id="conversation-form-message"></div>
+        <div class="form-actions"><span class="small subtle">Mock adapter: no AI response will run.</span><button class="button primary" type="submit">Send message</button></div>
+      </form>` : ""}
+    </section>
+  </div>`;
+}
+
+function analysisComposer(projectId) {
+  return `<section class="card form-card analysis-form-card">
+    <div class="alert">Submitting creates a mock queued receipt only. Intent detection, orchestration, model/tool work, validation, confidence, and report generation do not run in Phase 4.</div>
+    <form id="analysis-request-form">
+      <div class="form-grid">
+        <div class="field full"><label for="analysis-text">Analysis request</label><textarea id="analysis-text" name="requestText" required placeholder="Review the architecture implications of this PRD"></textarea></div>
+        <div class="field"><label for="analysis-type">Request type</label><select id="analysis-type" name="requestType" required><option value="architecture_review">Architecture review</option><option value="requirement_analysis">Requirement analysis</option><option value="repository_review">Repository review</option><option value="risk_assessment">Risk assessment</option><option value="security_analysis">Security analysis</option><option value="testing_plan">Testing plan</option></select></div>
+        <div class="field"><label for="analysis-priority">Priority</label><select id="analysis-priority" name="priority"><option value="low">Low</option><option value="normal" selected>Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
+        <div class="field"><label for="analysis-strategy">Execution strategy</label><select id="analysis-strategy" name="executionStrategy"><option value="sequential">Sequential</option><option value="parallel">Parallel</option><option value="hybrid" selected>Hybrid</option></select></div>
+        <div class="field"><label for="analysis-conversation">Conversation</label><select id="analysis-conversation" name="conversationId"><option value="">No linked conversation</option>${state.conversations.map((item) => `<option value="${item.id}" ${item.id === state.conversationId ? "selected" : ""}>${escapeHtml(item.title)}</option>`).join("")}</select></div>
+        <div class="field"><label for="analysis-assets">Assets</label><select id="analysis-assets" name="assetIds" multiple>${contextOptions(state.assets)}</select><small>Use Ctrl/Cmd to select multiple.</small></div>
+        <div class="field"><label for="analysis-repositories">Repositories</label><select id="analysis-repositories" name="repositoryIds" multiple>${contextOptions(state.repositories)}</select><small>References only; no source is fetched.</small></div>
+      </div>
+      <div id="analysis-form-message"></div>
+      <div class="form-actions"><button class="button primary" type="submit">Create analysis request</button></div>
+    </form>
+  </section>`;
+}
+
+function requestHistory() {
+  if (!state.analysisRequests.length) return `<section class="card empty"><div><div class="empty-icon">↳</div><h2>No analysis requests</h2><p>Create a typed request. Phase 5 will later provide workflow execution views.</p></div></section>`;
+  return `<div class="table-wrap"><table><thead><tr><th>Request</th><th>Type</th><th>Priority</th><th>Status</th><th>Receipt</th><th></th></tr></thead><tbody>${state.analysisRequests.map((request) => `<tr>
+    <td><strong>${escapeHtml(request.requestText)}</strong><br><span class="small">${new Date(request.createdAt).toLocaleString()}${request.mock ? " · Mock" : ""}</span></td>
+    <td>${escapeHtml(request.requestType.replaceAll("_", " "))}</td><td>${escapeHtml(request.priority)}</td><td>${status(request.status)}</td>
+    <td><code>${escapeHtml(request.id)}</code><br><span class="small">${escapeHtml(request.workflowId || "No workflow")}</span></td>
+    <td>${["received","validated","queued","processing"].includes(request.status) ? `<button class="button ghost" data-action="cancel-request" data-request-id="${request.id}">Cancel</button>` : ""}</td>
+  </tr>`).join("")}</tbody></table></div>`;
+}
+
+function analysisPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "Conversation and analysis cannot be loaded for an unavailable project.");
+  state.projectId = project.id;
+  const tabs = [["conversation","Conversation"],["compose","New analysis"],["history","Request history"]];
+  return `${pageHeader("Decision workspace", "Conversation & analysis", `Organize project context and create typed analysis requests for ${project.name}. Workflow execution begins in Phase 5.`)}
+    <div class="alert">Provisional route · Mock adapter active. No AI model, agent, tool, workflow, validation, confidence, or report generation is running.</div>
+    <div class="input-tabs page-tabs" role="tablist">${tabs.map(([key,label]) => `<button class="input-tab ${state.analysisTab === key ? "active" : ""}" role="tab" aria-selected="${state.analysisTab === key}" data-action="analysis-tab" data-tab="${key}">${label}</button>`).join("")}</div>
+    ${state.analysisTab === "conversation" ? conversationWorkspace(projectId) : state.analysisTab === "compose" ? analysisComposer(projectId) : requestHistory()}`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -400,6 +486,8 @@ function renderPage() {
   if (repository) return shell(repositoryPage(repository[1]));
   const inputs = path.match(/^\/app\/projects\/([^/]+)\/inputs$/);
   if (inputs) return shell(inputsPage(inputs[1]));
+  const analysis = path.match(/^\/app\/projects\/([^/]+)\/analysis$/);
+  if (analysis) return shell(analysisPage(analysis[1]));
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -426,12 +514,19 @@ async function hydrate(workspaceId = state.workspaceId) {
     state.members = members.data;
     if (!state.projects.some((p) => p.id === state.projectId)) state.projectId = state.projects[0]?.id || "";
     if (state.projectId) {
-      const [repositories, assets] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId)]);
+      const [repositories, assets, conversations, requests] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId), api.listConversations(state.projectId), api.listAnalysisRequests(state.projectId)]);
       state.repositories = repositories.data;
       state.assets = assets.data;
+      state.conversations = conversations.data;
+      state.analysisRequests = requests.data;
+      state.conversationId = state.conversations[0]?.id || "";
+      state.messages = state.conversationId ? (await api.listMessages(state.projectId, state.conversationId)).data : [];
     } else {
       state.repositories = [];
       state.assets = [];
+      state.conversations = [];
+      state.analysisRequests = [];
+      state.messages = [];
     }
   } catch (error) {
     state.error = error instanceof Error ? error.message : "Unable to load the workspace.";
@@ -459,6 +554,23 @@ document.addEventListener("click", (event) => {
   if (action === "toggle-repo-form") document.querySelector("#repo-form-panel")?.classList.toggle("hidden-panel");
   if (action === "close-repo-detail") { state.repositoryDetailId = ""; state.repositorySnapshots = []; state.repositoryTree = []; render(); }
   if (action === "input-tab") { state.inputTab = target.getAttribute("data-tab") || "file"; render(); }
+  if (action === "analysis-tab") { state.analysisTab = target.getAttribute("data-tab") || "conversation"; render(); }
+  if (action === "toggle-conversation-form") document.querySelector("#new-conversation-form")?.classList.toggle("hidden-panel");
+  if (action === "select-conversation") {
+    const conversationId = target.getAttribute("data-conversation-id");
+    api.listMessages(state.projectId, conversationId).then((messages) => {
+      state.conversationId = conversationId;
+      state.messages = messages.data;
+      render();
+    });
+  }
+  if (action === "cancel-request") {
+    api.cancelAnalysisRequest(state.projectId, target.getAttribute("data-request-id")).then(async () => {
+      state.analysisRequests = (await api.listAnalysisRequests(state.projectId)).data;
+      toast("Analysis request cancelled by the mock adapter.");
+      render();
+    }).catch((error) => toast(error instanceof Error ? error.message : "Cancellation failed."));
+  }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");
     Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
@@ -498,9 +610,13 @@ document.addEventListener("change", async (event) => {
   if (target.id === "workspace-switcher") await hydrate(target.value);
   if (target.id === "project-switcher") {
     state.projectId = target.value;
-    Promise.all([api.listRepositories(target.value), api.listAssets(target.value)]).then(([repositories, assets]) => {
+    Promise.all([api.listRepositories(target.value), api.listAssets(target.value), api.listConversations(target.value), api.listAnalysisRequests(target.value)]).then(async ([repositories, assets, conversations, requests]) => {
       state.repositories = repositories.data;
       state.assets = assets.data;
+      state.conversations = conversations.data;
+      state.analysisRequests = requests.data;
+      state.conversationId = conversations.data[0]?.id || "";
+      state.messages = state.conversationId ? (await api.listMessages(target.value, state.conversationId)).data : [];
       navigate(`/app/projects/${target.value}/overview`);
     });
   }
@@ -624,6 +740,56 @@ document.addEventListener("submit", async (event) => {
       render();
     } catch (error) {
       if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Input failed.")}</div>`;
+    }
+  }
+  if (form.id === "new-conversation-form") {
+    const values = Object.fromEntries(new FormData(form));
+    try {
+      const created = await api.createConversation(state.projectId, values, { idempotencyKey: createIdempotencyKey() });
+      state.conversations = (await api.listConversations(state.projectId)).data;
+      state.conversationId = created.data.id;
+      state.messages = [];
+      toast("Conversation created in the mock adapter.");
+      render();
+    } catch (error) { toast(error instanceof Error ? error.message : "Conversation creation failed."); }
+  }
+  if (form.id === "message-form") {
+    const values = new FormData(form);
+    const input = {
+      text: values.get("text"),
+      assetIds: values.getAll("assetIds"),
+      repositoryIds: values.getAll("repositoryIds")
+    };
+    const message = form.querySelector("#conversation-form-message");
+    try {
+      await api.postMessage(state.projectId, state.conversationId, input, { idempotencyKey: createIdempotencyKey() });
+      state.messages = (await api.listMessages(state.projectId, state.conversationId)).data;
+      state.conversations = (await api.listConversations(state.projectId)).data;
+      toast("Message accepted. No AI execution occurred.");
+      render();
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Message failed.")}</div>`;
+    }
+  }
+  if (form.id === "analysis-request-form") {
+    const values = new FormData(form);
+    const input = {
+      requestText: values.get("requestText"),
+      requestType: values.get("requestType"),
+      priority: values.get("priority"),
+      executionStrategy: values.get("executionStrategy"),
+      conversationId: values.get("conversationId") || undefined,
+      assetIds: values.getAll("assetIds"),
+      repositoryIds: values.getAll("repositoryIds")
+    };
+    const message = form.querySelector("#analysis-form-message");
+    try {
+      const created = await api.createAnalysisRequest(state.projectId, input, { idempotencyKey: createIdempotencyKey() });
+      state.analysisRequests = (await api.listAnalysisRequests(state.projectId)).data;
+      if (message) message.innerHTML = `<div class="alert success">Mock receipt created: ${escapeHtml(created.data.id)} · workflow ${escapeHtml(created.data.workflowId)} · status ${escapeHtml(created.data.status)}. No execution started.</div>`;
+      toast("Mock analysis receipt created.");
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Request failed.")}</div>`;
     }
   }
 });

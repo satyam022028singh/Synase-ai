@@ -75,3 +75,39 @@ test("blocked security state remains distinct from processing state", async () =
   assert.equal(blocked.processingStatus, "failed");
   assert.equal(blocked.extractionStatus, "not_started");
 });
+
+test("conversations and messages remain project scoped", async () => {
+  const conversations = await api.listConversations("prj_platform");
+  assert.ok(conversations.data.every((session) => session.projectId === "prj_platform"));
+  const messages = await api.listMessages("prj_platform", conversations.data[0].id);
+  assert.ok(messages.data.every((message) => message.conversationId === conversations.data[0].id));
+});
+
+test("message submission requires idempotency", async () => {
+  await assert.rejects(
+    () => api.postMessage("prj_platform", "conv_arch", { text: "Review this." }),
+    (error) => error instanceof ApiError && error.code === "IDEMPOTENCY_REQUIRED"
+  );
+});
+
+test("analysis request rejects cross-project context references", async () => {
+  await assert.rejects(
+    () => api.createAnalysisRequest(
+      "prj_platform",
+      { requestText: "Review routing.", requestType: "repository_review", priority: "normal", executionStrategy: "hybrid", assetIds: [], repositoryIds: ["repo_runtime"] },
+      { idempotencyKey: createIdempotencyKey() }
+    ),
+    (error) => error instanceof ApiError && error.code === "INVALID_CONTEXT_REFERENCE"
+  );
+});
+
+test("analysis receipt remains queued and distinct from workflow execution", async () => {
+  const response = await api.createAnalysisRequest(
+    "prj_platform",
+    { requestText: "Review architecture.", requestType: "architecture_review", priority: "high", executionStrategy: "hybrid", assetIds: ["asset_prd"], repositoryIds: ["repo_core"] },
+    { idempotencyKey: createIdempotencyKey() }
+  );
+  assert.equal(response.data.status, "queued");
+  assert.match(response.data.workflowId, /^wf_mock_/);
+  assert.equal(response.data.mock, true);
+});

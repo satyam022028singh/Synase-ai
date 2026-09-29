@@ -109,6 +109,45 @@ export interface UploadInitiationResponse {
   assetId: string;
   upload: { method: "PUT"; url: string; expiresAt: string; headers: Record<string, string> };
 }
+export type ConversationStatus = "active" | "archived" | "deleted";
+export type MessageRole = "user" | "assistant" | "system" | "tool";
+export type MessageStatus = "draft" | "submitted" | "processing" | "completed" | "failed" | "deleted";
+export interface ConversationSession {
+  id: string;
+  projectId: string;
+  title?: string;
+  status: ConversationStatus;
+  updatedAt: string;
+}
+export interface ConversationMessage {
+  id: string;
+  conversationId: string;
+  role: MessageRole;
+  text?: string;
+  status: MessageStatus;
+  assetIds: string[];
+  repositoryIds: string[];
+  createdAt: string;
+  mock?: boolean;
+}
+export type AnalysisPriority = "low" | "normal" | "high" | "urgent";
+export type ExecutionStrategy = "sequential" | "parallel" | "hybrid";
+export type AnalysisRequestStatus = "received" | "validated" | "rejected" | "queued" | "processing" | "completed" | "failed" | "cancelled";
+export interface AnalysisRequest {
+  id: string;
+  projectId: string;
+  conversationId?: string;
+  requestText: string;
+  requestType: string;
+  priority: AnalysisPriority;
+  executionStrategy: ExecutionStrategy;
+  assetIds: string[];
+  repositoryIds: string[];
+  status: AnalysisRequestStatus;
+  workflowId?: string;
+  traceId?: string;
+  createdAt: string;
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;
@@ -116,4 +155,6 @@ export interface DomainApi {
   createProject(input: Pick<Project, "workspaceId" | "name"> & Partial<Project>): Promise<ApiSuccess<Project>>;
   listRepositories(projectId: string): Promise<ApiList<Repository>>;
   listAssets(projectId: string): Promise<ApiList<Asset>>;
+  listConversations(projectId: string): Promise<ApiList<ConversationSession>>;
+  listAnalysisRequests(projectId: string): Promise<ApiList<AnalysisRequest>>;
 }

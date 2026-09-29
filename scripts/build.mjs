@@ -19,7 +19,7 @@ for (const file of files) {
 }
 await writeFile(new URL("../dist/build-manifest.json", import.meta.url), JSON.stringify({
   product: "SYNASE AI",
-  phases: ["Phase 0", "Phase 1", "Phase 2", "Phase 3"],
+  phases: ["Phase 0", "Phase 1", "Phase 2", "Phase 3", "Phase 4"],
   generatedAt: new Date().toISOString(),
   files: manifest
 }, null, 2));

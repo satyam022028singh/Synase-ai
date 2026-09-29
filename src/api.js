@@ -139,6 +139,20 @@ const db = {
     { id: "asset_arch", projectId: "prj_platform", name: "Architecture v3.png", inputType: "image", sourceType: "drag_drop", mimeType: "image/png", byteSize: 948200, processingStatus: "indexing", securityScanStatus: "clean", extractionStatus: "completed", createdAt: "2026-09-29T07:28:00Z" },
     { id: "asset_logs", projectId: "prj_platform", name: "deployment-errors.log", inputType: "log", sourceType: "upload", mimeType: "text/plain", byteSize: 183420, processingStatus: "warning", securityScanStatus: "warning", extractionStatus: "partial", createdAt: "2026-09-28T20:02:00Z" },
     { id: "asset_blocked", projectId: "prj_platform", name: "legacy-source.zip", inputType: "code_archive", sourceType: "upload", mimeType: "application/zip", byteSize: 18233200, processingStatus: "failed", securityScanStatus: "blocked", extractionStatus: "not_started", createdAt: "2026-09-28T11:44:00Z" }
+  ],
+  conversations: [
+    { id: "conv_arch", projectId: "prj_platform", title: "Architecture review", status: "active", updatedAt: "2026-09-29T08:42:00Z" },
+    { id: "conv_release", projectId: "prj_platform", title: "Release readiness", status: "active", updatedAt: "2026-09-28T14:18:00Z" },
+    { id: "conv_mcp", projectId: "prj_mcp", title: "Routing evaluation", status: "active", updatedAt: "2026-09-28T17:01:00Z" }
+  ],
+  messages: [
+    { id: "msg_1", conversationId: "conv_arch", role: "user", text: "Review the architecture implications of the current product requirements.", status: "completed", assetIds: ["asset_prd"], repositoryIds: ["repo_core"], createdAt: "2026-09-29T08:40:00Z" },
+    { id: "msg_2", conversationId: "conv_arch", role: "system", text: "Mock adapter receipt: context references were accepted. No AI analysis or workflow execution occurred.", status: "completed", assetIds: [], repositoryIds: [], createdAt: "2026-09-29T08:42:00Z", mock: true },
+    { id: "msg_3", conversationId: "conv_release", role: "user", text: "Identify release risks using the deployment logs.", status: "completed", assetIds: ["asset_logs"], repositoryIds: [], createdAt: "2026-09-28T14:12:00Z" }
+  ],
+  analysisRequests: [
+    { id: "req_arch", projectId: "prj_platform", conversationId: "conv_arch", requestText: "Review architecture implications and identify decisions that require approval.", requestType: "architecture_review", priority: "high", executionStrategy: "hybrid", assetIds: ["asset_prd"], repositoryIds: ["repo_core"], status: "queued", workflowId: "wf_mock_arch", traceId: "trace_mock_arch", createdAt: "2026-09-29T08:43:00Z", mock: true },
+    { id: "req_risk", projectId: "prj_platform", conversationId: "conv_release", requestText: "Assess release risks using the deployment logs.", requestType: "risk_assessment", priority: "normal", executionStrategy: "sequential", assetIds: ["asset_logs"], repositoryIds: [], status: "received", workflowId: "wf_mock_risk", traceId: "trace_mock_risk", createdAt: "2026-09-28T14:19:00Z", mock: true }
   ]
 };
 
@@ -344,6 +358,75 @@ export const mockApi = {
     if (!asset) throw new ApiError("RESOURCE_NOT_FOUND", "Asset was not found.", 404);
     asset.processingStatus = "deleted";
     return { data: { assetId, status: "deleted" } };
+  },
+  async listConversations(projectId) {
+    await sleep();
+    return page(db.conversations.filter((session) => session.projectId === projectId && session.status !== "deleted"));
+  },
+  async createConversation(projectId, input, { idempotencyKey } = {}) {
+    await sleep(340);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const session = { id: `conv_${Math.random().toString(36).slice(2, 9)}`, projectId, title: input.title?.trim() || "New conversation", status: "active", updatedAt: new Date().toISOString() };
+    db.conversations.unshift(session);
+    return { data: session };
+  },
+  async listMessages(projectId, conversationId) {
+    await sleep();
+    const session = db.conversations.find((item) => item.projectId === projectId && item.id === conversationId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Conversation was not found.", 404);
+    return page(db.messages.filter((message) => message.conversationId === conversationId && message.status !== "deleted"));
+  },
+  async postMessage(projectId, conversationId, input, { idempotencyKey } = {}) {
+    await sleep(420);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!input.text?.trim()) throw new ApiError("VALIDATION_ERROR", "Message text is required.", 422);
+    const session = db.conversations.find((item) => item.projectId === projectId && item.id === conversationId);
+    if (!session || session.status !== "active") throw new ApiError("RESOURCE_CONFLICT", "An active conversation is required.", 409);
+    const message = { id: `msg_${Math.random().toString(36).slice(2, 9)}`, conversationId, role: "user", text: input.text.trim(), status: "submitted", assetIds: input.assetIds || [], repositoryIds: input.repositoryIds || [], createdAt: new Date().toISOString() };
+    db.messages.push(message);
+    db.messages.push({ id: `msg_${Math.random().toString(36).slice(2, 9)}`, conversationId, role: "system", text: "Mock adapter receipt: message accepted. No AI response or workflow execution occurred.", status: "completed", assetIds: [], repositoryIds: [], createdAt: new Date().toISOString(), mock: true });
+    session.updatedAt = new Date().toISOString();
+    return { data: message };
+  },
+  async listAnalysisRequests(projectId) {
+    await sleep();
+    return page(db.analysisRequests.filter((request) => request.projectId === projectId));
+  },
+  async createAnalysisRequest(projectId, input, { idempotencyKey } = {}) {
+    await sleep(480);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!input.requestText?.trim() || !input.requestType) throw new ApiError("VALIDATION_ERROR", "Request text and request type are required.", 422);
+    const ownedAssets = new Set(db.assets.filter((item) => item.projectId === projectId).map((item) => item.id));
+    const ownedRepositories = new Set(db.repositories.filter((item) => item.projectId === projectId).map((item) => item.id));
+    if ((input.assetIds || []).some((id) => !ownedAssets.has(id)) || (input.repositoryIds || []).some((id) => !ownedRepositories.has(id))) {
+      throw new ApiError("INVALID_CONTEXT_REFERENCE", "All context references must belong to the project.", 422);
+    }
+    const request = {
+      id: `req_${Math.random().toString(36).slice(2, 9)}`,
+      projectId,
+      conversationId: input.conversationId || undefined,
+      requestText: input.requestText.trim(),
+      requestType: input.requestType,
+      priority: input.priority || "normal",
+      executionStrategy: input.executionStrategy || "hybrid",
+      assetIds: input.assetIds || [],
+      repositoryIds: input.repositoryIds || [],
+      status: "queued",
+      workflowId: `wf_mock_${Math.random().toString(36).slice(2, 8)}`,
+      traceId: `trace_mock_${Math.random().toString(36).slice(2, 8)}`,
+      createdAt: new Date().toISOString(),
+      mock: true
+    };
+    db.analysisRequests.unshift(request);
+    return { data: request };
+  },
+  async cancelAnalysisRequest(projectId, requestId) {
+    await sleep(340);
+    const request = db.analysisRequests.find((item) => item.projectId === projectId && item.id === requestId);
+    if (!request) throw new ApiError("RESOURCE_NOT_FOUND", "Analysis request was not found.", 404);
+    if (!["received", "validated", "queued", "processing"].includes(request.status)) throw new ApiError("RESOURCE_CONFLICT", "This request cannot be cancelled.", 409);
+    request.status = "cancelled";
+    return { data: { ...request } };
   }
 };
 
