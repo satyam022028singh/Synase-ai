@@ -1,0 +1,640 @@
+// @ts-check
+import { api, ApiError, createIdempotencyKey } from "./api.js";
+
+const app = document.querySelector("#app");
+const state = {
+  authenticated: true,
+  user: null,
+  workspaces: [],
+  workspaceId: "ws_synase",
+  projects: [],
+  projectId: "prj_platform",
+  dashboard: null,
+  repositories: [],
+  assets: [],
+  members: [],
+  repositoryDetailId: "",
+  repositorySnapshots: [],
+  repositoryTree: [],
+  inputTab: "file",
+  loading: true,
+  sidebarOpen: false,
+  toast: "",
+  error: ""
+};
+
+const routes = {
+  dashboard: "/app/dashboard",
+  projects: "/app/projects",
+  createProject: "/app/projects/create",
+  members: "/app/workspaces/ws_synase/members",
+  workspaceSettings: "/app/workspaces/ws_synase/settings"
+};
+
+const projectRoute = (segment) => `/app/projects/${state.projectId || "prj_platform"}/${segment}`;
+
+const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+}[char]));
+
+function currentPath() {
+  const queryRoute = new URLSearchParams(location.search).get("route");
+  return queryRoute || location.hash.slice(1) || routes.dashboard;
+}
+
+function navigate(path) {
+  history.replaceState(null, "", `${location.pathname}${location.search}#${path}`);
+  state.sidebarOpen = false;
+  render();
+}
+
+function isActive(path, prefix = false) {
+  return prefix ? currentPath().startsWith(path) : currentPath() === path;
+}
+
+function toast(message) {
+  state.toast = message;
+  render();
+  setTimeout(() => {
+    state.toast = "";
+    render();
+  }, 2800);
+}
+
+function initials(name = "User") {
+  return name.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+}
+
+function status(value) {
+  return `<span class="status ${escapeHtml(value)}">${escapeHtml(value.replaceAll("_", " "))}</span>`;
+}
+
+function formatBytes(bytes = 0) {
+  if (!bytes) return "—";
+  const units = ["B", "KB", "MB", "GB"];
+  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  return `${(bytes / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
+}
+
+function loading() {
+  return `<div class="loading"><div><div class="spinner"></div><div>Loading authoritative state…</div></div></div>`;
+}
+
+function pageHeader(eyebrow, title, description, action = "") {
+  return `<div class="breadcrumbs"><span>SYNASE AI</span><span>/</span><b>${escapeHtml(title)}</b></div>
+    <header class="page-header">
+      <div><div class="eyebrow">${escapeHtml(eyebrow)}</div><h1>${escapeHtml(title)}</h1><p class="page-copy">${escapeHtml(description)}</p></div>
+      ${action}
+    </header>`;
+}
+
+function navLink(path, icon, label, prefix = false, disabled = false) {
+  return `<button class="nav-link ${isActive(path, prefix) ? "active" : ""}" data-route="${disabled ? "" : path}" ${disabled ? 'aria-disabled="true" title="Planned for a later phase"' : ""}>
+    <span class="nav-icon" aria-hidden="true">${icon}</span><span>${escapeHtml(label)}</span>
+  </button>`;
+}
+
+function shell(content) {
+  const workspaceOptions = state.workspaces.map((workspace) => `<option value="${workspace.id}" ${workspace.id === state.workspaceId ? "selected" : ""}>${escapeHtml(workspace.name)}</option>`).join("");
+  const projectOptions = state.projects.map((project) => `<option value="${project.id}" ${project.id === state.projectId ? "selected" : ""}>${escapeHtml(project.name)}</option>`).join("");
+  return `<div class="shell">
+    <aside class="sidebar ${state.sidebarOpen ? "open" : ""}" aria-label="Primary navigation">
+      <a class="brand" href="#${routes.dashboard}" data-route="${routes.dashboard}">
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span class="brand-copy"><strong>SYNASE AI</strong><span>Decision intelligence</span></span>
+      </a>
+      <nav>
+        <div class="nav-section">
+          <div class="nav-label">Workspace</div>
+          ${navLink(routes.dashboard, "⌂", "Dashboard")}
+          ${navLink(routes.projects, "◇", "Projects", true)}
+          ${navLink(projectRoute("repository"), "⌘", "Repository")}
+          ${navLink(projectRoute("inputs"), "＋", "Inputs")}
+          ${navLink(routes.members, "◎", "Members")}
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Intelligence</div>
+          ${navLink("/app/intelligence/product", "P", "Product Intelligence", false, true)}
+          ${navLink("/app/intelligence/devops", "D", "DevOps Intelligence", false, true)}
+          ${navLink("/app/mcp", "M", "MCP V2", false, true)}
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">System</div>
+          ${navLink(routes.workspaceSettings, "⚙", "Settings")}
+          ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
+        </div>
+      </nav>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–3 · Mock adapter</div></div>
+    </aside>
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu" data-action="toggle-menu" aria-label="Open navigation">☰</button>
+          <select class="context-select" id="workspace-switcher" aria-label="Current workspace">${workspaceOptions}</select>
+          <select class="context-select project-context" id="project-switcher" aria-label="Current project">${projectOptions}</select>
+        </div>
+        <div class="topbar-actions">
+          <button class="search-trigger" data-action="search" aria-label="Open command palette"><span>⌕</span><span>Search workspace</span><kbd>⌘ K</kbd></button>
+          <button class="icon-btn" data-action="notifications" aria-label="Notifications">○</button>
+          <button class="avatar" data-action="profile" aria-label="Open user menu">${initials(state.user?.displayName)}</button>
+        </div>
+      </header>
+      <main id="main" class="content">${content}</main>
+    </div>
+    ${state.toast ? `<div class="toast" role="status">${escapeHtml(state.toast)}</div>` : ""}
+  </div>`;
+}
+
+function metricCard(metric) {
+  return `<article class="metric ${metric.tone || ""}">
+    <div class="metric-label">${escapeHtml(metric.label)}</div>
+    <div class="metric-value">${escapeHtml(metric.value)}</div>
+    <div class="metric-note">${escapeHtml(metric.trend || "")}</div>
+  </article>`;
+}
+
+function projectRows(projects, compact = false) {
+  if (!projects.length) return `<div class="empty"><div><div class="empty-icon">◇</div><h2>No projects found</h2><p>Create a project or adjust your filters. Empty states always explain the next action.</p></div></div>`;
+  if (compact) return `<div class="project-list">${projects.slice(0, 5).map((project) => `
+    <button class="project-row" data-route="/app/projects/${project.id}/overview">
+      <div><div class="project-title"><span class="project-glyph"></span>${escapeHtml(project.name)}</div><p class="project-desc">${escapeHtml(project.description)}</p></div>
+      ${status(project.lifecycleStatus)}
+    </button>`).join("")}</div>`;
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>Project</th><th>Status</th><th>Role</th><th>Updated</th><th></th></tr></thead>
+    <tbody>${projects.map((project) => `<tr>
+      <td><strong>${escapeHtml(project.name)}</strong><br><span class="small">${escapeHtml(project.description)}</span></td>
+      <td>${status(project.lifecycleStatus)}</td><td>${escapeHtml(project.role.replaceAll("_", " "))}</td>
+      <td>${new Date(project.updatedAt).toLocaleDateString()}</td>
+      <td><button class="button ghost" data-route="/app/projects/${project.id}/overview">Open</button></td>
+    </tr>`).join("")}</tbody></table></div>`;
+}
+
+function dashboardPage() {
+  if (!state.dashboard) return loading();
+  const workspace = state.workspaces.find((item) => item.id === state.workspaceId);
+  return `${pageHeader("Workspace overview", `Good afternoon, ${state.user?.displayName?.split(" ")[0] || "Satyam"}`, `A clear view of ${workspace?.name || "your workspace"}. Metrics unavailable in Phase 2 are intentionally not fabricated.`, `<button class="button primary" data-route="${routes.createProject}">＋ New project</button>`)}
+    <section class="metrics" aria-label="Workspace metrics">${state.dashboard.metrics.map(metricCard).join("")}</section>
+    <section class="dashboard-grid">
+      <article class="card"><div class="card-head"><div><h2>Active projects</h2><span class="small subtle">${state.dashboard.projects.length} in current workspace</span></div><button class="button ghost" data-route="${routes.projects}">View all</button></div>
+        <div class="card-body">${projectRows(state.dashboard.projects, true)}</div>
+      </article>
+      <article class="card"><div class="card-head"><div><h2>Recent activity</h2><span class="small subtle">Mock contract events</span></div></div>
+        <div class="card-body activity-list">${state.dashboard.activity.map((item) => `<div class="activity"><strong>${escapeHtml(item.actor)}</strong> ${escapeHtml(item.action)} <strong>${escapeHtml(item.target)}</strong><time>${escapeHtml(item.occurredAt)}</time></div>`).join("")}</div>
+      </article>
+    </section>`;
+}
+
+function projectsPage() {
+  return `${pageHeader("Project workspace", "Projects", "Create, filter, and enter projects without coupling the frontend to database tables.", `<button class="button primary" data-route="${routes.createProject}">＋ New project</button>`)}
+    <div class="toolbar">
+      <input class="field-inline search" id="project-search" type="search" placeholder="Search projects" aria-label="Search projects">
+      <select class="field-inline" id="project-status" aria-label="Filter project status">
+        <option value="">All lifecycle states</option><option>active</option><option>draft</option><option>paused</option><option>completed</option><option>archived</option>
+      </select>
+    </div>
+    <div id="project-results">${projectRows(state.projects)}</div>`;
+}
+
+function createProjectPage() {
+  return `${pageHeader("Project workspace", "Create project", "Start with a small, typed contract. Repository and ingestion setup remain outside this phase.")}
+    <section class="card form-card">
+      <div class="alert">This build uses the deterministic mock adapter. A successful response represents contract behavior—not a live backend write.</div>
+      <form id="create-project-form">
+        <div class="form-grid">
+          <div class="field full"><label for="project-workspace">Workspace</label><select id="project-workspace" name="workspaceId" required>${state.workspaces.map((w) => `<option value="${w.id}" ${w.id === state.workspaceId ? "selected" : ""}>${escapeHtml(w.name)}</option>`).join("")}</select></div>
+          <div class="field full"><label for="project-name">Project name</label><input id="project-name" name="name" required maxlength="80" placeholder="e.g. Decision Intelligence Console"><small>Required · 80 characters maximum</small></div>
+          <div class="field full"><label for="project-description">Description</label><textarea id="project-description" name="description" maxlength="360" placeholder="What is this project?"></textarea></div>
+          <div class="field full"><label for="project-goal">Goal</label><textarea id="project-goal" name="goal" maxlength="360" placeholder="What outcome should this project drive?"></textarea></div>
+        </div>
+        <div id="form-message"></div>
+        <div class="form-actions"><button type="button" class="button ghost" data-route="${routes.projects}">Cancel</button><button type="submit" class="button primary">Create project</button></div>
+      </form>
+    </section>`;
+}
+
+function projectOverviewPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "This project does not exist or is not available in the selected workspace.");
+  state.projectId = project.id;
+  return `${pageHeader("Project overview", project.name, "Structured project context with honest availability states.", `<button class="button" data-route="/app/projects/${project.id}/settings">Project settings</button>`)}
+    <article class="card overview-hero">
+      <div><div class="cluster">${status(project.lifecycleStatus)}<span class="status">${escapeHtml(project.role.replaceAll("_", " "))}</span></div>
+        <p class="page-copy">${escapeHtml(project.description || "No description provided.")}</p>
+        <div class="overview-meta"><span>Goal<b>${escapeHtml(project.goal || "Not defined")}</b></span><span>Workspace<b>${escapeHtml(state.workspaces.find((w) => w.id === project.workspaceId)?.name || "Unknown")}</b></span><span>Updated<b>${new Date(project.updatedAt).toLocaleDateString()}</b></span></div>
+      </div>
+    </article>
+    <section class="placeholder-grid" aria-label="Future project modules">
+      <article class="placeholder"><h3>Repository</h3><p>Connection and snapshot data becomes available in Phase 3. No repository state is simulated here.</p><button class="button" disabled>Not available</button></article>
+      <article class="placeholder"><h3>Analysis runs</h3><p>Workflow creation and SSE execution views begin in later phases. Progress is never faked.</p><button class="button" disabled>Not available</button></article>
+      <article class="placeholder"><h3>Decision reports</h3><p>Reports and approval state are intentionally withheld until their contracted phase.</p><button class="button" disabled>Not available</button></article>
+    </section>`;
+}
+
+function projectSettingsPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "Settings cannot be loaded for an unavailable project.");
+  return `${pageHeader("Project administration", `${project.name} settings`, "Edit safe project metadata. Membership and destructive changes remain authoritative server actions.")}
+    <section class="dashboard-grid">
+      <article class="card form-card"><form id="project-settings-form" data-project-id="${project.id}">
+        <div class="field"><label for="settings-name">Project name</label><input id="settings-name" name="name" value="${escapeHtml(project.name)}" required></div>
+        <div class="field"><label for="settings-description">Description</label><textarea id="settings-description" name="description">${escapeHtml(project.description)}</textarea></div>
+        <div class="form-actions"><button class="button primary" type="submit">Save changes</button></div>
+      </form></article>
+      <article class="card"><div class="card-head"><h2>Danger zone</h2></div><div class="card-body"><p class="page-copy">Archive and delete are disabled until their backend semantics, restoration behavior, and ownership safeguards are frozen.</p><button class="button danger" disabled>Archive project</button></div></article>
+    </section>`;
+}
+
+function membersPage() {
+  return `${pageHeader("Workspace administration", "Workspace members", "Manage roles through explicit, non-optimistic mutations. This route is provisional.", `<button class="button primary" data-action="invite">＋ Invite member</button>`)}
+    <div class="alert">Provisional route: workspace member URLs must be approved before backend integration.</div>
+    <div class="table-wrap"><table><thead><tr><th>Member</th><th>Role</th><th>Joined</th><th>Status</th></tr></thead><tbody>
+      ${state.members.map((member) => `<tr><td><strong>${escapeHtml(member.name)}</strong><br>${escapeHtml(member.email)}</td><td>${escapeHtml(member.role)}</td><td>${escapeHtml(member.joinedAt)}</td><td>${status("active")}</td></tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+function workspaceSettingsPage() {
+  const workspace = state.workspaces.find((item) => item.id === state.workspaceId);
+  return `${pageHeader("Workspace administration", "Workspace settings", "Workspace defaults and destructive behavior remain permission-aware and contract-driven.")}
+    <div class="alert">Provisional route. Ownership transfer, archive, and deletion safeguards must be frozen before activation.</div>
+    <section class="card form-card"><form id="workspace-settings-form">
+      <div class="form-grid">
+        <div class="field full"><label for="workspace-name">Workspace name</label><input id="workspace-name" value="${escapeHtml(workspace?.name)}" disabled><small>Read-only in this frontend-only build.</small></div>
+        <div class="field full"><label for="workspace-description">Description</label><textarea id="workspace-description" disabled>${escapeHtml(workspace?.description)}</textarea></div>
+      </div>
+      <div class="form-actions"><button type="button" class="button" disabled>Save changes</button></div>
+    </form></section>`;
+}
+
+function repositoryPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "Repository context cannot be loaded for an unavailable project.");
+  state.projectId = project.id;
+  const detail = state.repositories.find((item) => item.id === state.repositoryDetailId);
+  return `${pageHeader("Project context", "Repository", `Connect and inspect repositories for ${project.name}. Sync actions are explicit mock operations.`, `<button class="button primary" data-action="toggle-repo-form">＋ Connect repository</button>`)}
+    <div class="alert">Mock adapter active. Provider authorization, source retrieval, scanning, and synchronization are not live.</div>
+    <section id="repo-form-panel" class="card form-card hidden-panel">
+      <form id="connect-repository-form">
+        <div class="form-grid">
+          <div class="field"><label for="repo-provider">Provider</label><select id="repo-provider" name="provider" required><option value="github">GitHub</option><option value="gitlab">GitLab</option><option value="bitbucket">Bitbucket</option><option value="local">Local</option></select></div>
+          <div class="field"><label for="repo-branch">Default branch</label><input id="repo-branch" name="defaultBranch" value="main"></div>
+          <div class="field full"><label for="repo-path">Repository path</label><input id="repo-path" name="fullName" placeholder="organization/repository" required><small>Do not enter provider tokens or credentials.</small></div>
+        </div>
+        <div id="repo-form-message"></div>
+        <div class="form-actions"><button class="button primary" type="submit">Connect mock repository</button></div>
+      </form>
+    </section>
+    ${state.repositories.length ? `<div class="table-wrap"><table><thead><tr><th>Repository</th><th>Provider</th><th>Branch</th><th>Connection</th><th>Last sync</th><th></th></tr></thead><tbody>
+      ${state.repositories.map((repository) => `<tr>
+        <td><strong>${escapeHtml(repository.fullName)}</strong><br><span class="small">${escapeHtml(repository.visibility)}</span></td>
+        <td>${escapeHtml(repository.provider)}</td><td><code>${escapeHtml(repository.defaultBranch)}</code></td><td>${status(repository.connectionStatus)}</td>
+        <td>${repository.lastSyncedAt ? new Date(repository.lastSyncedAt).toLocaleString() : "Never"}</td>
+        <td><div class="cluster"><button class="button ghost" data-action="repo-detail" data-repository-id="${repository.id}">Inspect</button><button class="button" data-action="repo-sync" data-repository-id="${repository.id}" ${repository.connectionStatus !== "connected" ? "disabled" : ""}>Sync</button></div></td>
+      </tr>`).join("")}</tbody></table></div>` : `<section class="card empty"><div><div class="empty-icon">⌘</div><h2>No repositories connected</h2><p>Connect a repository to provide project source context. Provider credentials are never collected by this mock.</p><button class="button primary" data-action="toggle-repo-form">Connect repository</button></div></section>`}
+    ${detail ? `<section class="card repository-detail">
+      <div class="card-head"><div><h2>${escapeHtml(detail.fullName)}</h2><span class="small subtle">Snapshot and tree preview</span></div><button class="icon-btn" data-action="close-repo-detail" aria-label="Close repository detail">×</button></div>
+      <div class="detail-grid">
+        <div class="card-body"><h3>Snapshots</h3>${state.repositorySnapshots.length ? `<div class="snapshot-list">${state.repositorySnapshots.map((snapshot) => `<div class="snapshot"><code>${escapeHtml(snapshot.commitSha)}</code><span>${escapeHtml(snapshot.branch)} · ${snapshot.fileCount} files · ${formatBytes(snapshot.totalBytes)}</span>${status(snapshot.scanStatus)}</div>`).join("")}</div>` : `<p class="page-copy">No snapshots are available.</p>`}</div>
+        <div class="card-body tree-panel"><h3>Lazy tree preview</h3>${state.repositoryTree.length ? `<ul class="tree-list">${state.repositoryTree.map((node) => `<li><span aria-hidden="true">${node.type === "directory" ? "▾" : "·"}</span><code>${escapeHtml(node.path)}</code>${node.byteSize ? `<small>${formatBytes(node.byteSize)}</small>` : ""}</li>`).join("")}</ul>` : `<p class="page-copy">Tree data is unavailable.</p>`}</div>
+      </div>
+    </section>` : ""}`;
+}
+
+function assetState(asset) {
+  const blocked = asset.securityScanStatus === "blocked";
+  return `<div class="state-stack">${status(asset.processingStatus)}${status(asset.securityScanStatus)}${blocked ? `<span class="small danger-text">Security blocked</span>` : ""}</div>`;
+}
+
+function inputComposer(projectId) {
+  const tabs = [
+    ["file", "File upload"],
+    ["text", "Text"],
+    ["url", "URL"],
+    ["repository", "Repository"]
+  ];
+  return `<section class="card composer">
+    <div class="input-tabs" role="tablist">${tabs.map(([key, label]) => `<button class="input-tab ${state.inputTab === key ? "active" : ""}" role="tab" aria-selected="${state.inputTab === key}" data-action="input-tab" data-tab="${key}">${label}</button>`).join("")}</div>
+    <div class="card-body">
+      ${state.inputTab === "file" ? `<form id="file-input-form">
+        <label class="dropzone" for="asset-file"><span class="drop-icon">⇧</span><strong>Select a multimodal file</strong><span>PDF, DOCX, PPTX, CSV, spreadsheets, images, audio, video, logs, or code archives · mock limit 50 MB</span><input id="asset-file" name="file" type="file" required></label>
+        <div class="option-row"><label><input type="checkbox" name="ocr"> OCR when applicable</label><label><input type="checkbox" name="extractTables"> Extract tables</label><label><input type="checkbox" name="profileData"> Profile structured data</label></div>
+        <div id="input-form-message"></div><div class="form-actions"><button class="button primary" type="submit">Run mock upload sequence</button></div>
+      </form>` : ""}
+      ${state.inputTab === "text" ? `<form id="text-input-form"><div class="field"><label for="text-title">Title</label><input id="text-title" name="title" placeholder="Context note"></div><div class="field"><label for="text-content">Text context</label><textarea id="text-content" name="text" required placeholder="Paste trusted project context"></textarea></div><div id="input-form-message"></div><div class="form-actions"><button class="button primary" type="submit">Add text context</button></div></form>` : ""}
+      ${state.inputTab === "url" ? `<form id="url-input-form"><div class="field"><label for="source-url">URL</label><input id="source-url" name="url" type="url" required placeholder="https://example.com/spec"><small>External content is treated as untrusted until processed.</small></div><div id="input-form-message"></div><div class="form-actions"><button class="button primary" type="submit">Add URL</button></div></form>` : ""}
+      ${state.inputTab === "repository" ? `<div class="empty compact-empty"><div><div class="empty-icon">⌘</div><h2>Use connected repositories</h2><p>Repository-based inputs use the project repository inventory. No provider credentials are exposed here.</p><button class="button" data-route="/app/projects/${projectId}/repository">Open repositories</button></div></div>` : ""}
+    </div>
+  </section>`;
+}
+
+function inputsPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "Inputs cannot be loaded for an unavailable project.");
+  state.projectId = project.id;
+  return `${pageHeader("Project context", "Multimodal inputs", `Add and track trusted project context for ${project.name}. The route and all processing are explicitly provisional/mock.`, "")}
+    <div class="alert">Provisional route · Mock adapter active. Selected file contents never leave this browser build; only metadata is added to fixtures.</div>
+    ${inputComposer(projectId)}
+    <section class="asset-section">
+      <div class="section-title"><div><h2>Input inventory</h2><p class="small subtle">${state.assets.length} active items</p></div><select id="asset-status-filter" class="field-inline" aria-label="Filter processing status"><option value="">All processing states</option><option>received</option><option>scanning</option><option>extracting</option><option>indexing</option><option>ready</option><option>warning</option><option>failed</option></select></div>
+      <div id="asset-results">${assetTable(state.assets, projectId)}</div>
+    </section>`;
+}
+
+function assetTable(assets, projectId) {
+  if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
+  return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
+    ${assets.map((asset) => `<tr>
+      <td><strong>${escapeHtml(asset.name)}</strong><br><span class="small">${new Date(asset.createdAt).toLocaleString()}</span></td>
+      <td>${escapeHtml(asset.inputType)}<br><span class="small">${escapeHtml(asset.sourceType)}</span></td><td>${formatBytes(asset.byteSize)}</td>
+      <td>${assetState(asset)}</td><td>${status(asset.extractionStatus)}</td>
+      <td><div class="cluster">${["received","scanning","extracting","indexing"].includes(asset.processingStatus) ? `<button class="button" data-action="advance-asset" data-asset-id="${asset.id}" title="User-triggered mock transition">Advance demo</button>` : ""}<button class="button ghost" data-action="delete-asset" data-asset-id="${asset.id}">Remove</button></div></td>
+    </tr>`).join("")}</tbody></table></div>`;
+}
+
+function notFound(title, copy) {
+  return `<section class="card empty"><div><div class="empty-icon">?</div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p><button class="button primary" data-route="${routes.dashboard}">Return to dashboard</button></div></section>`;
+}
+
+function authPage(kind) {
+  const config = {
+    login: { title: "Welcome back", copy: "Continue to your decision intelligence workspace.", button: "Sign in" },
+    register: { title: "Create your account", copy: "Set up access to SYNASE AI.", button: "Create account" },
+    forgot: { title: "Recover access", copy: "We’ll send recovery instructions if the account exists.", button: "Send instructions" }
+  }[kind];
+  return `<div class="auth-layout">
+    <section class="auth-art">
+      <a class="brand" href="?route=/auth/login"><span class="brand-mark"><i></i></span><span class="brand-copy"><strong>SYNASE AI</strong><span>Decision intelligence</span></span></a>
+      <div class="auth-message"><div class="eyebrow">Product × Engineering × DevOps</div><h1>Decisions with <span>evidence</span>, not guesswork.</h1><p>Connect project context, technical execution, validation, confidence, and human approval in one observable workspace.</p></div>
+      <div class="auth-pipeline"><span>Context</span><span>Orchestration</span><span>Validation</span><span>Confidence</span><span>Approval</span></div>
+    </section>
+    <main class="auth-panel"><section class="auth-card">
+      <div class="eyebrow">Secure workspace access</div><h2>${config.title}</h2><p class="page-copy">${config.copy}</p>
+      <form id="auth-form" data-kind="${kind}">
+        ${kind === "register" ? `<div class="field"><label for="auth-name">Full name</label><input id="auth-name" name="name" autocomplete="name" required></div>` : ""}
+        <div class="field"><label for="auth-email">Email</label><input id="auth-email" name="email" type="email" autocomplete="email" required></div>
+        ${kind !== "forgot" ? `<div class="field"><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" autocomplete="${kind === "login" ? "current-password" : "new-password"}" minlength="8" required></div>` : ""}
+        <div id="auth-message"></div><button class="button primary" type="submit">${config.button}</button>
+      </form>
+      <div class="auth-links">
+        ${kind !== "login" ? `<a href="?route=/auth/login">Sign in</a>` : `<a href="?route=/auth/register">Create account</a>`}
+        ${kind !== "forgot" ? `<a href="?route=/auth/forgot-password">Forgot password?</a>` : ""}
+      </div>
+    </section></main>
+  </div>`;
+}
+
+function renderPage() {
+  const path = currentPath();
+  if (path.startsWith("/auth/")) {
+    if (path.includes("register")) return authPage("register");
+    if (path.includes("forgot")) return authPage("forgot");
+    return authPage("login");
+  }
+  if (state.loading) return shell(loading());
+  if (path === routes.dashboard) return shell(dashboardPage());
+  if (path === routes.projects) return shell(projectsPage());
+  if (path === routes.createProject) return shell(createProjectPage());
+  if (path.includes("/workspaces/") && path.endsWith("/members")) return shell(membersPage());
+  if (path.includes("/workspaces/") && path.endsWith("/settings")) return shell(workspaceSettingsPage());
+  const repository = path.match(/^\/app\/projects\/([^/]+)\/repository$/);
+  if (repository) return shell(repositoryPage(repository[1]));
+  const inputs = path.match(/^\/app\/projects\/([^/]+)\/inputs$/);
+  if (inputs) return shell(inputsPage(inputs[1]));
+  const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
+  if (overview) return shell(projectOverviewPage(overview[1]));
+  const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
+  if (settings) return shell(projectSettingsPage(settings[1]));
+  return shell(notFound("Page not found", "This route is not part of the completed Phase 0–2 build."));
+}
+
+function render() {
+  app.innerHTML = renderPage();
+}
+
+async function hydrate(workspaceId = state.workspaceId) {
+  state.loading = true;
+  render();
+  try {
+    const [me, workspaces, projects, dashboard, members] = await Promise.all([
+      api.getMe(), api.listWorkspaces(), api.listProjects(workspaceId), api.getDashboard(workspaceId), api.listWorkspaceMembers()
+    ]);
+    state.user = me.data;
+    state.workspaces = workspaces.data;
+    state.workspaceId = workspaceId;
+    state.projects = projects.data;
+    state.dashboard = dashboard.data;
+    state.members = members.data;
+    if (!state.projects.some((p) => p.id === state.projectId)) state.projectId = state.projects[0]?.id || "";
+    if (state.projectId) {
+      const [repositories, assets] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId)]);
+      state.repositories = repositories.data;
+      state.assets = assets.data;
+    } else {
+      state.repositories = [];
+      state.assets = [];
+    }
+  } catch (error) {
+    state.error = error instanceof Error ? error.message : "Unable to load the workspace.";
+  } finally {
+    state.loading = false;
+    render();
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const target = event.target instanceof Element ? event.target.closest("[data-route],[data-action]") : null;
+  if (!target) return;
+  const route = target.getAttribute("data-route");
+  if (route) {
+    event.preventDefault();
+    navigate(route);
+    return;
+  }
+  const action = target.getAttribute("data-action");
+  if (action === "toggle-menu") { state.sidebarOpen = !state.sidebarOpen; render(); }
+  if (action === "search") toast("Global search contract is not defined yet.");
+  if (action === "notifications") toast("Notifications are not available in Phase 2.");
+  if (action === "profile") toast(`${state.user?.displayName || "User"} · ${state.user?.globalRole || "member"}`);
+  if (action === "invite") toast("Invitation requires the unresolved backend invitation contract.");
+  if (action === "toggle-repo-form") document.querySelector("#repo-form-panel")?.classList.toggle("hidden-panel");
+  if (action === "close-repo-detail") { state.repositoryDetailId = ""; state.repositorySnapshots = []; state.repositoryTree = []; render(); }
+  if (action === "input-tab") { state.inputTab = target.getAttribute("data-tab") || "file"; render(); }
+  if (action === "repo-detail") {
+    const repositoryId = target.getAttribute("data-repository-id");
+    Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
+      state.repositoryDetailId = repositoryId;
+      state.repositorySnapshots = snapshots.data;
+      state.repositoryTree = tree.data;
+      render();
+    }).catch((error) => toast(error instanceof Error ? error.message : "Repository detail failed."));
+  }
+  if (action === "repo-sync") {
+    const repositoryId = target.getAttribute("data-repository-id");
+    api.syncRepository(state.projectId, repositoryId).then(async () => {
+      state.repositories = (await api.listRepositories(state.projectId)).data;
+      toast("Mock repository sync completed. No provider was contacted.");
+      render();
+    }).catch((error) => toast(error instanceof Error ? error.message : "Sync failed."));
+  }
+  if (action === "advance-asset") {
+    api.advanceAssetDemo(state.projectId, target.getAttribute("data-asset-id")).then(async () => {
+      state.assets = (await api.listAssets(state.projectId)).data;
+      toast("Advanced one explicit mock processing state.");
+      render();
+    });
+  }
+  if (action === "delete-asset") {
+    api.deleteAsset(state.projectId, target.getAttribute("data-asset-id")).then(async () => {
+      state.assets = (await api.listAssets(state.projectId)).data;
+      toast("Input removed from the mock inventory.");
+      render();
+    });
+  }
+});
+
+document.addEventListener("change", async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement)) return;
+  if (target.id === "workspace-switcher") await hydrate(target.value);
+  if (target.id === "project-switcher") {
+    state.projectId = target.value;
+    Promise.all([api.listRepositories(target.value), api.listAssets(target.value)]).then(([repositories, assets]) => {
+      state.repositories = repositories.data;
+      state.assets = assets.data;
+      navigate(`/app/projects/${target.value}/overview`);
+    });
+  }
+  if (target.id === "project-search" || target.id === "project-status") filterProjects();
+  if (target.id === "asset-status-filter") {
+    const filtered = state.assets.filter((asset) => !target.value || asset.processingStatus === target.value);
+    const results = document.querySelector("#asset-results");
+    if (results) results.innerHTML = assetTable(filtered, state.projectId);
+  }
+});
+
+document.addEventListener("input", (event) => {
+  const target = event.target;
+  if (target instanceof HTMLInputElement && target.id === "project-search") filterProjects();
+});
+
+function filterProjects() {
+  const search = /** @type {HTMLInputElement|null} */ (document.querySelector("#project-search"))?.value.toLowerCase() || "";
+  const lifecycle = /** @type {HTMLSelectElement|null} */ (document.querySelector("#project-status"))?.value || "";
+  const filtered = state.projects.filter((project) =>
+    (!search || `${project.name} ${project.description}`.toLowerCase().includes(search)) &&
+    (!lifecycle || project.lifecycleStatus === lifecycle)
+  );
+  const results = document.querySelector("#project-results");
+  if (results) results.innerHTML = projectRows(filtered);
+}
+
+document.addEventListener("submit", async (event) => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement)) return;
+  event.preventDefault();
+  if (form.id === "create-project-form") {
+    const button = form.querySelector('button[type="submit"]');
+    const message = form.querySelector("#form-message");
+    if (button instanceof HTMLButtonElement) { button.disabled = true; button.textContent = "Creating…"; }
+    try {
+      const values = Object.fromEntries(new FormData(form));
+      const result = await api.createProject(values, { idempotencyKey: createIdempotencyKey() });
+      await hydrate(values.workspaceId);
+      toast("Project created in the mock adapter.");
+      navigate(`/app/projects/${result.data.id}/overview`);
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof ApiError ? `${error.message} · ${error.requestId}` : "Unable to create project.")}</div>`;
+    } finally {
+      if (button instanceof HTMLButtonElement) { button.disabled = false; button.textContent = "Create project"; }
+    }
+  }
+  if (form.id === "project-settings-form") {
+    const id = form.dataset.projectId;
+    const values = Object.fromEntries(new FormData(form));
+    try {
+      await api.updateProject(id, values);
+      await hydrate(state.workspaceId);
+      toast("Project settings updated in the mock adapter.");
+    } catch (error) { toast(error instanceof Error ? error.message : "Update failed."); }
+  }
+  if (form.id === "auth-form") {
+    const kind = form.dataset.kind;
+    const values = Object.fromEntries(new FormData(form));
+    const message = form.querySelector("#auth-message");
+    const button = form.querySelector('button[type="submit"]');
+    if (button instanceof HTMLButtonElement) { button.disabled = true; button.textContent = "Please wait…"; }
+    try {
+      if (kind === "login") {
+        await api.login(values);
+        location.href = `${location.pathname}#${routes.dashboard}`;
+        await hydrate();
+      } else if (kind === "register") {
+        await api.register(values);
+        if (message) message.innerHTML = `<div class="alert success">Check your email to continue. This is a mock response.</div>`;
+      } else {
+        await api.recover(values.email);
+        if (message) message.innerHTML = `<div class="alert success">If this account exists, recovery instructions have been accepted by the mock adapter.</div>`;
+      }
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Authentication failed.")}</div>`;
+    } finally {
+      if (button instanceof HTMLButtonElement) { button.disabled = false; button.textContent = kind === "login" ? "Sign in" : kind === "register" ? "Create account" : "Send instructions"; }
+    }
+  }
+  if (form.id === "connect-repository-form") {
+    const button = form.querySelector('button[type="submit"]');
+    const message = form.querySelector("#repo-form-message");
+    if (button instanceof HTMLButtonElement) { button.disabled = true; button.textContent = "Connecting…"; }
+    try {
+      const values = Object.fromEntries(new FormData(form));
+      await api.connectRepository(state.projectId, values, { idempotencyKey: createIdempotencyKey() });
+      state.repositories = (await api.listRepositories(state.projectId)).data;
+      toast("Repository added as pending in the mock adapter.");
+      render();
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Unable to connect repository.")}</div>`;
+    } finally {
+      if (button instanceof HTMLButtonElement) { button.disabled = false; button.textContent = "Connect mock repository"; }
+    }
+  }
+  if (form.id === "file-input-form") {
+    const file = /** @type {HTMLInputElement|null} */ (form.querySelector("#asset-file"))?.files?.[0];
+    const message = form.querySelector("#input-form-message");
+    if (!file) return;
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+    const inputType = ({ pdf: "pdf", csv: "csv", xlsx: "spreadsheet", xls: "spreadsheet", docx: "document", pptx: "document", png: "image", jpg: "image", jpeg: "image", mp3: "audio", wav: "audio", mp4: "video", mov: "video", log: "log", zip: "code_archive" })[extension] || "file";
+    try {
+      const initiated = await api.initiateUpload(state.projectId, { name: file.name, inputType, byteSize: file.size, mimeType: file.type, sourceType: "upload" }, { idempotencyKey: createIdempotencyKey() });
+      await api.completeUpload(state.projectId, initiated.data.assetId);
+      state.assets = (await api.listAssets(state.projectId)).data;
+      toast("Mock initiate → transfer → complete sequence recorded. No file content was uploaded.");
+      render();
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Upload failed.")}</div>`;
+    }
+  }
+  if (form.id === "text-input-form" || form.id === "url-input-form") {
+    const message = form.querySelector("#input-form-message");
+    try {
+      const values = Object.fromEntries(new FormData(form));
+      if (form.id === "text-input-form") await api.addTextInput(state.projectId, values);
+      else await api.addUrlInput(state.projectId, values);
+      state.assets = (await api.listAssets(state.projectId)).data;
+      toast(form.id === "text-input-form" ? "Text context added to the mock inventory." : "URL accepted by the mock adapter.");
+      render();
+    } catch (error) {
+      if (message) message.innerHTML = `<div class="alert error">${escapeHtml(error instanceof Error ? error.message : "Input failed.")}</div>`;
+    }
+  }
+});
+
+window.addEventListener("hashchange", render);
+window.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    toast("Global search contract is not defined yet.");
+  }
+});
+
+render();
+if (!currentPath().startsWith("/auth/")) hydrate();
