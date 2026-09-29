@@ -179,7 +179,41 @@ const db = {
       { eventId: "demo_evt_7", eventType: "validation.completed", workflowId: "wf_mock_arch", sequence: 7, schemaVersion: "1", payload: { stage: "validation", progressPercent: 82 } },
       { eventId: "demo_evt_8", eventType: "workflow.completed", workflowId: "wf_mock_arch", sequence: 8, schemaVersion: "1", payload: { status: "completed", progressPercent: 100 } }
     ]
-  }
+  },
+  mcpRequests: [
+    { id: "mcp_req_arch", workflowId: "wf_mock_arch", detectedLayer: "both", status: "completed", payloadFormat: "toon", confidence: 0.87, validationStatus: "passed", createdAt: "2026-09-29T08:46:00Z", mock: true },
+    { id: "mcp_req_risk", workflowId: "wf_mock_risk", detectedLayer: "devops", status: "processing", payloadFormat: "reference", confidence: 0.62, validationStatus: "warning", createdAt: "2026-09-28T14:22:00Z", mock: true },
+    { id: "mcp_req_cache", workflowId: "wf_mock_arch", detectedLayer: "product", status: "cached", payloadFormat: "json", confidence: 0.91, validationStatus: "passed", createdAt: "2026-09-27T10:18:00Z", mock: true }
+  ],
+  mcpTrace: [
+    { id: "trace_1", requestId: "mcp_req_arch", chamber: "request_gateway", sequence: 1, status: "completed", durationMs: 18, summary: "Request accepted and correlated" },
+    { id: "trace_2", requestId: "mcp_req_arch", chamber: "context_manager", sequence: 2, status: "completed", durationMs: 142, summary: "Selected 8 project context references" },
+    { id: "trace_3", requestId: "mcp_req_arch", chamber: "task_layer_intelligence", sequence: 3, status: "completed", durationMs: 36, summary: "Detected product + DevOps scope" },
+    { id: "trace_4", requestId: "mcp_req_arch", chamber: "chamber_router", sequence: 4, status: "completed", durationMs: 24, summary: "Routed to architecture-review capability" },
+    { id: "trace_5", requestId: "mcp_req_arch", chamber: "tool_model_execution", sequence: 5, status: "completed", durationMs: 1260, summary: "Mock execution metadata only; no model or tool ran" },
+    { id: "trace_6", requestId: "mcp_req_arch", chamber: "validation", sequence: 6, status: "completed", durationMs: 84, summary: "Validation passed with warnings resolved" },
+    { id: "trace_7", requestId: "mcp_req_arch", chamber: "response_aggregation", sequence: 7, status: "completed", durationMs: 52, summary: "Structured response aggregation completed" }
+  ],
+  mcpModels: [
+    { id: "model_claude", provider: "anthropic", name: "Claude Sonnet", contextWindow: 200000, availabilityStatus: "active" },
+    { id: "model_gpt", provider: "openai", name: "GPT reasoning", contextWindow: 128000, availabilityStatus: "active" },
+    { id: "model_local", provider: "local", name: "Local evaluator", contextWindow: 32000, availabilityStatus: "disabled" }
+  ],
+  mcpTools: [
+    { id: "tool_repo", name: "Repository Inspector", type: "github", availabilityStatus: "active", capabilities: ["repository_review", "code_search"] },
+    { id: "tool_logs", name: "Log Analyzer", type: "logs", availabilityStatus: "active", capabilities: ["risk_analysis", "incident_review"] },
+    { id: "tool_deploy", name: "Deployment Planner", type: "cicd", availabilityStatus: "disabled", capabilities: ["deployment_plan"] }
+  ],
+  mcpServers: [
+    { id: "server_internal", name: "SYNASE Internal MCP", transportType: "internal", status: "active", healthStatus: "healthy", toolCount: 8 },
+    { id: "server_repo", name: "Repository MCP", transportType: "https", status: "active", healthStatus: "degraded", toolCount: 4 },
+    { id: "server_docs", name: "Documentation MCP", transportType: "sse", status: "discovered", healthStatus: "unknown", toolCount: 0 }
+  ],
+  mcpDirectories: [
+    { id: "dir_internal", name: "Internal Registry", type: "internal", status: "active", healthStatus: "healthy" },
+    { id: "dir_smithery", name: "Smithery", type: "smithery", status: "disabled", healthStatus: "unknown" }
+  ],
+  discoveryRuns: []
 };
 
 function page(data) {
@@ -503,8 +537,54 @@ export const mockApi = {
     if (event.eventType === "workflow.completed") workflow.status = "completed";
     workflow.updatedAt = event.occurredAt;
     return { data: { event, workflow: { ...workflow }, terminal: event.eventType === "workflow.completed" } };
+  },
+  async getMcpOverview() {
+    await sleep();
+    return { data: {
+      requestCount: db.mcpRequests.length,
+      completedCount: db.mcpRequests.filter((item) => ["completed", "validated", "cached"].includes(item.status)).length,
+      averageConfidence: Number((db.mcpRequests.reduce((sum, item) => sum + item.confidence, 0) / db.mcpRequests.length).toFixed(2)),
+      healthyServers: db.mcpServers.filter((item) => item.healthStatus === "healthy").length,
+      modelCount: db.mcpModels.length,
+      toolCount: db.mcpTools.length
+    } };
+  },
+  async listMcpRequests() { await sleep(); return page(db.mcpRequests); },
+  async getMcpTrace(requestId) {
+    await sleep();
+    if (!db.mcpRequests.some((item) => item.id === requestId)) throw new ApiError("RESOURCE_NOT_FOUND", "MCP request was not found.", 404);
+    return page(db.mcpTrace.filter((stage) => stage.requestId === requestId).sort((a, b) => a.sequence - b.sequence));
+  },
+  async listMcpModels() { await sleep(); return page(db.mcpModels); },
+  async listMcpTools() { await sleep(); return page(db.mcpTools); },
+  async listMcpServers() { await sleep(); return page(db.mcpServers); },
+  async listMcpDirectories() { await sleep(); return page(db.mcpDirectories); },
+  async checkMcpServerHealth(serverId) {
+    await sleep(320);
+    const server = db.mcpServers.find((item) => item.id === serverId);
+    if (!server) throw new ApiError("RESOURCE_NOT_FOUND", "MCP server was not found.", 404);
+    server.healthStatus = server.healthStatus === "unknown" ? "healthy" : server.healthStatus;
+    return { data: { serverId, healthStatus: server.healthStatus, checkedAt: new Date().toISOString(), mock: true } };
+  },
+  async discoverMcpDirectory(directoryId, { idempotencyKey } = {}) {
+    await sleep(380);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const directory = db.mcpDirectories.find((item) => item.id === directoryId);
+    if (!directory) throw new ApiError("RESOURCE_NOT_FOUND", "MCP directory was not found.", 404);
+    const run = { id: `discovery_${Math.random().toString(36).slice(2, 8)}`, directoryId, status: "completed", resultsCount: 2, createdAt: new Date().toISOString(), mock: true };
+    db.discoveryRuns.unshift(run);
+    return { data: run };
   }
 };
+
+export function redactMcpPayload(value) {
+  const sensitive = /token|password|secret|authorization|api[_-]?key|credential/i;
+  if (Array.isArray(value)) return value.map(redactMcpPayload);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, nested]) => [key, sensitive.test(key) ? "[REDACTED]" : redactMcpPayload(nested)]));
+  }
+  return value;
+}
 
 export function normalizeWorkflowEvents(events) {
   const byId = new Map();

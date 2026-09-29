@@ -20,6 +20,14 @@ const state = {
   workflowTasks: [],
   workflowEvents: [],
   streamState: "idle",
+  mcpOverview: null,
+  mcpRequests: [],
+  mcpTrace: [],
+  mcpRequestId: "",
+  mcpModels: [],
+  mcpTools: [],
+  mcpServers: [],
+  mcpDirectories: [],
   conversationId: "",
   analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
@@ -128,7 +136,7 @@ function shell(content) {
           <div class="nav-label">Intelligence</div>
           ${navLink("/app/intelligence/product", "P", "Product Intelligence", false, true)}
           ${navLink("/app/intelligence/devops", "D", "DevOps Intelligence", false, true)}
-          ${navLink("/app/mcp", "M", "MCP V2", false, true)}
+          ${navLink("/app/mcp/overview", "M", "MCP V2", true)}
         </div>
         <div class="nav-section">
           <div class="nav-label">System</div>
@@ -136,7 +144,7 @@ function shell(content) {
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–5 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–6 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -472,6 +480,53 @@ function runsPage(projectId) {
     <div class="runs-layout"><aside class="card"><div class="card-head"><div><h2>Runs</h2><span class="small subtle">${state.workflows.length} workflows</span></div></div>${workflowList()}</aside>${workflowDetail()}</div>`;
 }
 
+function mcpTabs(view) {
+  const tabs = [["overview","Overview"],["executions","Executions"],["tools","Tools"],["models","Models"],["discovery","Discovery"]];
+  return `<div class="input-tabs page-tabs">${tabs.map(([key,label]) => `<button class="input-tab ${view === key ? "active" : ""}" data-route="/app/mcp/${key}">${label}</button>`).join("")}</div>`;
+}
+
+function mcpOverviewView() {
+  const metrics = [
+    { label: "Requests", value: String(state.mcpOverview?.requestCount ?? "—"), trend: "Mock catalog", tone: "neutral" },
+    { label: "Completed / cached", value: String(state.mcpOverview?.completedCount ?? "—"), trend: "Trace metadata", tone: "positive" },
+    { label: "Avg. confidence", value: state.mcpOverview ? `${Math.round(state.mcpOverview.averageConfidence * 100)}%` : "—", trend: "Normalized 0–1", tone: "neutral" },
+    { label: "Healthy servers", value: String(state.mcpOverview?.healthyServers ?? "—"), trend: `${state.mcpServers.length} known`, tone: "warning" }
+  ];
+  return `<section class="metrics">${metrics.map(metricCard).join("")}</section>
+    <div class="dashboard-grid"><article class="card"><div class="card-head"><h2>Recent MCP requests</h2><button class="button ghost" data-route="/app/mcp/executions">View traces</button></div><div class="card-body">${mcpRequestTable(state.mcpRequests.slice(0,5))}</div></article>
+    <article class="card"><div class="card-head"><h2>Inventory</h2></div><div class="card-body inventory-list"><div><span>Models</span><b>${state.mcpModels.length}</b></div><div><span>Tools</span><b>${state.mcpTools.length}</b></div><div><span>Servers</span><b>${state.mcpServers.length}</b></div><div><span>Directories</span><b>${state.mcpDirectories.length}</b></div></div></article></div>`;
+}
+
+function mcpRequestTable(requests) {
+  return `<div class="mcp-request-list">${requests.map((request) => `<button class="mcp-request ${request.id === state.mcpRequestId ? "active" : ""}" data-action="select-mcp-request" data-request-id="${request.id}"><div><strong>${escapeHtml(request.id)}</strong><span>${escapeHtml(request.detectedLayer || "unknown")} · ${escapeHtml(request.payloadFormat)}</span></div>${status(request.status)}<b>${Math.round(request.confidence * 100)}%</b></button>`).join("")}</div>`;
+}
+
+function mcpExecutionsView() {
+  const request = state.mcpRequests.find((item) => item.id === state.mcpRequestId);
+  return `<div class="mcp-layout"><aside class="card"><div class="card-head"><h2>Requests</h2></div>${mcpRequestTable(state.mcpRequests)}</aside>
+    <section class="card"><div class="card-head"><div><h2>${escapeHtml(request?.id || "Select a request")}</h2><span class="small subtle">${request ? `${request.detectedLayer} layer · validation ${request.validationStatus}` : ""}</span></div>${request ? status(request.status) : ""}</div>
+    <div class="trace-list">${state.mcpTrace.map((stage) => `<div class="trace-stage"><span class="trace-seq">${stage.sequence}</span><div><strong>${escapeHtml(stage.chamber.replaceAll("_"," "))}</strong><p>${escapeHtml(stage.summary)}</p></div><div>${status(stage.status)}<small>${stage.durationMs ? `${stage.durationMs} ms` : "—"}</small></div></div>`).join("")}</div>
+    ${request ? `<div class="safe-payload"><b>Safe trace metadata</b><code>{ layer: \"${escapeHtml(request.detectedLayer)}\", format: \"${escapeHtml(request.payloadFormat)}\", credentials: \"[REDACTED]\" }</code></div>` : ""}</section></div>`;
+}
+
+function mcpCatalogView(kind) {
+  const models = kind === "models";
+  const items = models ? state.mcpModels : state.mcpTools;
+  return `<div class="catalog-grid">${items.map((item) => `<article class="card catalog-card"><div class="card-body"><div class="catalog-head"><span class="catalog-glyph">${models ? "M" : "T"}</span>${status(item.availabilityStatus)}</div><h2>${escapeHtml(item.name)}</h2><p>${models ? `${escapeHtml(item.provider)} · ${item.contextWindow?.toLocaleString() || "—"} context` : `${escapeHtml(item.type)} · ${(item.capabilities || []).join(", ")}`}</p><div class="small subtle">Safe catalog metadata only</div></div></article>`).join("")}</div>`;
+}
+
+function mcpDiscoveryView() {
+  return `<div class="workflow-grid"><article class="card"><div class="card-head"><h2>Directories</h2></div><div class="discovery-list">${state.mcpDirectories.map((directory) => `<div class="discovery-row"><div><strong>${escapeHtml(directory.name)}</strong><span>${escapeHtml(directory.type)} · ${escapeHtml(directory.healthStatus)}</span></div>${status(directory.status)}<button class="button" data-action="discover-directory" data-directory-id="${directory.id}" ${directory.status !== "active" ? "disabled" : ""}>Discover</button></div>`).join("")}</div></article>
+    <article class="card"><div class="card-head"><h2>Servers</h2></div><div class="discovery-list">${state.mcpServers.map((server) => `<div class="discovery-row"><div><strong>${escapeHtml(server.name)}</strong><span>${escapeHtml(server.transportType)} · ${server.toolCount} tools</span></div>${status(server.healthStatus)}<button class="button ghost" data-action="server-health" data-server-id="${server.id}">Health check</button></div>`).join("")}</div></article></div>`;
+}
+
+function mcpPage(view = "overview") {
+  return `${pageHeader("MCP V2", view === "overview" ? "MCP observability" : `MCP ${view}`, "Inspect safe execution metadata, catalogs, routing traces, validation, confidence, discovery, and server health.")}
+    <div class="alert">Mock MCP workspace. No directory, server, model, agent, or tool is contacted, and credentials never enter frontend display models.</div>
+    ${mcpTabs(view)}
+    ${view === "overview" ? mcpOverviewView() : view === "executions" ? mcpExecutionsView() : view === "tools" ? mcpCatalogView("tools") : view === "models" ? mcpCatalogView("models") : mcpDiscoveryView()}`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -536,6 +591,8 @@ function renderPage() {
   if (analysis) return shell(analysisPage(analysis[1]));
   const runs = path.match(/^\/app\/projects\/([^/]+)\/runs$/);
   if (runs) return shell(runsPage(runs[1]));
+  const mcp = path.match(/^\/app\/mcp(?:\/(overview|executions|tools|models|discovery))?$/);
+  if (mcp) return shell(mcpPage(mcp[1] || "overview"));
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -545,14 +602,22 @@ function renderPage() {
 
 function render() {
   app.innerHTML = renderPage();
+  queueMicrotask(() => {
+    const activeTab = document.querySelector(".page-tabs .input-tab.active");
+    const strip = activeTab?.parentElement;
+    if (activeTab && strip && strip.scrollWidth > strip.clientWidth) {
+      strip.scrollLeft = activeTab.offsetLeft - (strip.clientWidth - activeTab.clientWidth) / 2;
+    }
+  });
 }
 
 async function hydrate(workspaceId = state.workspaceId) {
   state.loading = true;
   render();
   try {
-    const [me, workspaces, projects, dashboard, members] = await Promise.all([
-      api.getMe(), api.listWorkspaces(), api.listProjects(workspaceId), api.getDashboard(workspaceId), api.listWorkspaceMembers()
+    const [me, workspaces, projects, dashboard, members, mcpOverview, mcpRequests, mcpModels, mcpTools, mcpServers, mcpDirectories] = await Promise.all([
+      api.getMe(), api.listWorkspaces(), api.listProjects(workspaceId), api.getDashboard(workspaceId), api.listWorkspaceMembers(),
+      api.getMcpOverview(), api.listMcpRequests(), api.listMcpModels(), api.listMcpTools(), api.listMcpServers(), api.listMcpDirectories()
     ]);
     state.user = me.data;
     state.workspaces = workspaces.data;
@@ -560,6 +625,14 @@ async function hydrate(workspaceId = state.workspaceId) {
     state.projects = projects.data;
     state.dashboard = dashboard.data;
     state.members = members.data;
+    state.mcpOverview = mcpOverview.data;
+    state.mcpRequests = mcpRequests.data;
+    state.mcpModels = mcpModels.data;
+    state.mcpTools = mcpTools.data;
+    state.mcpServers = mcpServers.data;
+    state.mcpDirectories = mcpDirectories.data;
+    state.mcpRequestId = state.mcpRequests[0]?.id || "";
+    state.mcpTrace = state.mcpRequestId ? (await api.getMcpTrace(state.mcpRequestId)).data : [];
     if (!state.projects.some((p) => p.id === state.projectId)) state.projectId = state.projects[0]?.id || "";
     if (state.projectId) {
       const [repositories, assets, conversations, requests, workflows] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId), api.listConversations(state.projectId), api.listAnalysisRequests(state.projectId), api.listWorkflows(state.projectId)]);
@@ -672,6 +745,26 @@ document.addEventListener("click", (event) => {
       toast(`Workflow ${result.data.status} in the mock adapter.`);
       render();
     }).catch((error) => toast(error instanceof Error ? error.message : "Workflow control failed."));
+  }
+  if (action === "select-mcp-request") {
+    const requestId = target.getAttribute("data-request-id");
+    api.getMcpTrace(requestId).then((trace) => {
+      state.mcpRequestId = requestId;
+      state.mcpTrace = trace.data;
+      render();
+    });
+  }
+  if (action === "server-health") {
+    api.checkMcpServerHealth(target.getAttribute("data-server-id")).then(async (result) => {
+      state.mcpServers = (await api.listMcpServers()).data;
+      toast(`Mock health check: ${result.data.healthStatus}. No server was contacted.`);
+      render();
+    });
+  }
+  if (action === "discover-directory") {
+    api.discoverMcpDirectory(target.getAttribute("data-directory-id"), { idempotencyKey: createIdempotencyKey() }).then((result) => {
+      toast(`Mock discovery completed with ${result.data.resultsCount} fixture results.`);
+    });
   }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");

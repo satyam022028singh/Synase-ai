@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents } from "../src/api.js";
+import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents, redactMcpPayload } from "../src/api.js";
 
 test("list response uses the documented envelope", async () => {
   const response = await api.listProjects("ws_synase");
@@ -140,4 +140,29 @@ test("mock workflow playback advances only on explicit calls", async () => {
   const after = await api.getWorkflow("prj_platform", "wf_mock_arch");
   assert.ok(result.data.event);
   assert.ok(after.data.progressPercent > before.data.progressPercent);
+});
+
+test("MCP trace stages remain ordered", async () => {
+  const trace = await api.getMcpTrace("mcp_req_arch");
+  assert.deepEqual(trace.data.map((stage) => stage.sequence), [1, 2, 3, 4, 5, 6, 7]);
+});
+
+test("MCP payload redaction removes nested credential fields", () => {
+  const result = redactMcpPayload({ authorization: "Bearer x", nested: { apiKey: "secret", safe: "ok" } });
+  assert.equal(result.authorization, "[REDACTED]");
+  assert.equal(result.nested.apiKey, "[REDACTED]");
+  assert.equal(result.nested.safe, "ok");
+});
+
+test("MCP discovery requires idempotency", async () => {
+  await assert.rejects(
+    () => api.discoverMcpDirectory("dir_internal"),
+    (error) => error instanceof ApiError && error.code === "IDEMPOTENCY_REQUIRED"
+  );
+});
+
+test("MCP server health action returns labeled mock metadata", async () => {
+  const result = await api.checkMcpServerHealth("server_docs");
+  assert.equal(result.data.mock, true);
+  assert.equal(result.data.healthStatus, "healthy");
 });

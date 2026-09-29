@@ -179,6 +179,43 @@ export interface WorkflowEvent<T = Record<string, unknown>> {
   schemaVersion: "1";
   payload: T;
 }
+export interface McpRequest {
+  id: string;
+  workflowId?: string;
+  detectedLayer?: "product" | "devops" | "both" | "unknown";
+  status: "received" | "processing" | "completed" | "failed" | "cached" | "validated";
+  payloadFormat: "json" | "toon" | "reference";
+  createdAt: string;
+}
+export interface McpTraceStage {
+  id: string;
+  requestId: string;
+  chamber: string;
+  sequence: number;
+  status: "queued" | "running" | "completed" | "failed" | "skipped" | "cached";
+  durationMs?: number;
+  summary: string;
+}
+export interface McpModel {
+  id: string;
+  provider: string;
+  name: string;
+  contextWindow?: number;
+  availabilityStatus: "active" | "disabled" | "deprecated";
+}
+export interface McpTool {
+  id: string;
+  name: string;
+  type: string;
+  availabilityStatus: "active" | "disabled" | "deprecated";
+}
+export interface McpServer {
+  id: string;
+  name: string;
+  transportType: string;
+  status: "discovered" | "registered" | "active" | "disabled" | "error" | "deprecated";
+  healthStatus: "unknown" | "healthy" | "degraded" | "unavailable";
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

@@ -1,6 +1,6 @@
-# SYNASE AI frontend — Phases 0–5
+# SYNASE AI frontend — Phases 0–6
 
-Implemented frontend foundation, design system/application shell, mock-backed Auth + Workspace + Projects, Repository, Multimodal Input, Conversation, Analysis Requests, Workflow Runs, and SSE state handling.
+Implemented frontend foundation, design system/application shell, mock-backed Auth + Workspace + Projects, Repository, Multimodal Input, Conversation, Analysis Requests, Workflow/SSE, and MCP V2 observability.
 
 ## Run
 
@@ -33,9 +33,11 @@ Open `http://localhost:4173`.
 - Workflow snapshots, tasks, ordered event history, and controls
 - Explicit user-triggered mock SSE playback
 - Connection, disconnect, reconnect/refetch, and terminal states
+- MCP overview, execution traces, model/tool catalogs, discovery, servers, and health
+- Credential-safe redacted trace metadata
 - Honest future-phase placeholders
 - Mock contract tests and build manifest
 
 ## Important
 
-The live backend is intentionally not connected. Authentication, route finalization, pagination, signed-upload fields, provider authorization, message retry, analysis options, and SSE authentication/replay contracts remain unresolved. Mock event playback is explicitly labeled and user-triggered; it never represents live AI execution.
+The live backend is intentionally not connected. Authentication, route finalization, pagination, signed-upload fields, provider authorization, SSE contracts, MCP payload DTOs, and health/discovery authorization remain unresolved. All MCP actions are deterministic mocks and never contact external servers, models, or tools.
