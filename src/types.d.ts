@@ -233,6 +233,22 @@ export interface RoadmapItem {
   status: "planned" | "active" | "completed" | "delayed" | "cancelled";
   startDate?: string; endDate?: string; dependencies: string[];
 }
+export interface Finding {
+  id: string; projectId: string; type: string;
+  severity: "critical" | "high" | "medium" | "low" | "info";
+  title: string; evidence: string; affectedLocation?: string;
+  status: "open" | "acknowledged" | "in_progress" | "resolved" | "accepted" | "false_positive" | "closed";
+}
+export interface DevOpsRecommendation {
+  id: string; projectId: string; type: string; title: string; priority: string;
+  status: string; approvalStatus: "not_required" | "pending" | "approved" | "rejected";
+  rationale: string; executed: false;
+}
+export interface DeploymentPlan {
+  id: string; projectId: string; title: string;
+  status: "proposed" | "reviewed" | "approved" | "rejected" | "implemented";
+  approvalRequired: boolean; executed: false;
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

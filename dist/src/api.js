@@ -231,6 +231,33 @@ const db = {
     { id: "ROAD-01", projectId: "prj_platform", milestone: "Frontend foundations", release: "R1", sequence: 1, status: "completed", startDate: "2026-09-01", endDate: "2026-09-15", dependencies: [] },
     { id: "ROAD-02", projectId: "prj_platform", milestone: "Intelligence workspaces", release: "R2", sequence: 2, status: "active", startDate: "2026-09-16", endDate: "2026-10-15", dependencies: ["ROAD-01"] },
     { id: "ROAD-03", projectId: "prj_platform", milestone: "Reports and approvals", release: "R3", sequence: 3, status: "planned", startDate: "2026-10-16", endDate: "2026-11-15", dependencies: ["ROAD-02"] }
+  ],
+  devopsSummary: {
+    prj_platform: { architectureScore: 0.78, qualityScore: 0.74, securityScore: 0.68, testCoverage: 0.71, deploymentReadiness: 0.64, repositoryCount: 2, provenance: "mock_analysis" }
+  },
+  findings: [
+    { id: "FIND-SEC-01", projectId: "prj_platform", type: "security", severity: "high", title: "Secret-scan policy is not frozen", evidence: "Auth/RBAC and ingestion specifications", affectedLocation: "Upload and integration boundary", status: "open" },
+    { id: "FIND-ARCH-02", projectId: "prj_platform", type: "architecture", severity: "medium", title: "Global routes depend on project-scoped APIs", evidence: "Page → API Matrix", affectedLocation: "Reports, approvals, integrations", status: "acknowledged" },
+    { id: "FIND-TEST-03", projectId: "prj_platform", type: "testing", severity: "low", title: "Contract coverage lacks live-backend fixtures", evidence: "Mock contract suite", affectedLocation: "Integration tests", status: "in_progress" }
+  ],
+  devopsRecommendations: [
+    { id: "REC-01", projectId: "prj_platform", type: "security", title: "Freeze signed-upload redaction policy", priority: "high", status: "proposed", approvalStatus: "pending", rationale: "Prevents credential exposure in diagnostics.", executed: false },
+    { id: "REC-02", projectId: "prj_platform", type: "testing", title: "Add backend DTO conformance suite", priority: "medium", status: "proposed", approvalStatus: "not_required", rationale: "Reduces integration drift.", executed: false }
+  ],
+  dependencies: [
+    { id: "DEP-01", projectId: "prj_platform", name: "TanStack Query", category: "frontend", currentVersion: "TBD", risk: "low", status: "unresolved_contract" },
+    { id: "DEP-02", projectId: "prj_platform", name: "Auth provider", category: "security", currentVersion: "TBD", risk: "high", status: "decision_required" }
+  ],
+  testSuggestions: [
+    { id: "TEST-01", projectId: "prj_platform", title: "SSE replay and dedupe integration test", type: "integration", priority: "high", status: "suggested" },
+    { id: "TEST-02", projectId: "prj_platform", title: "Credential-redaction regression suite", type: "security", priority: "critical", status: "planned" }
+  ],
+  deploymentPlans: [
+    { id: "PLAN-01", projectId: "prj_platform", title: "Frontend staging rollout", status: "proposed", approvalRequired: true, executed: false, steps: [
+      { sequence: 1, type: "build", title: "Build immutable frontend artifact", status: "proposed" },
+      { sequence: 2, type: "test", title: "Run contract and accessibility gates", status: "proposed" },
+      { sequence: 3, type: "deploy", title: "Deploy to staging after approval", status: "proposed" }
+    ] }
   ]
 };
 
@@ -602,6 +629,17 @@ export const mockApi = {
     if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
     if (!["requirements", "prioritization", "strategy", "roadmap"].includes(action)) throw new ApiError("VALIDATION_ERROR", "Unknown product action.", 422);
     return { data: { projectId, action, status: "mock_completed", changedRecords: 0, mock: true, completedAt: new Date().toISOString() } };
+  },
+  async getDevOpsSummary(projectId) { await sleep(); return { data: db.devopsSummary[projectId] || null }; },
+  async listFindings(projectId) { await sleep(); return page(db.findings.filter((item) => item.projectId === projectId)); },
+  async listDevOpsRecommendations(projectId) { await sleep(); return page(db.devopsRecommendations.filter((item) => item.projectId === projectId)); },
+  async listDependencies(projectId) { await sleep(); return page(db.dependencies.filter((item) => item.projectId === projectId)); },
+  async listTestSuggestions(projectId) { await sleep(); return page(db.testSuggestions.filter((item) => item.projectId === projectId)); },
+  async listDeploymentPlans(projectId) { await sleep(); return page(db.deploymentPlans.filter((item) => item.projectId === projectId)); },
+  async runDevOpsMock(projectId, domain, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    return { data: { projectId, domain, status: "mock_completed", executedActions: 0, mock: true, completedAt: new Date().toISOString() } };
   }
 };
 

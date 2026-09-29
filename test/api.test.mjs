@@ -193,3 +193,25 @@ test("product mock action requires idempotency and changes no confirmed records"
   assert.equal(result.data.changedRecords, 0);
   assert.equal(result.data.mock, true);
 });
+
+test("DevOps findings use schema severity and evidence", async () => {
+  const response = await api.listFindings("prj_platform");
+  const allowed = new Set(["critical","high","medium","low","info"]);
+  assert.ok(response.data.every((item) => allowed.has(item.severity) && item.evidence));
+});
+
+test("DevOps recommendations never imply execution", async () => {
+  const response = await api.listDevOpsRecommendations("prj_platform");
+  assert.ok(response.data.every((item) => item.executed === false));
+});
+
+test("deployment plans remain plans with explicit approval state", async () => {
+  const response = await api.listDeploymentPlans("prj_platform");
+  assert.ok(response.data.every((plan) => plan.executed === false && typeof plan.approvalRequired === "boolean"));
+});
+
+test("DevOps mock action requires idempotency and executes nothing", async () => {
+  await assert.rejects(() => api.runDevOpsMock("prj_platform", "security"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  const result = await api.runDevOpsMock("prj_platform", "security", { idempotencyKey: createIdempotencyKey() });
+  assert.equal(result.data.executedActions, 0);
+});

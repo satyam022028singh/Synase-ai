@@ -8,29 +8,30 @@
     "Phase 4",
     "Phase 5",
     "Phase 6",
-    "Phase 7"
+    "Phase 7",
+    "Phase 8"
   ],
-  "generatedAt": "2026-09-29T10:09:23.694Z",
+  "generatedAt": "2026-09-29T10:15:09.959Z",
   "files": {
     "index.html": {
       "bytes": 656,
       "sha256": "aa1cdab93824d8211f4ef4dc60dd36c56bb52ef6587487edb836fbda67dd15eb"
     },
     "src/styles.css": {
-      "bytes": 31749,
-      "sha256": "fa59001df9601bb1a1e67ada8ea9e2577a83f7c0dd0493c547b907f5c4d9dfa9"
+      "bytes": 32802,
+      "sha256": "2b9543ff45241ad99a3270e8e6d6e6c0242e75f55d66e6feea15c1e5d62a37de"
     },
     "src/app.js": {
-      "bytes": 77628,
-      "sha256": "3506fecb31dad3dadb043cf4a846db8e67efe555d7d86680bac4a4b8cc7f7a0a"
+      "bytes": 84201,
+      "sha256": "f0b010fd55590a5a3e13e1b9b03520f5eea6e204e4d62f2db4091bb66c940d8b"
     },
     "src/api.js": {
-      "bytes": 39598,
-      "sha256": "58ee01de9a35a487ac924c8ddc0d5d99136bafc76a003c5b9e9d794526b10716"
+      "bytes": 43427,
+      "sha256": "b1c732179c64ec2a94fbdd0ee52e79c05ab412cc5604fef2d5a77a95b18a7e5d"
     },
     "src/types.d.ts": {
-      "bytes": 8221,
-      "sha256": "519e0736984cce98d323a3fe288e62f4f182d650e61c847ae8ca9aff79946fcf"
+      "bytes": 8982,
+      "sha256": "d5306c019a78273a52529f4abcfeddf914b7c7319d16e5596a2a1634fb2b7178"
     }
   }
 }

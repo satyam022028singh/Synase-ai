@@ -291,6 +291,15 @@ tbody tr:hover { background: rgba(79,140,255,.035); }
 .roadmap-seq { position: absolute; left: -34px; top: 20px; width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--primary); border-radius: 50%; background: var(--bg); color: var(--primary); font-size: 11px; }
 .roadmap-item h2 { margin-top: 10px; }
 .roadmap-item p, .roadmap-item small { color: var(--muted); font-size: 11px; }
+.recommendation-list { display: grid; gap: 10px; }
+.recommendation { padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(7,13,26,.35); }
+.recommendation strong { font-size: 12px; }
+.recommendation p { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.deployment-card { grid-column: span 2; }
+.deployment-steps { display: grid; gap: 8px; margin-bottom: 14px; }
+.deployment-steps > div { display: grid; grid-template-columns: 26px minmax(0,1fr) auto; align-items: center; gap: 9px; padding: 9px; border: 1px solid var(--border); border-radius: 7px; }
+.deployment-steps > div > span:first-child { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; background: rgba(79,140,255,.1); color: var(--primary); font-size: 10px; }
+.deployment-steps strong { font-size: 11px; }
 
 .auth-layout { min-height: 100vh; display: grid; grid-template-columns: minmax(0,1.05fr) minmax(420px,.75fr); }
 .auth-art { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 44px; border-right: 1px solid var(--border); background:
@@ -362,6 +371,9 @@ tbody tr:hover { background: rgba(79,140,255,.035); }
   .mcp-layout { grid-template-columns: 1fr; }
   .catalog-grid { grid-template-columns: 1fr; }
   .priority-grid { grid-template-columns: 1fr; }
+  .deployment-card { grid-column: auto; }
+  .deployment-steps > div { grid-template-columns: 26px minmax(0, 1fr); align-items: start; }
+  .deployment-steps > div > .status { grid-column: 2; justify-self: start; }
   .discovery-row { grid-template-columns: minmax(0,1fr) auto; padding: 8px 0; }
   .discovery-row .button { grid-column: 1 / -1; justify-self: start; }
   .field.full { grid-column: auto; }

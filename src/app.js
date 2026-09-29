@@ -33,6 +33,13 @@ const state = {
   productStrategy: null,
   roadmapItems: [],
   productTab: new URLSearchParams(location.search).get("productTab") || "requirements",
+  devopsSummary: null,
+  findings: [],
+  devopsRecommendations: [],
+  dependencies: [],
+  testSuggestions: [],
+  deploymentPlans: [],
+  devopsTab: new URLSearchParams(location.search).get("devopsTab") || "overview",
   conversationId: "",
   analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
@@ -140,7 +147,7 @@ function shell(content) {
         <div class="nav-section">
           <div class="nav-label">Intelligence</div>
           ${navLink("/app/intelligence/product", "P", "Product Intelligence")}
-          ${navLink("/app/intelligence/devops", "D", "DevOps Intelligence", false, true)}
+          ${navLink("/app/intelligence/devops", "D", "DevOps Intelligence")}
           ${navLink("/app/mcp/overview", "M", "MCP V2", true)}
         </div>
         <div class="nav-section">
@@ -149,7 +156,7 @@ function shell(content) {
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–7 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–8 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -562,6 +569,39 @@ function productIntelligencePage() {
     ${state.productTab === "requirements" ? requirementsView() : state.productTab === "prioritization" ? prioritizationView() : state.productTab === "strategy" ? strategyView() : roadmapView()}`;
 }
 
+function findingsTable(items = state.findings) {
+  return `<div class="table-wrap"><table><thead><tr><th>Finding</th><th>Type</th><th>Severity</th><th>Affected location</th><th>Status</th></tr></thead><tbody>${items.map((item) => `<tr><td><strong>${escapeHtml(item.id)} · ${escapeHtml(item.title)}</strong><br><span class="small">${escapeHtml(item.evidence)}</span></td><td>${escapeHtml(item.type)}</td><td>${status(item.severity)}</td><td>${escapeHtml(item.affectedLocation || "—")}</td><td>${status(item.status)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function devopsOverview() {
+  const s = state.devopsSummary || {};
+  const metrics = [["Architecture",s.architectureScore],["Code quality",s.qualityScore],["Security",s.securityScore],["Deployment readiness",s.deploymentReadiness]];
+  return `<section class="metrics">${metrics.map(([label,value]) => metricCard({label,value:value == null?"—":`${Math.round(value*100)}%`,trend:"Mock evidence aggregate",tone:value<.7?"warning":"positive"})).join("")}</section>
+    <div class="dashboard-grid"><article class="card"><div class="card-head"><h2>Open engineering findings</h2></div><div class="card-body">${findingsTable(state.findings)}</div></article><article class="card"><div class="card-head"><h2>Recommendations</h2></div><div class="card-body recommendation-list">${state.devopsRecommendations.map((item)=>`<div class="recommendation"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.rationale)}</p><div class="cluster">${status(item.priority)}${status(item.approvalStatus)}<span class="proposal">Not executed</span></div></div>`).join("")}</div></article></div>`;
+}
+
+function devopsDependencies() {
+  return `<div class="table-wrap"><table><thead><tr><th>Dependency</th><th>Category</th><th>Version</th><th>Risk</th><th>Status</th></tr></thead><tbody>${state.dependencies.map((item)=>`<tr><td><strong>${escapeHtml(item.name)}</strong></td><td>${escapeHtml(item.category)}</td><td>${escapeHtml(item.currentVersion)}</td><td>${status(item.risk)}</td><td>${status(item.status)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function devopsTesting() {
+  return `<div class="catalog-grid">${state.testSuggestions.map((item)=>`<article class="card catalog-card"><div class="card-body"><div class="catalog-head"><span class="catalog-glyph">T</span>${status(item.status)}</div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.type)} testing</p><div class="cluster">${status(item.priority)}<span class="proposal">Suggestion · not executed</span></div></div></article>`).join("")}</div>`;
+}
+function devopsDeployment() {
+  return `<div class="catalog-grid">${state.deploymentPlans.map((plan)=>`<article class="card deployment-card"><div class="card-head"><div><h2>${escapeHtml(plan.title)}</h2><span class="small subtle">Plan only · never executed</span></div>${status(plan.status)}</div><div class="card-body"><div class="deployment-steps">${plan.steps.map((step)=>`<div><span>${step.sequence}</span><strong>${escapeHtml(step.title)}</strong>${status(step.status)}</div>`).join("")}</div><div class="alert">Approval required: ${plan.approvalRequired ? "Yes" : "No"}. Executed: No.</div></div></article>`).join("")}</div>`;
+}
+
+function devopsIntelligencePage() {
+  const tabs = [["overview","Overview"],["architecture","Architecture"],["quality","Quality"],["security","Security"],["dependencies","Dependencies"],["testing","Testing"],["risk","Risk"],["deployment","Deployment"]];
+  let body = devopsOverview();
+  if (["architecture","quality","security","risk"].includes(state.devopsTab)) body = findingsTable(state.findings.filter((item)=> state.devopsTab==="risk" || item.type === state.devopsTab || (state.devopsTab==="quality" && item.type==="testing")));
+  if (state.devopsTab === "dependencies") body = devopsDependencies();
+  if (state.devopsTab === "testing") body = devopsTesting();
+  if (state.devopsTab === "deployment") body = devopsDeployment();
+  return `${pageHeader("DevOps intelligence", "Engineering decisions", "Review architecture, quality, security, dependencies, testing, risk, and deployment plans with evidence.", `<button class="button primary" data-action="devops-mock" data-devops-domain="${state.devopsTab}">Run mock ${state.devopsTab}</button>`)}
+    <div class="alert">Mock DevOps Intelligence. Findings and plans are evidence fixtures; no code, CI/CD, infrastructure, or deployment action is executed.</div>
+    <div class="input-tabs page-tabs">${tabs.map(([key,label])=>`<button class="input-tab ${state.devopsTab===key?"active":""}" data-action="devops-tab" data-tab="${key}">${label}</button>`).join("")}</div>${body}`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -629,6 +669,7 @@ function renderPage() {
   const mcp = path.match(/^\/app\/mcp(?:\/(overview|executions|tools|models|discovery))?$/);
   if (mcp) return shell(mcpPage(mcp[1] || "overview"));
   if (path === "/app/intelligence/product") return shell(productIntelligencePage());
+  if (path === "/app/intelligence/devops") return shell(devopsIntelligencePage());
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -688,6 +729,13 @@ async function hydrate(workspaceId = state.workspaceId) {
       state.productFeatures = features.data;
       state.productStrategy = strategy.data;
       state.roadmapItems = roadmap.data;
+      const [devopsSummary, findings, recommendations, dependencies, tests, deployments] = await Promise.all([api.getDevOpsSummary(state.projectId), api.listFindings(state.projectId), api.listDevOpsRecommendations(state.projectId), api.listDependencies(state.projectId), api.listTestSuggestions(state.projectId), api.listDeploymentPlans(state.projectId)]);
+      state.devopsSummary = devopsSummary.data;
+      state.findings = findings.data;
+      state.devopsRecommendations = recommendations.data;
+      state.dependencies = dependencies.data;
+      state.testSuggestions = tests.data;
+      state.deploymentPlans = deployments.data;
       state.conversationId = state.conversations[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(state.projectId, state.conversationId)).data : [];
     } else {
@@ -813,6 +861,12 @@ document.addEventListener("click", (event) => {
       toast(`Mock ${result.data.action} completed with no confirmed-state changes.`);
     });
   }
+  if (action === "devops-tab") { state.devopsTab = target.getAttribute("data-tab") || "overview"; render(); }
+  if (action === "devops-mock") {
+    api.runDevOpsMock(state.projectId, target.getAttribute("data-devops-domain"), { idempotencyKey: createIdempotencyKey() }).then((result) => {
+      toast(`Mock ${result.data.domain} analysis completed. Executed actions: 0.`);
+    });
+  }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");
     Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
@@ -872,6 +926,13 @@ document.addEventListener("change", async (event) => {
       state.productFeatures = features.data;
       state.productStrategy = strategy.data;
       state.roadmapItems = roadmap.data;
+      const [devopsSummary, findings, recommendations, dependencies, tests, deployments] = await Promise.all([api.getDevOpsSummary(target.value), api.listFindings(target.value), api.listDevOpsRecommendations(target.value), api.listDependencies(target.value), api.listTestSuggestions(target.value), api.listDeploymentPlans(target.value)]);
+      state.devopsSummary = devopsSummary.data;
+      state.findings = findings.data;
+      state.devopsRecommendations = recommendations.data;
+      state.dependencies = dependencies.data;
+      state.testSuggestions = tests.data;
+      state.deploymentPlans = deployments.data;
       state.conversationId = conversations.data[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(target.value, state.conversationId)).data : [];
       navigate(`/app/projects/${target.value}/overview`);
