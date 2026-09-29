@@ -11,13 +11,14 @@
     "Phase 7",
     "Phase 8",
     "Phase 9",
-    "Phase 10"
+    "Phase 10",
+    "Phase 11"
   ],
-  "generatedAt": "2026-09-29T10:35:00.399Z",
+  "generatedAt": "2026-09-29T12:06:04.681Z",
   "files": {
     "index.html": {
-      "bytes": 656,
-      "sha256": "aa1cdab93824d8211f4ef4dc60dd36c56bb52ef6587487edb836fbda67dd15eb"
+      "bytes": 771,
+      "sha256": "17bffd895705a580874741d598601fda3effdfc8e5d552283f649466b0845fbc"
     },
     "src/styles.css": {
       "bytes": 38780,
@@ -34,6 +35,22 @@
     "src/types.d.ts": {
       "bytes": 12322,
       "sha256": "d09d3e7facbe5415ad3afa9f80dda920b73541f24913894a4cf2be2296170126"
+    },
+    "src/phase11.css": {
+      "bytes": 3385,
+      "sha256": "523cd95c736eee1a001e7dfb4e23abe16da6b89131e00414adcc5e60ce6e5af4"
+    },
+    "src/phase11.js": {
+      "bytes": 13206,
+      "sha256": "132f6e2224d8b836ceec3982d7097224e8eb7661625f7f42aebfa26c9d1fb6f3"
+    },
+    "src/phase11-api.js": {
+      "bytes": 10240,
+      "sha256": "b22c9624143db8291f14ab0d1ee2f003f7611ce01816f4c5b3ab43fadc8a317a"
+    },
+    "src/phase11-types.d.ts": {
+      "bytes": 2909,
+      "sha256": "a94ebf4d9a6ae2f1ebcc7766dc969a223caf56507b65c1b121e1c6b0fba2ccfa"
     }
   }
 }
