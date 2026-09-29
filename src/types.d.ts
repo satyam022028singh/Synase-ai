@@ -249,6 +249,28 @@ export interface DeploymentPlan {
   status: "proposed" | "reviewed" | "approved" | "rejected" | "implemented";
   approvalRequired: boolean; executed: false;
 }
+export type ContextSensitivity = "public" | "internal" | "restricted" | "confidential";
+export type ContextTrustLevel = "verified" | "source_controlled" | "unverified";
+export interface ContextItem {
+  id: string; projectId: string; title: string; type: string; source: string;
+  scope: "workspace" | "project" | "request"; sensitivity: ContextSensitivity;
+  trustLevel: ContextTrustLevel; status: "ready" | "warning" | "failed"; updatedAt: string;
+}
+export interface MemoryResult {
+  id: string; projectId: string; title: string; excerpt: string; sourceContextId: string;
+  relevance: number; sensitivity: ContextSensitivity; trustLevel: ContextTrustLevel;
+}
+export interface RetrievalItem { memoryId: string; rank: number; score: number; reason: string }
+export interface RetrievalRecord {
+  id: string; projectId: string; query: string; status: "completed" | "failed";
+  createdAt: string; items: RetrievalItem[];
+}
+export interface KnowledgeNode { id: string; type: string; label: string; sensitivity: ContextSensitivity }
+export interface KnowledgeEdge { id: string; sourceId: string; targetId: string; type: string }
+export interface KnowledgeGraph {
+  projectId: string; status: "ready" | "syncing" | "warning" | "failed"; lastSyncedAt?: string;
+  storageBoundary: string; nodes: KnowledgeNode[]; edges: KnowledgeEdge[];
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

@@ -215,3 +215,37 @@ test("DevOps mock action requires idempotency and executes nothing", async () =>
   const result = await api.runDevOpsMock("prj_platform", "security", { idempotencyKey: createIdempotencyKey() });
   assert.equal(result.data.executedActions, 0);
 });
+
+test("context inventory remains project scoped with sensitivity and trust", async () => {
+  const response = await api.listContextItems("prj_platform");
+  assert.ok(response.data.length > 0);
+  assert.ok(response.data.every((item) => item.projectId === "prj_platform" && item.sensitivity && item.trustLevel));
+});
+
+test("memory search returns ranked safe projections", async () => {
+  const response = await api.searchMemory("prj_platform", "API boundary");
+  assert.ok(response.data.length > 0);
+  assert.ok(response.data.every((item) => item.sourceContextId && item.relevance <= 1 && !("embedding" in item)));
+});
+
+test("retrieval history preserves ascending ranks", async () => {
+  const response = await api.listRetrievalHistory("prj_platform");
+  for (const record of response.data) {
+    assert.deepEqual(record.items.map((item) => item.rank), [...record.items].sort((a,b) => a.rank-b.rank).map((item) => item.rank));
+  }
+});
+
+test("knowledge graph edges reference projected nodes and hide store details", async () => {
+  const response = await api.getKnowledgeGraph("prj_platform");
+  const nodeIds = new Set(response.data.nodes.map((node) => node.id));
+  assert.ok(response.data.edges.every((edge) => nodeIds.has(edge.sourceId) && nodeIds.has(edge.targetId)));
+  assert.equal("credentials" in response.data, false);
+  assert.match(response.data.storageBoundary, /backend-only/);
+});
+
+test("context mock actions require idempotency and contact no stores", async () => {
+  await assert.rejects(() => api.runContextMock("prj_platform", "reindex"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  const result = await api.runContextMock("prj_platform", "graph_sync", { idempotencyKey: createIdempotencyKey() });
+  assert.equal(result.data.contactedStores, false);
+  assert.equal(result.data.changedRecords, 0);
+});

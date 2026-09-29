@@ -258,7 +258,45 @@ const db = {
       { sequence: 2, type: "test", title: "Run contract and accessibility gates", status: "proposed" },
       { sequence: 3, type: "deploy", title: "Deploy to staging after approval", status: "proposed" }
     ] }
-  ]
+  ],
+  contextItems: [
+    { id: "ctx_prd", projectId: "prj_platform", title: "Product requirements", type: "document", source: "asset_prd", scope: "project", sensitivity: "internal", trustLevel: "verified", status: "ready", updatedAt: "2026-09-29T06:10:00Z" },
+    { id: "ctx_repo", projectId: "prj_platform", title: "Frontend repository snapshot", type: "repository", source: "repo_core", scope: "project", sensitivity: "restricted", trustLevel: "source_controlled", status: "ready", updatedAt: "2026-09-29T07:42:00Z" },
+    { id: "ctx_logs", projectId: "prj_platform", title: "Deployment error log", type: "log", source: "asset_logs", scope: "request", sensitivity: "confidential", trustLevel: "unverified", status: "warning", updatedAt: "2026-09-28T20:02:00Z" }
+  ],
+  memoryItems: [
+    { id: "mem_1", projectId: "prj_platform", title: "Evidence before recommendation", excerpt: "Every decision must preserve evidence, confidence, and provenance.", sourceContextId: "ctx_prd", relevance: 0.96, sensitivity: "internal", trustLevel: "verified" },
+    { id: "mem_2", projectId: "prj_platform", title: "Frontend/backend boundary", excerpt: "The browser consumes domain APIs and never reads persistence stores directly.", sourceContextId: "ctx_prd", relevance: 0.91, sensitivity: "internal", trustLevel: "verified" },
+    { id: "mem_3", projectId: "prj_platform", title: "Deployment warning pattern", excerpt: "Recent logs contain retry exhaustion during artifact promotion.", sourceContextId: "ctx_logs", relevance: 0.74, sensitivity: "confidential", trustLevel: "unverified" }
+  ],
+  retrievalHistory: [
+    { id: "ret_1", projectId: "prj_platform", query: "architecture evidence and API boundaries", status: "completed", createdAt: "2026-09-29T08:44:00Z", items: [
+      { memoryId: "mem_2", rank: 1, score: 0.94, reason: "Direct API-boundary match" },
+      { memoryId: "mem_1", rank: 2, score: 0.82, reason: "Decision-evidence principle" }
+    ] },
+    { id: "ret_2", projectId: "prj_platform", query: "deployment risk", status: "completed", createdAt: "2026-09-28T14:20:00Z", items: [
+      { memoryId: "mem_3", rank: 1, score: 0.88, reason: "Relevant deployment log evidence" }
+    ] }
+  ],
+  knowledgeGraphs: {
+    prj_platform: {
+      projectId: "prj_platform",
+      status: "ready",
+      lastSyncedAt: "2026-09-29T08:10:00Z",
+      storageBoundary: "Neo4j is backend-only; this response is a safe domain projection.",
+      nodes: [
+        { id: "node_project", type: "project", label: "SYNASE Platform", sensitivity: "internal" },
+        { id: "node_prd", type: "document", label: "Product Requirements", sensitivity: "internal" },
+        { id: "node_repo", type: "repository", label: "synase-platform", sensitivity: "restricted" },
+        { id: "node_decision", type: "decision", label: "API-driven frontend", sensitivity: "internal" }
+      ],
+      edges: [
+        { id: "edge_1", sourceId: "node_project", targetId: "node_prd", type: "uses" },
+        { id: "edge_2", sourceId: "node_project", targetId: "node_repo", type: "implemented_by" },
+        { id: "edge_3", sourceId: "node_prd", targetId: "node_decision", type: "supports" }
+      ]
+    }
+  }
 };
 
 function page(data) {
@@ -640,6 +678,28 @@ export const mockApi = {
     await sleep(360);
     if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
     return { data: { projectId, domain, status: "mock_completed", executedActions: 0, mock: true, completedAt: new Date().toISOString() } };
+  },
+  async listContextItems(projectId) { await sleep(); return page(db.contextItems.filter((item) => item.projectId === projectId)); },
+  async searchMemory(projectId, query = "") {
+    await sleep();
+    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const items = db.memoryItems.filter((item) => item.projectId === projectId && (!terms.length || terms.some((term) => `${item.title} ${item.excerpt}`.toLowerCase().includes(term))));
+    return page(items.sort((a, b) => b.relevance - a.relevance));
+  },
+  async listRetrievalHistory(projectId) {
+    await sleep();
+    return page(db.retrievalHistory.filter((item) => item.projectId === projectId).map((item) => ({ ...item, items: [...item.items].sort((a, b) => a.rank - b.rank) })));
+  },
+  async getKnowledgeGraph(projectId) {
+    await sleep();
+    const graph = db.knowledgeGraphs[projectId];
+    return { data: graph || { projectId, status: "ready", storageBoundary: "Neo4j is backend-only; this response is a safe domain projection.", nodes: [], edges: [] } };
+  },
+  async runContextMock(projectId, action, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!["reindex", "graph_sync"].includes(action)) throw new ApiError("VALIDATION_ERROR", "Unknown context action.", 422);
+    return { data: { projectId, action, status: "mock_completed", changedRecords: 0, contactedStores: false, mock: true, completedAt: new Date().toISOString() } };
   }
 };
 
