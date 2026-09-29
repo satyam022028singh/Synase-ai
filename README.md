@@ -1,6 +1,6 @@
-# SYNASE AI frontend — Phases 0–10
+# SYNASE AI frontend — Phases 0–11
 
-Implemented frontend foundation through mock-backed Reports + HITL.
+Implemented frontend foundation through mock-backed Integrations + Activity + Audit.
 
 ## Run
 
@@ -12,41 +12,26 @@ python3 -m http.server 4173 -d dist
 
 Open `http://localhost:4173`.
 
-## Implemented
+## Phase 11
+
+- Available integration providers remain separate from project connections
+- Project-scoped connection, authorization, health, capability, synchronization, and run projections
+- Explicit idempotent mock connect, disconnect, health-check, and sync receipts
+- Project-scoped activity feed with actor, action, target, source, domain, timestamp, and outcome
+- Read-only immutable audit-event projection with safe resource references and request/correlation identifiers
+- Recursive credential and payload redaction
+- Responsive integration, activity, audit-table, and audit-detail surfaces
+- Explicit provisional global/project route semantics
+
+## Implemented foundations
 
 - Domain API abstraction and normalized errors
-- Deterministic mock adapter, list envelopes, idempotent project creation contract
-- TypeScript domain declaration inventory
-- Responsive SYNASE AI design tokens and shell
-- Accessible public/auth states
-- Dashboard, projects list/search/filter, create project, project overview/settings
-- Workspace switcher, project switcher, member and settings surfaces
-- Repository connection, explicit mock sync, snapshots, and lazy tree preview
-- Multimodal file/text/URL/repository input composer
-- Initiate → mock transfer → complete upload sequence
-- Distinct processing, security-scan, and extraction states
-- User-triggered deterministic processing transitions
-- Project-scoped conversation sessions and message thread
-- Safe asset/repository context references
-- Typed analysis composer and explicit queued request receipts
-- Analysis request history and authoritative mock cancellation
-- Workflow snapshots, tasks, ordered event history, and controls
-- Explicit user-triggered mock SSE playback
-- Connection, disconnect, reconnect/refetch, and terminal states
-- MCP overview, execution traces, model/tool catalogs, discovery, servers, and health
-- Credential-safe redacted trace metadata
-- Product requirements, prioritization, strategy, and roadmap with explicit provenance
-- DevOps architecture, quality, security, dependencies, testing, risk, and deployment plans
-- Project-scoped context explorer with sensitivity and trust labels
-- Safe memory search projections with relevance and source evidence
-- Ranked retrieval history without embedding exposure
-- Knowledge graph map plus an accessible relationship representation
-- Decision-report portfolio and detail with sections, evidence, references, confidence, and decisions
-- Human approval queue with explicit approve/reject/cancel/comment receipts
-- Safe mock generation, publication, and export receipts that never imply execution
-- Honest future-phase placeholders
-- Mock contract tests and build manifest
+- Deterministic mock adapters and typed domain models
+- Responsive SYNASE AI design tokens and application shell
+- Auth, workspace, projects, repository, multimodal input, conversation, analysis, workflows, SSE, MCP V2, product and DevOps intelligence, context, knowledge, reports, HITL, integrations, activity, and audit projections
+- Accessible loading, empty, error, retry, forbidden, and not-found patterns where applicable
+- Contract tests and build manifest
 
 ## Important
 
-The live backend is intentionally not connected. Authentication, route finalization, pagination, signed-upload fields, provider authorization, SSE contracts, report generation transport, export binary delivery, aggregate routes, and approval authorization remain unresolved. All actions are deterministic mocks; approval never implies downstream execution.
+The live backend and external providers are intentionally not connected. All Phase 11 provider, connection, health, synchronization, activity, and audit data is deterministic mock data. Mock actions contact no external service, import no records, expose no credentials, and never imply integration, repository, CI/CD, infrastructure, publication, or deployment execution. Global aggregation, provider authorization callbacks, notification delivery, audit retention/completeness, and the dedicated audit route remain unresolved/provisional.
