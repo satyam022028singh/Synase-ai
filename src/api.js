@@ -213,7 +213,25 @@ const db = {
     { id: "dir_internal", name: "Internal Registry", type: "internal", status: "active", healthStatus: "healthy" },
     { id: "dir_smithery", name: "Smithery", type: "smithery", status: "disabled", healthStatus: "unknown" }
   ],
-  discoveryRuns: []
+  discoveryRuns: [],
+  requirements: [
+    { id: "REQ-001", projectId: "prj_platform", title: "Evidence-backed decision reports", type: "functional", priority: "critical", status: "approved", evidence: ["SYNASE Product Requirements.pdf"], rationale: "Core product outcome", architectureImpact: "Reporting and approval domains", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-014", projectId: "prj_platform", title: "Offline-safe workflow reconnect", type: "technical", priority: "high", status: "clarified", evidence: ["Workflow realtime specification"], rationale: "Preserve authoritative execution state", architectureImpact: "SSE client and workflow snapshots", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-AI-03", projectId: "prj_platform", title: "Explain confidence contributors", type: "non_functional", priority: "medium", status: "identified", evidence: ["MCP trace fixture"], rationale: "Improve reviewer trust", architectureImpact: "Confidence explanation contract", provenance: "ai_suggested", confidence: 0.78 }
+  ],
+  productFeatures: [
+    { id: "FEAT-01", projectId: "prj_platform", title: "Decision report workspace", businessValue: 9, impact: 9, effort: 6, risk: 4, priorityRank: 1, status: "prioritized", rationale: "Primary decision-delivery surface", provenance: "confirmed" },
+    { id: "FEAT-02", projectId: "prj_platform", title: "MCP trace observability", businessValue: 8, impact: 8, effort: 7, risk: 5, priorityRank: 2, status: "in_progress", rationale: "Makes AI execution reviewable", provenance: "confirmed" },
+    { id: "FEAT-AI-03", projectId: "prj_platform", title: "Confidence comparison", businessValue: 6, impact: 7, effort: 5, risk: 3, priorityRank: 3, status: "candidate", rationale: "Useful for reviewer decisions", provenance: "ai_suggested" }
+  ],
+  productStrategy: {
+    prj_platform: { objective: "Connect product intent to engineering evidence and controlled decisions.", principles: ["Evidence before recommendation", "Human approval for impact", "Observable execution"], risks: ["Contract drift", "Overstated execution state"], provenance: "confirmed" }
+  },
+  roadmapItems: [
+    { id: "ROAD-01", projectId: "prj_platform", milestone: "Frontend foundations", release: "R1", sequence: 1, status: "completed", startDate: "2026-09-01", endDate: "2026-09-15", dependencies: [] },
+    { id: "ROAD-02", projectId: "prj_platform", milestone: "Intelligence workspaces", release: "R2", sequence: 2, status: "active", startDate: "2026-09-16", endDate: "2026-10-15", dependencies: ["ROAD-01"] },
+    { id: "ROAD-03", projectId: "prj_platform", milestone: "Reports and approvals", release: "R3", sequence: 3, status: "planned", startDate: "2026-10-16", endDate: "2026-11-15", dependencies: ["ROAD-02"] }
+  ]
 };
 
 function page(data) {
@@ -574,6 +592,16 @@ export const mockApi = {
     const run = { id: `discovery_${Math.random().toString(36).slice(2, 8)}`, directoryId, status: "completed", resultsCount: 2, createdAt: new Date().toISOString(), mock: true };
     db.discoveryRuns.unshift(run);
     return { data: run };
+  },
+  async listRequirements(projectId) { await sleep(); return page(db.requirements.filter((item) => item.projectId === projectId)); },
+  async listProductFeatures(projectId) { await sleep(); return page(db.productFeatures.filter((item) => item.projectId === projectId).sort((a,b) => a.priorityRank - b.priorityRank)); },
+  async getProductStrategy(projectId) { await sleep(); return { data: db.productStrategy[projectId] || null }; },
+  async listRoadmapItems(projectId) { await sleep(); return page(db.roadmapItems.filter((item) => item.projectId === projectId).sort((a,b) => a.sequence - b.sequence)); },
+  async runProductMock(projectId, action, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!["requirements", "prioritization", "strategy", "roadmap"].includes(action)) throw new ApiError("VALIDATION_ERROR", "Unknown product action.", 422);
+    return { data: { projectId, action, status: "mock_completed", changedRecords: 0, mock: true, completedAt: new Date().toISOString() } };
   }
 };
 

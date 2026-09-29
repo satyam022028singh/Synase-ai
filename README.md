@@ -1,4 +1,4 @@
-# SYNASE AI frontend — Phases 0–6
+# SYNASE AI frontend — Phases 0–7
 
 Implemented frontend foundation, design system/application shell, mock-backed Auth + Workspace + Projects, Repository, Multimodal Input, Conversation, Analysis Requests, Workflow/SSE, and MCP V2 observability.
 
@@ -35,6 +35,7 @@ Open `http://localhost:4173`.
 - Connection, disconnect, reconnect/refetch, and terminal states
 - MCP overview, execution traces, model/tool catalogs, discovery, servers, and health
 - Credential-safe redacted trace metadata
+- Product requirements, prioritization, strategy, and roadmap with explicit provenance
 - Honest future-phase placeholders
 - Mock contract tests and build manifest
 

@@ -28,6 +28,11 @@ const state = {
   mcpTools: [],
   mcpServers: [],
   mcpDirectories: [],
+  requirements: [],
+  productFeatures: [],
+  productStrategy: null,
+  roadmapItems: [],
+  productTab: new URLSearchParams(location.search).get("productTab") || "requirements",
   conversationId: "",
   analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
@@ -134,7 +139,7 @@ function shell(content) {
         </div>
         <div class="nav-section">
           <div class="nav-label">Intelligence</div>
-          ${navLink("/app/intelligence/product", "P", "Product Intelligence", false, true)}
+          ${navLink("/app/intelligence/product", "P", "Product Intelligence")}
           ${navLink("/app/intelligence/devops", "D", "DevOps Intelligence", false, true)}
           ${navLink("/app/mcp/overview", "M", "MCP V2", true)}
         </div>
@@ -144,7 +149,7 @@ function shell(content) {
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–6 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–7 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -527,6 +532,36 @@ function mcpPage(view = "overview") {
     ${view === "overview" ? mcpOverviewView() : view === "executions" ? mcpExecutionsView() : view === "tools" ? mcpCatalogView("tools") : view === "models" ? mcpCatalogView("models") : mcpDiscoveryView()}`;
 }
 
+function provenance(item) {
+  return item.provenance === "ai_suggested" ? `<span class="proposal">AI suggestion${item.confidence ? ` · ${Math.round(item.confidence*100)}%` : ""}</span>` : `<span class="confirmed">Confirmed state</span>`;
+}
+
+function requirementsView() {
+  return `<div class="table-wrap"><table><thead><tr><th>ID / Requirement</th><th>Type</th><th>Priority</th><th>Status</th><th>Evidence / impact</th><th>Provenance</th></tr></thead><tbody>${state.requirements.map((item) => `<tr><td><strong>${escapeHtml(item.id)} · ${escapeHtml(item.title)}</strong><br><span class="small">${escapeHtml(item.rationale || "")}</span></td><td>${escapeHtml(item.type)}</td><td>${status(item.priority)}</td><td>${status(item.status)}</td><td>${escapeHtml(item.evidence.join(", "))}<br><span class="small">${escapeHtml(item.architectureImpact || "—")}</span></td><td>${provenance(item)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function prioritizationView() {
+  return `<div class="priority-grid">${state.productFeatures.map((feature) => `<article class="card priority-card"><div class="card-body"><div class="catalog-head"><span class="rank">#${feature.priorityRank}</span>${provenance(feature)}</div><h2>${escapeHtml(feature.title)}</h2><p>${escapeHtml(feature.rationale)}</p><div class="score-grid"><span>Value<b>${feature.businessValue}</b></span><span>Impact<b>${feature.impact}</b></span><span>Effort<b>${feature.effort}</b></span><span>Risk<b>${feature.risk}</b></span></div><div class="cluster">${status(feature.status)}</div></div></article>`).join("")}</div>`;
+}
+
+function strategyView() {
+  const item = state.productStrategy;
+  if (!item) return notFound("Strategy unavailable","No strategy aggregate is available for this project.");
+  return `<div class="dashboard-grid"><article class="card"><div class="card-head"><h2>Strategic objective</h2>${provenance(item)}</div><div class="card-body"><p class="strategy-objective">${escapeHtml(item.objective)}</p><h3>Principles</h3><ul class="clean-list">${item.principles.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul></div></article><article class="card"><div class="card-head"><h2>Known risks</h2></div><div class="card-body"><ul class="clean-list risk-list">${item.risks.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul></div></article></div>`;
+}
+
+function roadmapView() {
+  return `<div class="roadmap">${state.roadmapItems.map((item) => `<article class="roadmap-item"><span class="roadmap-seq">${item.sequence}</span><div><div class="cluster"><b>${escapeHtml(item.release)}</b>${status(item.status)}</div><h2>${escapeHtml(item.milestone)}</h2><p>${escapeHtml(item.startDate || "—")} → ${escapeHtml(item.endDate || "—")}</p><small>Dependencies: ${escapeHtml(item.dependencies.join(", ") || "None")}</small></div></article>`).join("")}</div>`;
+}
+
+function productIntelligencePage() {
+  const tabs = [["requirements","Requirements"],["prioritization","Prioritization"],["strategy","Strategy"],["roadmap","Roadmap"]];
+  return `${pageHeader("Product intelligence", "Product decisions", "Structure requirements, feature priorities, strategy, and roadmap with evidence and explicit suggestion provenance.", `<button class="button primary" data-action="product-mock" data-product-action="${state.productTab}">Run mock ${state.productTab}</button>`)}
+    <div class="alert">Mock Product Intelligence. Suggestions are clearly separated from confirmed project state; no AI workflow is running.</div>
+    <div class="input-tabs page-tabs">${tabs.map(([key,label]) => `<button class="input-tab ${state.productTab===key?"active":""}" data-action="product-tab" data-tab="${key}">${label}</button>`).join("")}</div>
+    ${state.productTab === "requirements" ? requirementsView() : state.productTab === "prioritization" ? prioritizationView() : state.productTab === "strategy" ? strategyView() : roadmapView()}`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -593,6 +628,7 @@ function renderPage() {
   if (runs) return shell(runsPage(runs[1]));
   const mcp = path.match(/^\/app\/mcp(?:\/(overview|executions|tools|models|discovery))?$/);
   if (mcp) return shell(mcpPage(mcp[1] || "overview"));
+  if (path === "/app/intelligence/product") return shell(productIntelligencePage());
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -647,6 +683,11 @@ async function hydrate(workspaceId = state.workspaceId) {
         state.workflowTasks = tasks.data;
         state.workflowEvents = normalizeWorkflowEvents(events.data);
       }
+      const [requirements, features, strategy, roadmap] = await Promise.all([api.listRequirements(state.projectId), api.listProductFeatures(state.projectId), api.getProductStrategy(state.projectId), api.listRoadmapItems(state.projectId)]);
+      state.requirements = requirements.data;
+      state.productFeatures = features.data;
+      state.productStrategy = strategy.data;
+      state.roadmapItems = roadmap.data;
       state.conversationId = state.conversations[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(state.projectId, state.conversationId)).data : [];
     } else {
@@ -766,6 +807,12 @@ document.addEventListener("click", (event) => {
       toast(`Mock discovery completed with ${result.data.resultsCount} fixture results.`);
     });
   }
+  if (action === "product-tab") { state.productTab = target.getAttribute("data-tab") || "requirements"; render(); }
+  if (action === "product-mock") {
+    api.runProductMock(state.projectId, target.getAttribute("data-product-action"), { idempotencyKey: createIdempotencyKey() }).then((result) => {
+      toast(`Mock ${result.data.action} completed with no confirmed-state changes.`);
+    });
+  }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");
     Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
@@ -820,6 +867,11 @@ document.addEventListener("change", async (event) => {
         state.workflowTasks = [];
         state.workflowEvents = [];
       }
+      const [requirements, features, strategy, roadmap] = await Promise.all([api.listRequirements(target.value), api.listProductFeatures(target.value), api.getProductStrategy(target.value), api.listRoadmapItems(target.value)]);
+      state.requirements = requirements.data;
+      state.productFeatures = features.data;
+      state.productStrategy = strategy.data;
+      state.roadmapItems = roadmap.data;
       state.conversationId = conversations.data[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(target.value, state.conversationId)).data : [];
       navigate(`/app/projects/${target.value}/overview`);

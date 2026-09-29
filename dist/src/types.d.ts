@@ -216,6 +216,23 @@ export interface McpServer {
   status: "discovered" | "registered" | "active" | "disabled" | "error" | "deprecated";
   healthStatus: "unknown" | "healthy" | "degraded" | "unavailable";
 }
+export interface Requirement {
+  id: string; projectId: string; title: string; type: string;
+  priority: "critical" | "high" | "medium" | "low" | "deferred";
+  status: "identified" | "clarified" | "approved" | "in_progress" | "implemented" | "validated" | "rejected" | "archived";
+  evidence: string[]; rationale?: string; architectureImpact?: string;
+  provenance: "confirmed" | "ai_suggested"; confidence?: number;
+}
+export interface ProductFeature {
+  id: string; projectId: string; title: string; businessValue: number; impact: number;
+  effort: number; risk: number; priorityRank: number; status: string; rationale: string;
+  provenance: "confirmed" | "ai_suggested";
+}
+export interface RoadmapItem {
+  id: string; projectId: string; milestone: string; release: string; sequence: number;
+  status: "planned" | "active" | "completed" | "delayed" | "cancelled";
+  startDate?: string; endDate?: string; dependencies: string[];
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

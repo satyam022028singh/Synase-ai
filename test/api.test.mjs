@@ -166,3 +166,30 @@ test("MCP server health action returns labeled mock metadata", async () => {
   assert.equal(result.data.mock, true);
   assert.equal(result.data.healthStatus, "healthy");
 });
+
+test("requirements preserve confirmed and AI-suggested provenance", async () => {
+  const response = await api.listRequirements("prj_platform");
+  assert.ok(response.data.some((item) => item.provenance === "confirmed"));
+  assert.ok(response.data.some((item) => item.provenance === "ai_suggested" && item.confidence <= 1));
+});
+
+test("feature prioritization remains ordered by rank", async () => {
+  const response = await api.listProductFeatures("prj_platform");
+  assert.deepEqual(response.data.map((item) => item.priorityRank), [1, 2, 3]);
+});
+
+test("roadmap dependencies reference earlier milestones", async () => {
+  const response = await api.listRoadmapItems("prj_platform");
+  const seen = new Set();
+  for (const item of response.data) {
+    assert.ok(item.dependencies.every((dependency) => seen.has(dependency)));
+    seen.add(item.id);
+  }
+});
+
+test("product mock action requires idempotency and changes no confirmed records", async () => {
+  await assert.rejects(() => api.runProductMock("prj_platform", "requirements"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  const result = await api.runProductMock("prj_platform", "requirements", { idempotencyKey: createIdempotencyKey() });
+  assert.equal(result.data.changedRecords, 0);
+  assert.equal(result.data.mock, true);
+});
