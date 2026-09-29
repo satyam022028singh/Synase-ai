@@ -320,6 +320,31 @@ tbody tr:hover { background: rgba(79,140,255,.035); }
 .graph-node.node-1 { left: 42%; top: 40%; }.graph-node.node-2 { left: 8%; top: 12%; }.graph-node.node-3 { right: 8%; top: 14%; }.graph-node.node-4 { right: 12%; bottom: 10%; }
 .relationship-list > div { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
 .relationship-list span { color: var(--cyan); text-align: center; }
+.report-grid, .decision-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.report-card .card-head { min-height: 88px; }
+.report-card .card-body > p, .decision-card p, .report-sections p { color: var(--muted); line-height: 1.55; }
+.report-meta { display: flex; align-items: center; justify-content: space-between; margin: 16px 0; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+.confidence { display: grid; grid-template-columns: minmax(80px,1fr) auto auto; align-items: center; gap: 8px; margin: 12px 0; }
+.confidence > div { height: 6px; overflow: hidden; border-radius: 99px; background: var(--border); }
+.confidence > div span { display: block; height: 100%; background: linear-gradient(90deg,var(--primary),var(--cyan)); }
+.confidence b { font-size: 12px; }.confidence small { color: var(--muted); }
+.report-summary { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 24px; align-items: center; }
+.report-summary p { margin: 6px 0 0; font-size: 16px; line-height: 1.55; }
+.report-detail-grid { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(300px,.75fr); gap: 14px; margin-top: 14px; }
+.report-sections { display: grid; gap: 12px; }.report-aside { align-self: start; position: sticky; top: 82px; }
+.section-index { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid var(--primary); border-radius: 50%; color: var(--primary); font-size: 11px; }
+.section-title { margin: 22px 0 12px; }
+.reference-list > div { display: grid; gap: 5px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.reference-list > div:last-child { border-bottom: 0; }.reference-list span { color: var(--muted); font-size: 11px; }
+.approval-layout { display: grid; grid-template-columns: minmax(300px,.75fr) minmax(0,1.35fr); gap: 14px; }
+.approval-list { padding: 8px; }
+.approval-row { width: 100%; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 13px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.approval-row:hover, .approval-row.active { border-color: rgba(79,140,255,.45); background: rgba(79,140,255,.09); }
+.approval-row div { display: grid; gap: 5px; }.approval-row div span { color: var(--muted); font-size: 11px; }
+.detail-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 16px 0; }
+.detail-list div { padding: 10px; border: 1px solid var(--border); border-radius: 7px; }.detail-list dt { color: var(--muted); font-size: 10px; text-transform: uppercase; }.detail-list dd { margin: 5px 0 0; }
+.comment-list { display: grid; gap: 8px; margin: 10px 0 14px; }.comment-list > div { padding: 10px; border-left: 2px solid var(--primary); background: var(--surface-2); }.comment-list p { margin: 5px 0; }.comment-list span { color: var(--subtle); font-size: 10px; }
+.button.success { border-color: rgba(52,211,153,.5); color: var(--positive); }.button.danger { border-color: rgba(251,113,133,.5); color: #fb7185; }
 
 .auth-layout { min-height: 100vh; display: grid; grid-template-columns: minmax(0,1.05fr) minmax(420px,.75fr); }
 .auth-art { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 44px; border-right: 1px solid var(--border); background:
@@ -400,6 +425,10 @@ tbody tr:hover { background: rgba(79,140,255,.035); }
   .graph-node.node-1 { left: 28%; top: 38%; }.graph-node.node-2 { left: 4%; top: 8%; }.graph-node.node-3 { right: 4%; top: 12%; }.graph-node.node-4 { right: 8%; bottom: 8%; }
   .relationship-list > div { grid-template-columns: 1fr; }
   .relationship-list span { text-align: left; }
+  .report-grid, .decision-grid, .report-detail-grid, .approval-layout, .report-summary { grid-template-columns: 1fr; }
+  .report-aside { position: static; }
+  .detail-list { grid-template-columns: 1fr; }
+  .approval-row { align-items: flex-start; }
   .discovery-row { grid-template-columns: minmax(0,1fr) auto; padding: 8px 0; }
   .discovery-row .button { grid-column: 1 / -1; justify-self: start; }
   .field.full { grid-column: auto; }

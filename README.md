@@ -1,6 +1,6 @@
-# SYNASE AI frontend — Phases 0–9
+# SYNASE AI frontend — Phases 0–10
 
-Implemented frontend foundation through mock-backed Context + Knowledge.
+Implemented frontend foundation through mock-backed Reports + HITL.
 
 ## Run
 
@@ -41,9 +41,12 @@ Open `http://localhost:4173`.
 - Safe memory search projections with relevance and source evidence
 - Ranked retrieval history without embedding exposure
 - Knowledge graph map plus an accessible relationship representation
+- Decision-report portfolio and detail with sections, evidence, references, confidence, and decisions
+- Human approval queue with explicit approve/reject/cancel/comment receipts
+- Safe mock generation, publication, and export receipts that never imply execution
 - Honest future-phase placeholders
 - Mock contract tests and build manifest
 
 ## Important
 
-The live backend is intentionally not connected. Authentication, route finalization, pagination, signed-upload fields, provider authorization, SSE contracts, MCP payload DTOs, retrieval contracts, and graph-sync authorization remain unresolved. All MCP, context, memory, retrieval, and knowledge actions are deterministic mocks; they never contact external servers, models, tools, ChromaDB, Neo4j, or object storage.
+The live backend is intentionally not connected. Authentication, route finalization, pagination, signed-upload fields, provider authorization, SSE contracts, report generation transport, export binary delivery, aggregate routes, and approval authorization remain unresolved. All actions are deterministic mocks; approval never implies downstream execution.

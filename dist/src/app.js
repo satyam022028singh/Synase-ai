@@ -45,6 +45,12 @@ const state = {
   retrievalHistory: [],
   knowledgeGraph: null,
   contextQuery: "",
+  reports: [],
+  reportId: "",
+  reportDetail: null,
+  approvals: [],
+  approvalId: "",
+  approvalDetail: null,
   conversationId: "",
   analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
@@ -158,12 +164,17 @@ function shell(content) {
           ${navLink("/app/knowledge/graph", "K", "Knowledge Graph")}
         </div>
         <div class="nav-section">
+          <div class="nav-label">Outputs</div>
+          ${navLink("/app/reports", "R", "Reports", true)}
+          ${navLink("/app/approvals", "A", "Approvals")}
+        </div>
+        <div class="nav-section">
           <div class="nav-label">System</div>
           ${navLink(routes.workspaceSettings, "⚙", "Settings")}
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–9 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–10 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -646,6 +657,40 @@ function knowledgeGraphPage() {
     <article class="card"><div class="card-head"><h2>Accessible relationships</h2></div><div class="card-body relationship-list">${(graph?.edges||[]).map((edge)=>`<div><strong>${escapeHtml(nodeById.get(edge.sourceId)?.label || edge.sourceId)}</strong><span>${escapeHtml(edge.type.replaceAll("_"," "))}</span><strong>${escapeHtml(nodeById.get(edge.targetId)?.label || edge.targetId)}</strong></div>`).join("")}</div></article></section>`;
 }
 
+function confidence(value = 0) {
+  const percent = Math.round(value * 100);
+  const label = value >= .85 ? "High" : value >= .65 ? "Moderate" : "Low";
+  return `<div class="confidence" aria-label="${label} confidence, ${percent} percent"><div><span style="width:${percent}%"></span></div><b>${percent}%</b><small>${label}</small></div>`;
+}
+
+function reportsPage() {
+  return `${pageHeader("Decision outputs", "Decision reports", "Review project-scoped reports, evidence, confidence, decisions, and approval state.", `<button class="button primary" data-action="generate-report">Generate mock receipt</button>`)}
+    <div class="alert">Provisional global route using the selected project. Generation creates a queued mock receipt only; no AI workflow or report generation runs.</div>
+    <div class="report-grid">${state.reports.map((report)=>`<article class="card report-card"><div class="card-head"><div><span class="small">${escapeHtml(report.type.replaceAll("_"," "))} · v${report.version}</span><h2>${escapeHtml(report.title)}</h2></div>${status(report.status)}</div><div class="card-body"><p>${escapeHtml(report.summary)}</p>${confidence(report.confidence)}<div class="report-meta"><span>Approval</span>${status(report.approvalStatus)}</div><button class="button" data-route="/app/reports/${report.id}">Review report</button></div></article>`).join("") || `<section class="card empty"><div><h2>No reports</h2><p>No report artifacts exist for this project.</p></div></section>`}</div>`;
+}
+
+function reportDetailPage(reportId) {
+  const report = state.reportDetail?.id === reportId ? state.reportDetail : state.reports.find((item)=>item.id===reportId);
+  if (!report) return notFound("Report not found", "This report is outside the selected project or does not exist.");
+  return `${pageHeader("Decision report", report.title, `${report.type.replaceAll("_"," ")} · Version ${report.version}`, `<div class="cluster"><button class="button" data-action="export-report" data-report-id="${report.id}">Mock export</button><button class="button primary" data-action="publish-report" data-report-id="${report.id}">Publish receipt</button></div>`)}
+    <div class="alert">Report content is a deterministic fixture. Export and publication return receipts only; no binary is generated and nothing is published.</div>
+    <section class="report-hero card"><div class="card-body"><div class="report-summary"><div><span class="small">Summary</span><p>${escapeHtml(report.summary)}</p></div>${confidence(report.confidence)}</div><div class="cluster">${status(report.status)}${status(report.approvalStatus)}<span class="proposal">v${report.version}</span></div></div></section>
+    <div class="report-detail-grid"><div class="report-sections">${[...report.sections].sort((a,b)=>a.sequence-b.sequence).map((section)=>`<article class="card"><div class="card-head"><span class="section-index">${section.sequence}</span><h2>${escapeHtml(section.title)}</h2></div><div class="card-body"><p>${escapeHtml(section.content)}</p></div></article>`).join("")}</div>
+    <aside class="report-aside"><article class="card"><div class="card-head"><h2>Evidence & references</h2></div><div class="card-body reference-list">${report.references.map((ref)=>`<div><strong>${escapeHtml(ref.label)}</strong><span>${escapeHtml(ref.sourceType)} · ${escapeHtml(ref.sourceId)}</span>${status(ref.trustLevel)}</div>`).join("")}</div></article></aside></div>
+    <h2 class="section-title">Decisions</h2><div class="decision-grid">${report.decisions.map((decision)=>`<article class="card decision-card"><div class="card-body"><div class="cluster">${status(decision.impact)}${status(decision.status)}<span class="proposal">${escapeHtml(decision.provenance.replaceAll("_"," "))}</span></div><h2>${escapeHtml(decision.title)}</h2><p>${escapeHtml(decision.rationale)}</p>${confidence(decision.confidence)}<div class="alert">Executed: No</div></div></article>`).join("")}</div>`;
+}
+
+function approvalsPage() {
+  const selected = state.approvalDetail || state.approvals.find((item)=>item.id===state.approvalId) || state.approvals[0];
+  return `${pageHeader("Human approval", "Approval queue", "Review high-impact requests and record explicit human decisions without implying downstream execution.")}
+    <div class="alert">Provisional global route using the selected project. Approval changes authorization state only; it never proves that code, CI/CD, infrastructure, publication, or deployment executed.</div>
+    <div class="approval-layout"><section class="card"><div class="card-head"><div><h2>Requests</h2><span class="small">${state.approvals.filter((item)=>item.status==="pending").length} pending</span></div></div><div class="approval-list">${state.approvals.map((item)=>`<button class="approval-row ${selected?.id===item.id?"active":""}" data-action="select-approval" data-approval-id="${item.id}"><div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.type.replaceAll("_"," "))} · ${escapeHtml(item.risk)} risk</span></div>${status(item.status)}</button>`).join("")}</div></section>
+    ${selected ? `<section class="card approval-detail"><div class="card-head"><div><span class="small">${escapeHtml(selected.type.replaceAll("_"," "))}</span><h2>${escapeHtml(selected.title)}</h2></div>${status(selected.status)}</div><div class="card-body"><p>${escapeHtml(selected.rationale)}</p><dl class="detail-list"><div><dt>Requested by</dt><dd>${escapeHtml(selected.requestedBy)}</dd></div><div><dt>Requested</dt><dd>${new Date(selected.requestedAt).toLocaleString()}</dd></div><div><dt>Risk</dt><dd>${escapeHtml(selected.risk)}</dd></div><div><dt>Executed</dt><dd>No</dd></div></dl>
+      ${selected.status==="pending" ? `<form id="approval-decision-form"><input type="hidden" name="approvalId" value="${selected.id}"><div class="field"><label for="approval-rationale">Decision rationale</label><textarea id="approval-rationale" name="rationale" placeholder="Record why this decision is appropriate"></textarea></div><div class="cluster"><button class="button success" name="decision" value="approve">Approve</button><button class="button danger" name="decision" value="reject">Reject</button><button type="button" class="button ghost" data-action="cancel-approval" data-approval-id="${selected.id}">Cancel request</button></div></form>` : `<div class="alert">Decision recorded. Downstream executed: No.</div>`}
+      <h3>Comments</h3><div class="comment-list">${selected.comments.map((comment)=>`<div><strong>${escapeHtml(comment.author)}</strong><p>${escapeHtml(comment.text)}</p><span>${new Date(comment.createdAt).toLocaleString()}</span></div>`).join("") || `<p class="subtle">No comments.</p>`}</div>
+      <form id="approval-comment-form"><input type="hidden" name="approvalId" value="${selected.id}"><div class="search-row"><input name="text" placeholder="Add review context" required><button class="button" type="submit">Add mock comment</button></div></form></div></section>` : ""}</div>`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -718,6 +763,10 @@ function renderPage() {
   if (path === "/app/context/memory") return shell(memoryPage());
   if (path === "/app/context/history") return shell(retrievalHistoryPage());
   if (path === "/app/knowledge/graph") return shell(knowledgeGraphPage());
+  if (path === "/app/reports") return shell(reportsPage());
+  const report = path.match(/^\/app\/reports\/([^/]+)$/);
+  if (report) return shell(reportDetailPage(report[1]));
+  if (path === "/app/approvals") return shell(approvalsPage());
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -789,6 +838,13 @@ async function hydrate(workspaceId = state.workspaceId) {
       state.memoryResults = memory.data;
       state.retrievalHistory = history.data;
       state.knowledgeGraph = graph.data;
+      const [reports, approvals] = await Promise.all([api.listReports(state.projectId), api.listApprovals(state.projectId)]);
+      state.reports = reports.data;
+      state.reportId = reports.data[0]?.id || "";
+      state.reportDetail = state.reportId ? (await api.getReport(state.projectId, state.reportId)).data : null;
+      state.approvals = approvals.data;
+      state.approvalId = approvals.data[0]?.id || "";
+      state.approvalDetail = state.approvalId ? (await api.getApproval(state.projectId, state.approvalId)).data : null;
       state.conversationId = state.conversations[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(state.projectId, state.conversationId)).data : [];
     } else {
@@ -925,6 +981,24 @@ document.addEventListener("click", (event) => {
       toast(`Mock ${result.data.action.replaceAll("_"," ")} completed. No backend store was contacted.`);
     });
   }
+  if (action === "generate-report") {
+    api.generateReport(state.projectId, "final_decision_summary", { idempotencyKey: createIdempotencyKey() }).then((result)=>toast(`Queued mock receipt ${result.data.workflowId}. No report was generated.`));
+  }
+  if (action === "export-report") {
+    api.exportReport(state.projectId, target.getAttribute("data-report-id"), "pdf", { idempotencyKey: createIdempotencyKey() }).then(()=>toast("Mock export receipt created. No binary or download URL exists."));
+  }
+  if (action === "publish-report") {
+    api.publishReport(state.projectId, target.getAttribute("data-report-id"), { idempotencyKey: createIdempotencyKey() }).then(()=>toast("Mock publication receipt created. Nothing was published.")).catch((error)=>toast(error instanceof Error ? error.message : "Publication failed."));
+  }
+  if (action === "select-approval") {
+    const approvalId = target.getAttribute("data-approval-id");
+    api.getApproval(state.projectId, approvalId).then((result)=>{ state.approvalId = approvalId; state.approvalDetail = result.data; render(); });
+  }
+  if (action === "cancel-approval") {
+    api.cancelApproval(state.projectId, target.getAttribute("data-approval-id"), { idempotencyKey: createIdempotencyKey() }).then(async (result)=>{
+      state.approvals = (await api.listApprovals(state.projectId)).data; state.approvalDetail = result.data; toast("Approval request cancelled. No downstream action executed."); render();
+    }).catch((error)=>toast(error instanceof Error ? error.message : "Cancellation failed."));
+  }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");
     Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
@@ -996,6 +1070,13 @@ document.addEventListener("change", async (event) => {
       state.memoryResults = memory.data;
       state.retrievalHistory = history.data;
       state.knowledgeGraph = graph.data;
+      const [reports, approvals] = await Promise.all([api.listReports(target.value), api.listApprovals(target.value)]);
+      state.reports = reports.data;
+      state.reportId = reports.data[0]?.id || "";
+      state.reportDetail = state.reportId ? (await api.getReport(target.value, state.reportId)).data : null;
+      state.approvals = approvals.data;
+      state.approvalId = approvals.data[0]?.id || "";
+      state.approvalDetail = state.approvalId ? (await api.getApproval(target.value, state.approvalId)).data : null;
       state.conversationId = conversations.data[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(target.value, state.conversationId)).data : [];
       navigate(`/app/projects/${target.value}/overview`);
@@ -1029,6 +1110,29 @@ document.addEventListener("submit", async (event) => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement)) return;
   event.preventDefault();
+  if (form.id === "approval-decision-form") {
+    const values = new FormData(form);
+    const decision = event.submitter instanceof HTMLButtonElement ? event.submitter.value : "";
+    try {
+      const result = await api.decideApproval(state.projectId, String(values.get("approvalId")), decision, String(values.get("rationale") || ""), { idempotencyKey: createIdempotencyKey() });
+      state.approvals = (await api.listApprovals(state.projectId)).data;
+      state.reports = (await api.listReports(state.projectId)).data;
+      state.approvalDetail = result.data;
+      toast(`${result.data.status} recorded. Downstream executed: No.`);
+      render();
+    } catch (error) { toast(error instanceof Error ? error.message : "Approval decision failed."); }
+    return;
+  }
+  if (form.id === "approval-comment-form") {
+    const values = new FormData(form);
+    try {
+      await api.addApprovalComment(state.projectId, String(values.get("approvalId")), String(values.get("text") || ""), { idempotencyKey: createIdempotencyKey() });
+      state.approvalDetail = (await api.getApproval(state.projectId, String(values.get("approvalId")))).data;
+      toast("Mock review comment added.");
+      render();
+    } catch (error) { toast(error instanceof Error ? error.message : "Comment failed."); }
+    return;
+  }
   if (form.id === "memory-search-form") {
     const query = String(new FormData(form).get("query") || "").trim();
     state.contextQuery = query;

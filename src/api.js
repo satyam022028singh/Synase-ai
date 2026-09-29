@@ -296,7 +296,55 @@ const db = {
         { id: "edge_3", sourceId: "node_prd", targetId: "node_decision", type: "supports" }
       ]
     }
-  }
+  },
+  reports: [
+    {
+      id: "rpt_arch_01", projectId: "prj_platform", workflowId: "wf_mock_arch",
+      title: "Architecture Review — Frontend Boundaries", type: "architecture_review",
+      version: 3, status: "review_required", summary: "The API-driven frontend boundary is sound; route scope and publication controls still require explicit decisions.",
+      confidence: 0.87, approvalStatus: "pending", createdAt: "2026-09-29T08:50:00Z", updatedAt: "2026-09-29T09:12:00Z",
+      sections: [
+        { id: "sec_summary", title: "Executive summary", sequence: 1, content: "Keep frontend pages dependent on domain contracts and safe projections rather than persistence models." },
+        { id: "sec_findings", title: "Key findings", sequence: 2, content: "Project scope is reliable in adapters, while global report and approval routes still lack aggregate contracts." },
+        { id: "sec_actions", title: "Recommended actions", sequence: 3, content: "Freeze project/global route semantics and require authoritative receipts for publication and approval actions." }
+      ],
+      references: [
+        { id: "ref_prd", label: "Product Requirements", sourceType: "context", sourceId: "ctx_prd", trustLevel: "verified" },
+        { id: "ref_matrix", label: "Page → API Matrix", sourceType: "document", sourceId: "ctx_prd", trustLevel: "verified" }
+      ],
+      decisions: [
+        { id: "dec_api", title: "Preserve domain-oriented API boundary", status: "recommended", impact: "high", rationale: "Prevents database coupling and integration rework.", provenance: "ai_suggested", confidence: 0.9, executed: false },
+        { id: "dec_scope", title: "Use selected project context for provisional global routes", status: "requires_approval", impact: "medium", rationale: "Aggregate endpoints are not contracted.", provenance: "ai_suggested", confidence: 0.78, executed: false }
+      ]
+    },
+    {
+      id: "rpt_risk_02", projectId: "prj_platform", workflowId: "wf_mock_risk",
+      title: "Release Risk Assessment", type: "risk_assessment", version: 1, status: "draft",
+      summary: "Release evidence is incomplete; no deployment recommendation is approved.", confidence: 0.68,
+      approvalStatus: "not_requested", createdAt: "2026-09-28T14:30:00Z", updatedAt: "2026-09-28T14:42:00Z",
+      sections: [{ id: "sec_risk", title: "Risk summary", sequence: 1, content: "The available deployment log contains retry exhaustion and requires human review." }],
+      references: [{ id: "ref_logs", label: "Deployment error log", sourceType: "context", sourceId: "ctx_logs", trustLevel: "unverified" }],
+      decisions: [{ id: "dec_hold", title: "Hold deployment recommendation", status: "recommended", impact: "critical", rationale: "Evidence is incomplete.", provenance: "ai_suggested", confidence: 0.72, executed: false }]
+    }
+  ],
+  approvals: [
+    {
+      id: "apr_report_01", projectId: "prj_platform", reportId: "rpt_arch_01", type: "report_publication",
+      title: "Publish architecture review", status: "pending", requestedBy: "SYNASE mock workflow",
+      requestedAt: "2026-09-29T09:12:00Z", expiresAt: "2026-10-06T09:12:00Z",
+      rationale: "Publication makes the report available as confirmed project state.", risk: "medium",
+      allowedActions: ["approve", "reject", "comment", "cancel"], executed: false,
+      comments: [{ id: "cmt_1", author: "Maya Chen", text: "Confirm route scope before publication.", createdAt: "2026-09-29T09:20:00Z" }]
+    },
+    {
+      id: "apr_deploy_02", projectId: "prj_platform", reportId: "rpt_risk_02", type: "deployment_change",
+      title: "Approve frontend staging rollout", status: "pending", requestedBy: "SYNASE mock workflow",
+      requestedAt: "2026-09-28T15:00:00Z", expiresAt: "2026-10-05T15:00:00Z",
+      rationale: "High-impact deployment plan requires an authorized human decision.", risk: "critical",
+      allowedActions: ["approve", "reject", "comment", "cancel"], executed: false, comments: []
+    }
+  ],
+  exportArtifacts: []
 };
 
 function page(data) {
@@ -700,6 +748,79 @@ export const mockApi = {
     if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
     if (!["reindex", "graph_sync"].includes(action)) throw new ApiError("VALIDATION_ERROR", "Unknown context action.", 422);
     return { data: { projectId, action, status: "mock_completed", changedRecords: 0, contactedStores: false, mock: true, completedAt: new Date().toISOString() } };
+  },
+  async listReports(projectId) { await sleep(); return page(db.reports.filter((item) => item.projectId === projectId)); },
+  async getReport(projectId, reportId) {
+    await sleep();
+    const report = db.reports.find((item) => item.projectId === projectId && item.id === reportId);
+    if (!report) throw new ApiError("RESOURCE_NOT_FOUND", "Decision report was not found.", 404);
+    return { data: structuredClone(report) };
+  },
+  async listApprovals(projectId) { await sleep(); return page(db.approvals.filter((item) => item.projectId === projectId)); },
+  async getApproval(projectId, approvalId) {
+    await sleep();
+    const approval = db.approvals.find((item) => item.projectId === projectId && item.id === approvalId);
+    if (!approval) throw new ApiError("RESOURCE_NOT_FOUND", "Approval was not found.", 404);
+    return { data: structuredClone(approval) };
+  },
+  async generateReport(projectId, type, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    return { data: { projectId, type, status: "queued", workflowId: "wf_mock_report", reportId: null, mock: true, generated: false } };
+  },
+  async publishReport(projectId, reportId, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const report = db.reports.find((item) => item.projectId === projectId && item.id === reportId);
+    if (!report) throw new ApiError("RESOURCE_NOT_FOUND", "Decision report was not found.", 404);
+    if (report.status !== "approved") throw new ApiError("APPROVAL_REQUIRED", "An approved report is required before publication.", 409);
+    return { data: { reportId, status: "mock_receipt", published: false, mock: true } };
+  },
+  async exportReport(projectId, reportId, format, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    await this.getReport(projectId, reportId);
+    const artifact = { id: `exp_${Math.random().toString(36).slice(2,8)}`, reportId, format, status: "mock_ready", downloadUrl: null, expiresAt: null, mock: true };
+    db.exportArtifacts.unshift(artifact);
+    return { data: artifact };
+  },
+  async decideApproval(projectId, approvalId, decision, rationale, { idempotencyKey } = {}) {
+    await sleep(360);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!["approve", "reject"].includes(decision)) throw new ApiError("VALIDATION_ERROR", "Unknown approval decision.", 422);
+    const approval = db.approvals.find((item) => item.projectId === projectId && item.id === approvalId);
+    if (!approval) throw new ApiError("RESOURCE_NOT_FOUND", "Approval was not found.", 404);
+    if (approval.status !== "pending") throw new ApiError("RESOURCE_CONFLICT", "Only pending approvals can be decided.", 409);
+    approval.status = decision === "approve" ? "approved" : "rejected";
+    approval.decidedAt = new Date().toISOString();
+    approval.decisionRationale = rationale || "";
+    approval.executed = false;
+    const report = db.reports.find((item) => item.id === approval.reportId);
+    if (report && approval.type === "report_publication") {
+      report.approvalStatus = approval.status;
+      if (approval.status === "approved") report.status = "approved";
+    }
+    return { data: { ...structuredClone(approval), downstreamExecuted: false, mock: true } };
+  },
+  async addApprovalComment(projectId, approvalId, text, { idempotencyKey } = {}) {
+    await sleep(300);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const approval = db.approvals.find((item) => item.projectId === projectId && item.id === approvalId);
+    if (!approval) throw new ApiError("RESOURCE_NOT_FOUND", "Approval was not found.", 404);
+    if (!text?.trim()) throw new ApiError("VALIDATION_ERROR", "Comment text is required.", 422);
+    const comment = { id: `cmt_${Math.random().toString(36).slice(2,8)}`, author: "Satyam Singh", text: text.trim(), createdAt: new Date().toISOString(), mock: true };
+    approval.comments.push(comment);
+    return { data: comment };
+  },
+  async cancelApproval(projectId, approvalId, { idempotencyKey } = {}) {
+    await sleep(300);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const approval = db.approvals.find((item) => item.projectId === projectId && item.id === approvalId);
+    if (!approval) throw new ApiError("RESOURCE_NOT_FOUND", "Approval was not found.", 404);
+    if (approval.status !== "pending") throw new ApiError("RESOURCE_CONFLICT", "Only pending approvals can be cancelled.", 409);
+    approval.status = "cancelled";
+    approval.executed = false;
+    return { data: { ...structuredClone(approval), downstreamExecuted: false, mock: true } };
   }
 };
 

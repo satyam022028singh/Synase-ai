@@ -271,6 +271,35 @@ export interface KnowledgeGraph {
   projectId: string; status: "ready" | "syncing" | "warning" | "failed"; lastSyncedAt?: string;
   storageBoundary: string; nodes: KnowledgeNode[]; edges: KnowledgeEdge[];
 }
+export type ReportStatus = "queued" | "generating" | "draft" | "review_required" | "approved" | "published" | "failed" | "archived";
+export type ApprovalStatus = "pending" | "approved" | "rejected" | "expired" | "cancelled";
+export type ApprovalType = "code_change" | "pull_request" | "ci_cd_change" | "deployment_change" | "high_risk_recommendation" | "report_publication" | "other";
+export interface ReportSection { id: string; title: string; sequence: number; content: string }
+export interface ReportReference { id: string; label: string; sourceType: string; sourceId: string; trustLevel: ContextTrustLevel }
+export interface DecisionItem {
+  id: string; title: string; status: "recommended" | "requires_approval" | "confirmed" | "rejected";
+  impact: "critical" | "high" | "medium" | "low"; rationale: string;
+  provenance: "confirmed" | "ai_suggested"; confidence: number; executed: false;
+}
+export interface DecisionReport {
+  id: string; projectId: string; workflowId?: string; title: string; type: string;
+  version: number; status: ReportStatus; summary: string; confidence: number;
+  approvalStatus: ApprovalStatus | "not_requested"; createdAt: string; updatedAt: string;
+  sections: ReportSection[]; references: ReportReference[]; decisions: DecisionItem[];
+}
+export interface ApprovalComment { id: string; author: string; text: string; createdAt: string; mock?: boolean }
+export interface Approval {
+  id: string; projectId: string; reportId?: string; type: ApprovalType; title: string;
+  status: ApprovalStatus; requestedBy: string; requestedAt: string; expiresAt?: string;
+  rationale: string; risk: "critical" | "high" | "medium" | "low";
+  allowedActions: Array<"approve" | "reject" | "comment" | "cancel">;
+  executed: false; comments: ApprovalComment[];
+}
+export interface ReportExportArtifact {
+  id: string; reportId: string; format: "pdf" | "docx" | "json";
+  status: "queued" | "mock_ready" | "ready" | "failed"; downloadUrl: string | null;
+  expiresAt: string | null; mock?: boolean;
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

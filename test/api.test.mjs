@@ -249,3 +249,45 @@ test("context mock actions require idempotency and contact no stores", async () 
   assert.equal(result.data.contactedStores, false);
   assert.equal(result.data.changedRecords, 0);
 });
+
+test("reports remain project scoped with canonical states and normalized confidence", async () => {
+  const response = await api.listReports("prj_platform");
+  const allowed = new Set(["queued","generating","draft","review_required","approved","published","failed","archived"]);
+  assert.ok(response.data.length > 0);
+  assert.ok(response.data.every((item) => item.projectId === "prj_platform" && allowed.has(item.status) && item.confidence >= 0 && item.confidence <= 1));
+});
+
+test("report decisions retain provenance and never imply execution", async () => {
+  const response = await api.getReport("prj_platform", "rpt_arch_01");
+  assert.ok(response.data.decisions.every((item) => ["confirmed","ai_suggested"].includes(item.provenance) && item.executed === false));
+});
+
+test("report generation and export require idempotency", async () => {
+  await assert.rejects(() => api.generateReport("prj_platform", "final_decision_summary"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  await assert.rejects(() => api.exportReport("prj_platform", "rpt_arch_01", "pdf"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  const artifact = await api.exportReport("prj_platform", "rpt_arch_01", "pdf", { idempotencyKey: createIdempotencyKey() });
+  assert.equal(artifact.data.downloadUrl, null);
+  assert.equal(artifact.data.mock, true);
+});
+
+test("publication requires an approved report", async () => {
+  await assert.rejects(
+    () => api.publishReport("prj_platform", "rpt_arch_01", { idempotencyKey: createIdempotencyKey() }),
+    (error) => error.code === "APPROVAL_REQUIRED"
+  );
+});
+
+test("approval decisions require idempotency and do not execute downstream actions", async () => {
+  await assert.rejects(() => api.decideApproval("prj_platform", "apr_report_01", "approve", "Reviewed"), (error) => error.code === "IDEMPOTENCY_REQUIRED");
+  const result = await api.decideApproval("prj_platform", "apr_report_01", "approve", "Reviewed", { idempotencyKey: createIdempotencyKey() });
+  assert.equal(result.data.status, "approved");
+  assert.equal(result.data.executed, false);
+  assert.equal(result.data.downstreamExecuted, false);
+});
+
+test("decided approvals reject repeated state transitions", async () => {
+  await assert.rejects(
+    () => api.decideApproval("prj_platform", "apr_report_01", "reject", "Changed", { idempotencyKey: createIdempotencyKey() }),
+    (error) => error.code === "RESOURCE_CONFLICT"
+  );
+});
