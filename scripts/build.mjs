@@ -7,7 +7,7 @@ await mkdir(dist, { recursive: true });
 await cp(new URL("../src/", import.meta.url), new URL("../dist/src/", import.meta.url), { recursive: true });
 await cp(new URL("../index.html", import.meta.url), new URL("../dist/index.html", import.meta.url));
 
-const files = ["index.html", "src/styles.css", "src/app.js", "src/api.js", "src/types.d.ts", "src/phase11.css", "src/phase11.js", "src/phase11-api.js", "src/phase11-types.d.ts"];
+const files = ["index.html", "src/styles.css", "src/app.js", "src/api.js", "src/types.d.ts", "src/phase11.css", "src/phase11.js", "src/phase11-api.js", "src/phase11-types.d.ts", "src/phase12.css", "src/phase12.js", "src/phase12-api.js", "src/phase12-types.d.ts"];
 const manifest = {};
 for (const file of files) {
   const body = await readFile(new URL(`../dist/${file}`, import.meta.url));
@@ -15,7 +15,7 @@ for (const file of files) {
 }
 await writeFile(new URL("../dist/build-manifest.json", import.meta.url), JSON.stringify({
   product: "SYNASE AI",
-  phases: ["Phase 0", "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10", "Phase 11"],
+  phases: ["Phase 0", "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10", "Phase 11", "Phase 12"],
   generatedAt: new Date().toISOString(), files: manifest
 }, null, 2));
 console.log(`Built SYNASE AI frontend (${Object.keys(manifest).length} assets) → dist/`);

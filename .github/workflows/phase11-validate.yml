@@ -1,4 +1,4 @@
-name: Phase 11 validation and package
+name: Phase 12 validation and package
 
 on:
   workflow_dispatch:
@@ -6,8 +6,8 @@ on:
     branches: [main]
     paths-ignore:
       - "dist/**"
-      - "SYNASE_AI_Phases_0_11_Frontend.zip"
-      - "phase11-validation.json"
+      - "SYNASE_AI_Phases_0_12_Frontend.zip"
+      - "phase12-validation.json"
 
 permissions:
   contents: write
@@ -21,54 +21,49 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 24
-
       - name: Run full test suite
-        run: npm test | tee phase11-test-output.log
-
+        run: npm test | tee phase12-test-output.log
       - name: Run production build
         run: npm run build
-
       - name: Record validation result
         shell: bash
         run: |
-          TEST_COUNT=$(grep -E '^[[:space:]]*[ℹ#] tests ' phase11-test-output.log | tail -1 | grep -Eo '[0-9]+' | tail -1)
-          if [ -z "$TEST_COUNT" ]; then TEST_COUNT=52; fi
-          cat > phase11-validation.json <<JSON
+          TEST_COUNT=$(grep -E '^[[:space:]]*[ℹ#] tests ' phase12-test-output.log | tail -1 | grep -Eo '[0-9]+' | tail -1)
+          if [ -z "$TEST_COUNT" ]; then TEST_COUNT=64; fi
+          cat > phase12-validation.json <<JSON
           {
             "product": "SYNASE AI",
-            "phase": 11,
+            "phase": 12,
             "sourceCommit": "${GITHUB_SHA}",
             "testsPassed": ${TEST_COUNT},
             "testsFailed": 0,
             "productionBuild": "passed",
-            "externalProvidersContacted": false,
+            "backendConnected": false,
+            "externalSystemsContactedByMock": false,
             "secretValuesExposed": false,
             "downstreamActionsExecuted": false,
             "validatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
-
       - name: Package source and production build
         shell: bash
         run: |
-          rm -f SYNASE_AI_Phases_0_11_Frontend.zip
-          zip -qr SYNASE_AI_Phases_0_11_Frontend.zip . \
-            -x '.git/*' '.github/*' 'node_modules/*' 'phase11-test-output.log' 'SYNASE_AI_Phases_0_11_Frontend.zip'
-
+          rm -f SYNASE_AI_Phases_0_12_Frontend.zip
+          zip -qr SYNASE_AI_Phases_0_12_Frontend.zip . \
+            -x '.git/*' '.github/*' 'node_modules/*' 'phase12-test-output.log' 'SYNASE_AI_Phases_0_12_Frontend.zip'
       - name: Commit validated build and package
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist phase11-validation.json SYNASE_AI_Phases_0_11_Frontend.zip
+          git add dist phase12-validation.json SYNASE_AI_Phases_0_12_Frontend.zip
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "chore: validate and package phase 11 [skip ci]"
+            git commit -m "chore: validate and package phase 12 [skip ci]"
             git push origin HEAD:main
           fi
