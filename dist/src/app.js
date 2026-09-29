@@ -1,5 +1,5 @@
 // @ts-check
-import { api, ApiError, createIdempotencyKey } from "./api.js";
+import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents } from "./api.js";
 
 const app = document.querySelector("#app");
 const state = {
@@ -15,6 +15,11 @@ const state = {
   conversations: [],
   messages: [],
   analysisRequests: [],
+  workflows: [],
+  workflowId: "",
+  workflowTasks: [],
+  workflowEvents: [],
+  streamState: "idle",
   conversationId: "",
   analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
   members: [],
@@ -116,6 +121,7 @@ function shell(content) {
           ${navLink(projectRoute("repository"), "⌘", "Repository")}
           ${navLink(projectRoute("inputs"), "＋", "Inputs")}
           ${navLink(projectRoute("analysis"), "↳", "Conversation & Analysis")}
+          ${navLink(projectRoute("runs"), "▶", "Execution Runs")}
           ${navLink(routes.members, "◎", "Members")}
         </div>
         <div class="nav-section">
@@ -130,7 +136,7 @@ function shell(content) {
           ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–4 · Mock adapter</div></div>
+      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–5 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -426,6 +432,46 @@ function analysisPage(projectId) {
     ${state.analysisTab === "conversation" ? conversationWorkspace(projectId) : state.analysisTab === "compose" ? analysisComposer(projectId) : requestHistory()}`;
 }
 
+function workflowList() {
+  return `<div class="run-list">${state.workflows.map((workflow) => `<button class="run-item ${workflow.id === state.workflowId ? "active" : ""}" data-action="select-workflow" data-workflow-id="${workflow.id}">
+    <span>${status(workflow.status)}<b>${escapeHtml(workflow.id)}</b></span><small>${escapeHtml(workflow.currentStage || "Not started")} · ${workflow.progressPercent}%</small>
+  </button>`).join("")}</div>`;
+}
+
+function workflowDetail() {
+  const workflow = state.workflows.find((item) => item.id === state.workflowId);
+  if (!workflow) return `<section class="card empty"><div><div class="empty-icon">▶</div><h2>Select a workflow</h2><p>Choose a run to inspect its authoritative snapshot and event history.</p></div></section>`;
+  const terminal = ["completed","failed","cancelled"].includes(workflow.status);
+  return `<section class="workflow-detail">
+    <article class="card run-summary">
+      <div class="card-head"><div><h2>${escapeHtml(workflow.id)}</h2><span class="small subtle">Request ${escapeHtml(workflow.requestId)} · ${escapeHtml(workflow.executionStrategy)}</span></div><div class="cluster">${status(workflow.status)}<span class="connection ${state.streamState}">${escapeHtml(state.streamState)}</span></div></div>
+      <div class="card-body">
+        <div class="progress-head"><span>${escapeHtml(workflow.currentStage || "Not started").replaceAll("_"," ")}</span><b>${workflow.progressPercent}%</b></div>
+        <div class="progress-track" aria-label="Authoritative workflow progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${workflow.progressPercent}" role="progressbar"><span style="width:${workflow.progressPercent}%"></span></div>
+        <div class="control-bar">
+          <button class="button" data-action="workflow-control" data-control="${workflow.status === "paused" ? "resume" : "pause"}" ${terminal ? "disabled" : ""}>${workflow.status === "paused" ? "Resume" : "Pause"}</button>
+          <button class="button danger" data-action="workflow-control" data-control="cancel" ${terminal ? "disabled" : ""}>Cancel</button>
+          <button class="button primary" data-action="next-mock-event" ${terminal ? "disabled" : ""}>Emit next mock event</button>
+        </div>
+        <p class="small subtle">Mock playback is user-triggered. No model, tool, agent, or backend workflow is running.</p>
+      </div>
+    </article>
+    <div class="workflow-grid">
+      <article class="card"><div class="card-head"><h2>Tasks</h2><span class="small subtle">${state.workflowTasks.length} tasks</span></div><div class="task-list">${state.workflowTasks.map((task) => `<div class="task-row"><span class="task-seq">${task.sequence}</span><div><strong>${escapeHtml(task.name)}</strong><small>${escapeHtml(task.layer)} · ${task.progressPercent}%</small></div>${status(task.status)}</div>`).join("")}</div></article>
+      <article class="card"><div class="card-head"><h2>Event stream</h2><button class="button ghost" data-action="toggle-stream">${state.streamState === "open" ? "Disconnect" : "Connect mock stream"}</button></div><div class="event-list">${state.workflowEvents.slice().reverse().map((event) => `<div class="event-row"><span>${event.sequence}</span><div><strong>${escapeHtml(event.eventType)}</strong><small>${escapeHtml(event.payload.stage || event.payload.status || "event")}</small></div><time>${new Date(event.occurredAt).toLocaleTimeString()}</time></div>`).join("")}</div></article>
+    </div>
+  </section>`;
+}
+
+function runsPage(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return notFound("Project not found", "Workflow runs cannot be loaded for an unavailable project.");
+  state.projectId = project.id;
+  return `${pageHeader("Workflow execution", "Execution runs", `Inspect authoritative workflow snapshots and explicit mock SSE playback for ${project.name}.`)}
+    <div class="alert">Mock SSE test harness. Events advance only when you click “Emit next mock event”; no live AI execution is represented.</div>
+    <div class="runs-layout"><aside class="card"><div class="card-head"><div><h2>Runs</h2><span class="small subtle">${state.workflows.length} workflows</span></div></div>${workflowList()}</aside>${workflowDetail()}</div>`;
+}
+
 function assetTable(assets, projectId) {
   if (!assets.length) return `<section class="card empty"><div><div class="empty-icon">＋</div><h2>No inputs yet</h2><p>Add a file, text block, URL, or connected repository.</p></div></section>`;
   return `<div class="table-wrap"><table><thead><tr><th>Input</th><th>Type/source</th><th>Size</th><th>Processing / security</th><th>Extraction</th><th></th></tr></thead><tbody>
@@ -488,6 +534,8 @@ function renderPage() {
   if (inputs) return shell(inputsPage(inputs[1]));
   const analysis = path.match(/^\/app\/projects\/([^/]+)\/analysis$/);
   if (analysis) return shell(analysisPage(analysis[1]));
+  const runs = path.match(/^\/app\/projects\/([^/]+)\/runs$/);
+  if (runs) return shell(runsPage(runs[1]));
   const overview = path.match(/^\/app\/projects\/([^/]+)\/overview$/);
   if (overview) return shell(projectOverviewPage(overview[1]));
   const settings = path.match(/^\/app\/projects\/([^/]+)\/settings$/);
@@ -514,11 +562,18 @@ async function hydrate(workspaceId = state.workspaceId) {
     state.members = members.data;
     if (!state.projects.some((p) => p.id === state.projectId)) state.projectId = state.projects[0]?.id || "";
     if (state.projectId) {
-      const [repositories, assets, conversations, requests] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId), api.listConversations(state.projectId), api.listAnalysisRequests(state.projectId)]);
+      const [repositories, assets, conversations, requests, workflows] = await Promise.all([api.listRepositories(state.projectId), api.listAssets(state.projectId), api.listConversations(state.projectId), api.listAnalysisRequests(state.projectId), api.listWorkflows(state.projectId)]);
       state.repositories = repositories.data;
       state.assets = assets.data;
       state.conversations = conversations.data;
       state.analysisRequests = requests.data;
+      state.workflows = workflows.data;
+      state.workflowId = workflows.data[0]?.id || "";
+      if (state.workflowId) {
+        const [tasks, events] = await Promise.all([api.listWorkflowTasks(state.projectId, state.workflowId), api.listWorkflowEvents(state.projectId, state.workflowId)]);
+        state.workflowTasks = tasks.data;
+        state.workflowEvents = normalizeWorkflowEvents(events.data);
+      }
       state.conversationId = state.conversations[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(state.projectId, state.conversationId)).data : [];
     } else {
@@ -527,6 +582,9 @@ async function hydrate(workspaceId = state.workspaceId) {
       state.conversations = [];
       state.analysisRequests = [];
       state.messages = [];
+      state.workflows = [];
+      state.workflowTasks = [];
+      state.workflowEvents = [];
     }
   } catch (error) {
     state.error = error instanceof Error ? error.message : "Unable to load the workspace.";
@@ -571,6 +629,50 @@ document.addEventListener("click", (event) => {
       render();
     }).catch((error) => toast(error instanceof Error ? error.message : "Cancellation failed."));
   }
+  if (action === "select-workflow") {
+    const workflowId = target.getAttribute("data-workflow-id");
+    Promise.all([api.listWorkflowTasks(state.projectId, workflowId), api.listWorkflowEvents(state.projectId, workflowId)]).then(([tasks, events]) => {
+      state.workflowId = workflowId;
+      state.workflowTasks = tasks.data;
+      state.workflowEvents = normalizeWorkflowEvents(events.data);
+      state.streamState = "idle";
+      render();
+    });
+  }
+  if (action === "toggle-stream") {
+    state.streamState = state.streamState === "open" ? "closed" : state.streamState === "closed" ? "reconnecting" : "open";
+    if (state.streamState === "reconnecting") {
+      Promise.all([api.getWorkflow(state.projectId, state.workflowId), api.listWorkflowEvents(state.projectId, state.workflowId)]).then(([workflow, events]) => {
+        state.workflows = state.workflows.map((item) => item.id === workflow.data.id ? workflow.data : item);
+        state.workflowEvents = normalizeWorkflowEvents(events.data);
+        state.streamState = "open";
+        toast("Mock reconnect refetched the authoritative snapshot.");
+        render();
+      });
+    } else render();
+  }
+  if (action === "next-mock-event") {
+    state.streamState = "open";
+    api.nextMockWorkflowEvent(state.projectId, state.workflowId).then(async (result) => {
+      if (!result.data.event) { toast("No further mock events."); return; }
+      state.workflowEvents = normalizeWorkflowEvents([...state.workflowEvents, result.data.event]);
+      state.workflows = state.workflows.map((item) => item.id === result.data.workflow.id ? result.data.workflow : item);
+      if (result.data.terminal) {
+        const snapshot = await api.getWorkflow(state.projectId, state.workflowId);
+        state.workflows = state.workflows.map((item) => item.id === snapshot.data.id ? snapshot.data : item);
+        state.streamState = "closed";
+        toast("Terminal mock event received; authoritative snapshot refetched.");
+      }
+      render();
+    });
+  }
+  if (action === "workflow-control") {
+    api.controlWorkflow(state.projectId, state.workflowId, target.getAttribute("data-control")).then((result) => {
+      state.workflows = state.workflows.map((item) => item.id === result.data.id ? result.data : item);
+      toast(`Workflow ${result.data.status} in the mock adapter.`);
+      render();
+    }).catch((error) => toast(error instanceof Error ? error.message : "Workflow control failed."));
+  }
   if (action === "repo-detail") {
     const repositoryId = target.getAttribute("data-repository-id");
     Promise.all([api.listRepositorySnapshots(repositoryId), api.getRepositoryTree(repositoryId)]).then(([snapshots, tree]) => {
@@ -610,11 +712,21 @@ document.addEventListener("change", async (event) => {
   if (target.id === "workspace-switcher") await hydrate(target.value);
   if (target.id === "project-switcher") {
     state.projectId = target.value;
-    Promise.all([api.listRepositories(target.value), api.listAssets(target.value), api.listConversations(target.value), api.listAnalysisRequests(target.value)]).then(async ([repositories, assets, conversations, requests]) => {
+    Promise.all([api.listRepositories(target.value), api.listAssets(target.value), api.listConversations(target.value), api.listAnalysisRequests(target.value), api.listWorkflows(target.value)]).then(async ([repositories, assets, conversations, requests, workflows]) => {
       state.repositories = repositories.data;
       state.assets = assets.data;
       state.conversations = conversations.data;
       state.analysisRequests = requests.data;
+      state.workflows = workflows.data;
+      state.workflowId = workflows.data[0]?.id || "";
+      if (state.workflowId) {
+        const [tasks, events] = await Promise.all([api.listWorkflowTasks(target.value, state.workflowId), api.listWorkflowEvents(target.value, state.workflowId)]);
+        state.workflowTasks = tasks.data;
+        state.workflowEvents = normalizeWorkflowEvents(events.data);
+      } else {
+        state.workflowTasks = [];
+        state.workflowEvents = [];
+      }
       state.conversationId = conversations.data[0]?.id || "";
       state.messages = state.conversationId ? (await api.listMessages(target.value, state.conversationId)).data : [];
       navigate(`/app/projects/${target.value}/overview`);

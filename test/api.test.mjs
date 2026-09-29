@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { api, ApiError, createIdempotencyKey } from "../src/api.js";
+import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents } from "../src/api.js";
 
 test("list response uses the documented envelope", async () => {
   const response = await api.listProjects("ws_synase");
@@ -110,4 +110,34 @@ test("analysis receipt remains queued and distinct from workflow execution", asy
   assert.equal(response.data.status, "queued");
   assert.match(response.data.workflowId, /^wf_mock_/);
   assert.equal(response.data.mock, true);
+});
+
+test("workflow events are deduplicated and ordered by sequence", () => {
+  const events = [
+    { eventId: "b", sequence: 2 },
+    { eventId: "a", sequence: 1 },
+    { eventId: "b", sequence: 2 }
+  ];
+  assert.deepEqual(normalizeWorkflowEvents(events).map((event) => event.eventId), ["a", "b"]);
+});
+
+test("workflow tasks remain ordered and scoped", async () => {
+  const tasks = await api.listWorkflowTasks("prj_platform", "wf_mock_arch");
+  assert.ok(tasks.data.every((task) => task.workflowId === "wf_mock_arch"));
+  assert.deepEqual(tasks.data.map((task) => task.sequence), [1, 2, 3, 4]);
+});
+
+test("workflow control validates state transitions", async () => {
+  const paused = await api.controlWorkflow("prj_platform", "wf_mock_arch", "pause");
+  assert.equal(paused.data.status, "paused");
+  const resumed = await api.controlWorkflow("prj_platform", "wf_mock_arch", "resume");
+  assert.equal(resumed.data.status, "running");
+});
+
+test("mock workflow playback advances only on explicit calls", async () => {
+  const before = await api.getWorkflow("prj_platform", "wf_mock_arch");
+  const result = await api.nextMockWorkflowEvent("prj_platform", "wf_mock_arch");
+  const after = await api.getWorkflow("prj_platform", "wf_mock_arch");
+  assert.ok(result.data.event);
+  assert.ok(after.data.progressPercent > before.data.progressPercent);
 });

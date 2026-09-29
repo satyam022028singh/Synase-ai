@@ -148,6 +148,37 @@ export interface AnalysisRequest {
   traceId?: string;
   createdAt: string;
 }
+export type WorkflowStatus = "created" | "queued" | "running" | "waiting" | "completed" | "failed" | "cancelled" | "paused";
+export type TaskStatus = "pending" | "ready" | "running" | "waiting" | "completed" | "failed" | "skipped" | "cancelled";
+export interface WorkflowRun {
+  id: string;
+  projectId: string;
+  requestId: string;
+  executionStrategy: ExecutionStrategy;
+  status: WorkflowStatus;
+  progressPercent: number;
+  currentStage?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface WorkflowTask {
+  id: string;
+  workflowId: string;
+  name: string;
+  layer: "product" | "devops" | "orchestrator" | "mcp" | "reporting";
+  status: TaskStatus;
+  progressPercent: number;
+  sequence: number;
+}
+export interface WorkflowEvent<T = Record<string, unknown>> {
+  eventId: string;
+  eventType: string;
+  workflowId: string;
+  occurredAt: string;
+  sequence: number;
+  schemaVersion: "1";
+  payload: T;
+}
 export interface DomainApi {
   getMe(): Promise<ApiSuccess<User>>;
   listWorkspaces(): Promise<ApiList<Workspace>>;

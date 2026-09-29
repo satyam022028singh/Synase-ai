@@ -153,7 +153,33 @@ const db = {
   analysisRequests: [
     { id: "req_arch", projectId: "prj_platform", conversationId: "conv_arch", requestText: "Review architecture implications and identify decisions that require approval.", requestType: "architecture_review", priority: "high", executionStrategy: "hybrid", assetIds: ["asset_prd"], repositoryIds: ["repo_core"], status: "queued", workflowId: "wf_mock_arch", traceId: "trace_mock_arch", createdAt: "2026-09-29T08:43:00Z", mock: true },
     { id: "req_risk", projectId: "prj_platform", conversationId: "conv_release", requestText: "Assess release risks using the deployment logs.", requestType: "risk_assessment", priority: "normal", executionStrategy: "sequential", assetIds: ["asset_logs"], repositoryIds: [], status: "received", workflowId: "wf_mock_risk", traceId: "trace_mock_risk", createdAt: "2026-09-28T14:19:00Z", mock: true }
-  ]
+  ],
+  workflows: [
+    { id: "wf_mock_arch", projectId: "prj_platform", requestId: "req_arch", executionStrategy: "hybrid", status: "running", progressPercent: 42, currentStage: "context_retrieval", createdAt: "2026-09-29T08:43:00Z", updatedAt: "2026-09-29T08:46:00Z", mock: true },
+    { id: "wf_mock_risk", projectId: "prj_platform", requestId: "req_risk", executionStrategy: "sequential", status: "waiting", progressPercent: 18, currentStage: "capability_mapping", createdAt: "2026-09-28T14:19:00Z", updatedAt: "2026-09-28T14:22:00Z", mock: true }
+  ],
+  workflowTasks: [
+    { id: "task_1", workflowId: "wf_mock_arch", name: "Detect intent", layer: "orchestrator", status: "completed", progressPercent: 100, sequence: 1 },
+    { id: "task_2", workflowId: "wf_mock_arch", name: "Retrieve project context", layer: "orchestrator", status: "running", progressPercent: 60, sequence: 2 },
+    { id: "task_3", workflowId: "wf_mock_arch", name: "Map capabilities", layer: "mcp", status: "ready", progressPercent: 0, sequence: 3 },
+    { id: "task_4", workflowId: "wf_mock_arch", name: "Generate decision report", layer: "reporting", status: "pending", progressPercent: 0, sequence: 4 },
+    { id: "task_5", workflowId: "wf_mock_risk", name: "Detect intent", layer: "orchestrator", status: "completed", progressPercent: 100, sequence: 1 },
+    { id: "task_6", workflowId: "wf_mock_risk", name: "Await repository context", layer: "orchestrator", status: "waiting", progressPercent: 20, sequence: 2 }
+  ],
+  workflowEvents: [
+    { eventId: "evt_1", eventType: "workflow.created", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:43:00Z", sequence: 1, schemaVersion: "1", payload: { status: "created", progressPercent: 0 } },
+    { eventId: "evt_2", eventType: "workflow.stage.started", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:44:00Z", sequence: 2, schemaVersion: "1", payload: { stage: "intent_detection", progressPercent: 10 } },
+    { eventId: "evt_3", eventType: "workflow.stage.completed", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:45:00Z", sequence: 3, schemaVersion: "1", payload: { stage: "intent_detection", progressPercent: 25 } },
+    { eventId: "evt_4", eventType: "workflow.stage.started", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:46:00Z", sequence: 4, schemaVersion: "1", payload: { stage: "context_retrieval", progressPercent: 42 } }
+  ],
+  workflowScripts: {
+    wf_mock_arch: [
+      { eventId: "demo_evt_5", eventType: "workflow.stage.completed", workflowId: "wf_mock_arch", sequence: 5, schemaVersion: "1", payload: { stage: "context_retrieval", progressPercent: 55 } },
+      { eventId: "demo_evt_6", eventType: "task.started", workflowId: "wf_mock_arch", sequence: 6, schemaVersion: "1", payload: { taskId: "task_3", stage: "capability_mapping", progressPercent: 64 } },
+      { eventId: "demo_evt_7", eventType: "validation.completed", workflowId: "wf_mock_arch", sequence: 7, schemaVersion: "1", payload: { stage: "validation", progressPercent: 82 } },
+      { eventId: "demo_evt_8", eventType: "workflow.completed", workflowId: "wf_mock_arch", sequence: 8, schemaVersion: "1", payload: { status: "completed", progressPercent: 100 } }
+    ]
+  }
 };
 
 function page(data) {
@@ -427,8 +453,67 @@ export const mockApi = {
     if (!["received", "validated", "queued", "processing"].includes(request.status)) throw new ApiError("RESOURCE_CONFLICT", "This request cannot be cancelled.", 409);
     request.status = "cancelled";
     return { data: { ...request } };
+  },
+  async listWorkflows(projectId) {
+    await sleep();
+    return page(db.workflows.filter((workflow) => workflow.projectId === projectId));
+  },
+  async getWorkflow(projectId, workflowId) {
+    await sleep();
+    const workflow = db.workflows.find((item) => item.projectId === projectId && item.id === workflowId);
+    if (!workflow) throw new ApiError("RESOURCE_NOT_FOUND", "Workflow was not found.", 404);
+    return { data: { ...workflow } };
+  },
+  async listWorkflowTasks(projectId, workflowId) {
+    await sleep();
+    await this.getWorkflow(projectId, workflowId);
+    return page(db.workflowTasks.filter((task) => task.workflowId === workflowId).sort((a, b) => a.sequence - b.sequence));
+  },
+  async listWorkflowEvents(projectId, workflowId) {
+    await sleep();
+    await this.getWorkflow(projectId, workflowId);
+    return page(db.workflowEvents.filter((event) => event.workflowId === workflowId).sort((a, b) => a.sequence - b.sequence));
+  },
+  async controlWorkflow(projectId, workflowId, action) {
+    await sleep(360);
+    const workflow = db.workflows.find((item) => item.projectId === projectId && item.id === workflowId);
+    if (!workflow) throw new ApiError("RESOURCE_NOT_FOUND", "Workflow was not found.", 404);
+    const allowed = {
+      pause: ["running", "waiting"],
+      resume: ["paused", "waiting"],
+      cancel: ["created", "queued", "running", "waiting", "paused"]
+    };
+    if (!allowed[action]?.includes(workflow.status)) throw new ApiError("RESOURCE_CONFLICT", `Workflow cannot ${action} from ${workflow.status}.`, 409);
+    workflow.status = action === "pause" ? "paused" : action === "resume" ? "running" : "cancelled";
+    workflow.updatedAt = new Date().toISOString();
+    return { data: { ...workflow } };
+  },
+  async nextMockWorkflowEvent(projectId, workflowId) {
+    await sleep(260);
+    const workflow = db.workflows.find((item) => item.projectId === projectId && item.id === workflowId);
+    if (!workflow) throw new ApiError("RESOURCE_NOT_FOUND", "Workflow was not found.", 404);
+    const script = db.workflowScripts[workflowId] || [];
+    const emitted = new Set(db.workflowEvents.filter((event) => event.workflowId === workflowId).map((event) => event.eventId));
+    const template = script.find((event) => !emitted.has(event.eventId));
+    if (!template) return { data: { event: null, terminal: ["completed", "failed", "cancelled"].includes(workflow.status) } };
+    const event = { ...template, occurredAt: new Date().toISOString() };
+    db.workflowEvents.push(event);
+    workflow.progressPercent = event.payload.progressPercent ?? workflow.progressPercent;
+    workflow.currentStage = event.payload.stage ?? workflow.currentStage;
+    if (event.eventType === "workflow.completed") workflow.status = "completed";
+    workflow.updatedAt = event.occurredAt;
+    return { data: { event, workflow: { ...workflow }, terminal: event.eventType === "workflow.completed" } };
   }
 };
+
+export function normalizeWorkflowEvents(events) {
+  const byId = new Map();
+  for (const event of events) {
+    if (!event?.eventId || !Number.isFinite(event.sequence)) continue;
+    if (!byId.has(event.eventId)) byId.set(event.eventId, event);
+  }
+  return [...byId.values()].sort((a, b) => a.sequence - b.sequence);
+}
 
 export const liveApi = {
   async request() {
