@@ -1,0 +1,63 @@
+// @ts-check
+import { phase12Api } from "./phase12-api.js";
+
+const state = { dashboard: null, loading: false, error: "" };
+const route = () => new URLSearchParams(location.search).get("route") || location.hash.slice(1) || "/app/dashboard";
+const esc = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" })[char]);
+const badge = (value) => `<span class="status ${esc(String(value))}">${esc(String(value).replaceAll("_", " "))}</span>`;
+const formatDate = (value) => new Date(value).toLocaleString();
+const go = (href) => `data-p12-route="${esc(href)}"`;
+
+function installPhaseMarker() {
+  const chip = document.querySelector(".phase-chip");
+  if (chip) chip.innerHTML = `<strong>● Build ready</strong><br>Phases 0–12 · Mock adapter`;
+}
+
+function metricCard(item) {
+  return `<article class="card p12-metric"><div class="card-body"><span class="small subtle">${esc(item.label)}</span><strong>${esc(item.value)}</strong><span>${esc(item.detail)}</span></div></article>`;
+}
+
+function dashboardView(data) {
+  const metrics = data.metrics.map(metricCard).join("");
+  const attention = data.attention.map((item) => `<button class="p12-attention" ${go(item.href)}><span class="p12-attention-icon">${item.kind === "approval" ? "✓" : item.kind === "workflow" ? "▶" : item.kind === "finding" ? "!" : item.kind === "integration" ? "I" : "C"}</span><span><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small><small>${item.proposed ? "AI-proposed · " : ""}Executed: ${item.executed ? "Yes" : "No"}</small></span>${badge(item.severity)}</button>`).join("");
+  const projects = data.projects.map((item) => `<tr><td><strong>${esc(item.name)}</strong><br><span class="small subtle">${esc(item.summary)}</span></td><td>${badge(item.lifecycle)}</td><td>${badge(item.health)}</td><td><button class="link-cell" ${go(`/app/projects/${item.id}/overview`)}>Open</button></td></tr>`).join("");
+  const workflows = data.workflows.map((item) => `<article class="p12-run"><div><strong>${esc(item.label)}</strong><small>${esc(item.id)}</small></div>${badge(item.status)}<div class="p12-progress" aria-label="${esc(item.progressPercent)} percent authoritative progress"><span style="width:${Math.max(0, Math.min(100, item.progressPercent))}%"></span></div><b>${esc(item.progressPercent)}%</b></article>`).join("");
+  const readiness = data.readiness.map((item) => `<div class="p12-readiness"><span>${esc(item.label)}</span>${badge(item.status)}<small>${esc(item.detail)}</small></div>`).join("");
+  const activity = data.activity.map((item) => `<li><span class="p12-activity-dot"></span><div><strong>${esc(item.actor)}</strong> ${esc(item.action)}<small>${esc(item.source)} event · ${esc(formatDate(item.occurredAt))} · Operational history, not audit</small></div></li>`).join("");
+  return `<div class="breadcrumbs"><span>SYNASE AI</span><span>/</span><b>Dashboard</b></div><header class="page-header p12-header"><div><div class="eyebrow">Phase 12 · Decision intelligence overview</div><h1>Workspace dashboard</h1><p class="page-copy">Attention, projects, workflows, outputs, and integration readiness without fabricated backend aggregation.</p></div><span class="p12-mode">Mock adapter · selected project scope</span></header><div class="alert">Workspace aggregate contract unresolved. This deterministic view is labeled <strong>${esc(data.scope.replaceAll("_", " "))}</strong>; it is not proof of backend connectivity.</div><section class="p12-metrics" aria-label="Workspace metrics">${metrics}</section><div class="p12-layout"><section class="card p12-panel"><div class="card-head"><div><h2>Needs attention</h2><span class="small subtle">Review queue · no downstream execution</span></div><b>${data.attention.length}</b></div><div class="card-body p12-attention-list">${attention}</div></section><section class="card p12-panel"><div class="card-head"><div><h2>Integration readiness</h2><span class="small subtle">Configuration, contracts, and connectivity stay distinct</span></div>${badge("partial")}</div><div class="card-body p12-readiness-list">${readiness}</div></section></div><div class="p12-layout p12-layout-wide"><section class="card p12-panel"><div class="card-head"><div><h2>Project portfolio</h2><span class="small subtle">Lifecycle and health are separate</span></div><button class="button" ${go("/app/projects")}>View all</button></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Lifecycle</th><th>Health</th><th></th></tr></thead><tbody>${projects}</tbody></table></div></section><section class="card p12-panel"><div class="card-head"><div><h2>Workflow status</h2><span class="small subtle">Authoritative fixture progress only</span></div><button class="button" ${go(`/app/projects/${data.selectedProjectId}/runs`)}>Runs</button></div><div class="card-body p12-runs">${workflows}</div></section></div><div class="p12-layout"><section class="card p12-panel"><div class="card-head"><div><h2>Reports and approvals</h2><span class="small subtle">Approval never implies execution</span></div><button class="button" ${go("/app/approvals")}>Review</button></div><div class="card-body p12-output-grid"><div><span>Review required</span><strong>${data.outputs.reports.reviewRequired}</strong></div><div><span>Pending approvals</span><strong>${data.outputs.approvals.pending}</strong></div><div><span>Published</span><strong>${data.outputs.reports.published}</strong></div><div><span>Executed</span><strong>${data.outputs.approvals.executed}</strong></div></div></section><section class="card p12-panel"><div class="card-head"><div><h2>Recent activity</h2><span class="small subtle">Operational history · distinct from audit</span></div><button class="button" ${go("/app/activity")}>Activity</button></div><div class="card-body"><ul class="p12-activity">${activity}</ul></div></section></div><footer class="p12-safety"><strong>Validation boundary</strong><span>External contacted: No</span><span>Imported records: 0</span><span>Secrets exposed: No</span><span>Downstream actions executed: No</span></footer>`;
+}
+
+function render() {
+  installPhaseMarker();
+  if (route() !== "/app/dashboard") return;
+  const main = document.querySelector("#main");
+  if (!main) return;
+  main.dataset.phase12View = route();
+  if (state.loading) main.innerHTML = `<div class="loading"><div><div class="spinner"></div>Loading dashboard contract…</div></div>`;
+  else if (state.error) main.innerHTML = `<section class="card empty"><div><h1>Dashboard unavailable</h1><p>${esc(state.error)}</p><button class="button primary" data-p12-retry>Retry</button></div></section>`;
+  else if (state.dashboard) main.innerHTML = dashboardView(state.dashboard);
+}
+
+async function load() {
+  if (route() !== "/app/dashboard" || state.loading) return;
+  state.loading = true; state.error = ""; render();
+  try { state.dashboard = (await phase12Api.getDashboard()).data; }
+  catch (error) { state.error = error instanceof Error ? error.message : "Dashboard contract failed."; }
+  finally { state.loading = false; render(); }
+}
+
+document.addEventListener("click", (event) => {
+  const target = event.target instanceof Element ? event.target.closest("[data-p12-route],[data-p12-retry]") : null;
+  if (!target) return;
+  const href = target.getAttribute("data-p12-route");
+  if (href) location.hash = href;
+  else load();
+});
+window.addEventListener("hashchange", () => route() === "/app/dashboard" ? load() : installPhaseMarker());
+const observer = new MutationObserver(() => {
+  installPhaseMarker();
+  const main = document.querySelector("#main");
+  if (route() === "/app/dashboard" && main && main.dataset.phase12View !== route() && !state.loading) load();
+});
+observer.observe(document.body, { childList: true, subtree: true });
+queueMicrotask(load);
