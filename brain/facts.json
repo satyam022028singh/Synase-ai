@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-10-01T11:23:40.749Z",
+  "product": {
+    "name": "synase-ai-frontend",
+    "version": "0.12.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "build": "node scripts/build.mjs",
+      "test": "node --test test/*.test.mjs",
+      "dev": "node scripts/serve.mjs",
+      "start": "node scripts/serve.mjs",
+      "brain": "node scripts/brain-extract.mjs && node scripts/brain.mjs",
+      "brain:query": "node scripts/brain-query.mjs"
+    }
+  },
+  "files": {
+    "src/api.js": {
+      "lines": 852,
+      "bytes": 58026
+    },
+    "src/app.js": {
+      "lines": 1369,
+      "bytes": 110135
+    },
+    "src/phase11-api.js": {
+      "lines": 71,
+      "bytes": 10310
+    },
+    "src/phase11.js": {
+      "lines": 48,
+      "bytes": 12563
+    },
+    "src/phase12-api.js": {
+      "lines": 135,
+      "bytes": 9576
+    },
+    "src/phase12.js": {
+      "lines": 63,
+      "bytes": 7760
+    },
+    "src/types.d.ts": {
+      "lines": 312,
+      "exports": 70
+    },
+    "src/phase11-types.d.ts": {
+      "lines": 18,
+      "exports": 17
+    },
+    "src/phase12-types.d.ts": {
+      "lines": 10,
+      "exports": 9
+    },
+    "test/api.test.mjs": {
+      "lines": 293,
+      "tests": 39
+    },
+    "test/phase11.test.mjs": {
+      "lines": 14,
+      "tests": 9
+    },
+    "test/phase11-extra.test.mjs": {
+      "lines": 8,
+      "tests": 4
+    },
+    "test/phase12.test.mjs": {
+      "lines": 17,
+      "tests": 12
+    }
+  },
+  "typeNames": {
+    "src/types.d.ts": [
+      "PlatformRole",
+      "WorkspaceRole",
+      "ProjectRole",
+      "ProjectLifecycleStatus",
+      "ApiSuccess",
+      "PageMeta",
+      "ApiList",
+      "ApiErrorShape",
+      "User",
+      "Workspace",
+      "WorkspaceMember",
+      "Project",
+      "ProjectMember",
+      "DashboardMetric",
+      "ActivityItem",
+      "RepositoryProvider",
+      "RepositoryConnectionStatus",
+      "Repository",
+      "RepositorySnapshot",
+      "InputType",
+      "InputProcessingStatus",
+      "SecurityScanStatus",
+      "ExtractionStatus",
+      "Asset",
+      "UploadInitiationResponse",
+      "ConversationStatus",
+      "MessageRole",
+      "MessageStatus",
+      "ConversationSession",
+      "ConversationMessage",
+      "AnalysisPriority",
+      "ExecutionStrategy",
+      "AnalysisRequestStatus",
+      "AnalysisRequest",
+      "WorkflowStatus",
+      "TaskStatus",
+      "WorkflowRun",
+      "WorkflowTask",
+      "WorkflowEvent",
+      "McpRequest",
+      "McpTraceStage",
+      "McpModel",
+      "McpTool",
+      "McpServer",
+      "Requirement",
+      "ProductFeature",
+      "RoadmapItem",
+      "Finding",
+      "DevOpsRecommendation",
+      "DeploymentPlan",
+      "ContextSensitivity",
+      "ContextTrustLevel",
+      "ContextItem",
+      "MemoryResult",
+      "RetrievalItem",
+      "RetrievalRecord",
+      "KnowledgeNode",
+      "KnowledgeEdge",
+      "KnowledgeGraph",
+      "ReportStatus",
+      "ApprovalStatus",
+      "ApprovalType",
+      "ReportSection",
+      "ReportReference",
+      "DecisionItem",
+      "DecisionReport",
+      "ApprovalComment",
+      "Approval",
+      "ReportExportArtifact",
+      "DomainApi"
+    ],
+    "src/phase11-types.d.ts": [
+      "IntegrationAuthorizationStatus",
+      "IntegrationConnectionStatus",
+      "IntegrationHealthStatus",
+      "IntegrationRunStatus",
+      "AuditOutcome",
+      "SafeAuditMetadata",
+      "IntegrationCapability",
+      "IntegrationProvider",
+      "IntegrationHealth",
+      "IntegrationConnection",
+      "IntegrationRun",
+      "IntegrationSyncReceipt",
+      "ActivityActor",
+      "ActivityItem",
+      "AuditActor",
+      "AuditResourceRef",
+      "AuditEvent"
+    ],
+    "src/phase12-types.d.ts": [
+      "AdapterMode",
+      "ContractCheckStatus",
+      "ContractCheck",
+      "IntegrationReadiness",
+      "AttentionItem",
+      "ProjectHealthSummary",
+      "DashboardOverview",
+      "QaCheck",
+      "QaReport"
+    ]
+  },
+  "dbKeys": [
+    "user",
+    "workspaces",
+    "projects",
+    "workspaceMembers",
+    "activity",
+    "repositories",
+    "snapshots",
+    "assets",
+    "conversations",
+    "messages",
+    "analysisRequests",
+    "workflows",
+    "workflowTasks",
+    "workflowEvents",
+    "workflowScripts",
+    "mcpRequests",
+    "mcpTrace",
+    "mcpModels",
+    "mcpTools",
+    "mcpServers",
+    "mcpDirectories",
+    "discoveryRuns",
+    "requirements",
+    "productFeatures",
+    "productStrategy",
+    "roadmapItems",
+    "devopsSummary",
+    "findings",
+    "devopsRecommendations",
+    "dependencies",
+    "testSuggestions",
+    "deploymentPlans",
+    "contextItems",
+    "memoryItems",
+    "retrievalHistory",
+    "knowledgeGraphs",
+    "reports",
+    "approvals",
+    "exportArtifacts"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "brain": "node scripts/brain-extract.mjs && node scripts/brain.mjs",
+    "brain:query": "node scripts/brain-query.mjs"
+  },
+  "buildAssets": [
+    "index.html",
+    "src/styles.css",
+    "src/app.js",
+    "src/api.js",
+    "src/types.d.ts",
+    "src/phase11.css",
+    "src/phase11.js",
+    "src/phase11-api.js",
+    "src/phase11-types.d.ts",
+    "src/phase12.css",
+    "src/phase12.js",
+    "src/phase12-api.js",
+    "src/phase12-types.d.ts"
+  ],
+  "indexLoads": [],
+  "serveTargets": "src/"
+}

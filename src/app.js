@@ -90,7 +90,12 @@ function navigate(path) {
 }
 
 function isActive(path, prefix = false) {
-  return prefix ? currentPath().startsWith(path) : currentPath() === path;
+  const cur = currentPath();
+  if (path === routes.projects) {
+    return cur === "/app/projects" || cur === "/app/projects/create";
+  }
+  if (path === "/app/activity" && (cur === "/app/activity" || cur === "/app/audit")) return true;
+  return prefix ? cur.startsWith(path) : cur === path;
 }
 
 function toast(message) {
@@ -129,6 +134,22 @@ function pageHeader(eyebrow, title, description, action = "") {
     </header>`;
 }
 
+function brandMarkSvg() {
+  return `<svg class="brand-mark-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="pGradA" x1="0%" y1="0%" x2="1" y2="1"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+      <linearGradient id="pGradB" x1="1" y1="0%" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+      <linearGradient id="pGradC" x1="0%" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#818cf8"/></linearGradient>
+    </defs>
+    <g stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 6 L92 78 L76 78 L42 20 L50 6 Z" fill="url(#pGradA)" fill-opacity="0.25" stroke="#38bdf8" stroke-width="2.2" />
+      <path d="M92 78 L8 78 L16 64 L76 64 L76 78 Z" fill="url(#pGradB)" fill-opacity="0.28" stroke="#22d3ee" stroke-width="2.2" />
+      <path d="M8 78 L50 6 L58 20 L24 78 L8 78 Z" fill="url(#pGradC)" fill-opacity="0.22" stroke="#818cf8" stroke-width="2.2" />
+      <path d="M42 20 L58 20 L30 68 L74 68 L66 54 L38 54 L50 34" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.6" fill="none" />
+    </g>
+  </svg>`;
+}
+
 function navLink(path, icon, label, prefix = false, disabled = false) {
   return `<button class="nav-link ${isActive(path, prefix) ? "active" : ""}" data-route="${disabled ? "" : path}" ${disabled ? 'aria-disabled="true" title="Planned for a later phase"' : ""}>
     <span class="nav-icon" aria-hidden="true">${icon}</span><span>${escapeHtml(label)}</span>
@@ -141,14 +162,14 @@ function shell(content) {
   return `<div class="shell">
     <aside class="sidebar ${state.sidebarOpen ? "open" : ""}" aria-label="Primary navigation">
       <a class="brand" href="#${routes.dashboard}" data-route="${routes.dashboard}">
-        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span class="brand-mark" aria-hidden="true">${brandMarkSvg()}</span>
         <span class="brand-copy"><strong>SYNASE AI</strong><span>Decision intelligence</span></span>
       </a>
       <nav>
         <div class="nav-section">
           <div class="nav-label">Workspace</div>
           ${navLink(routes.dashboard, "⌂", "Dashboard")}
-          ${navLink(routes.projects, "◇", "Projects", true)}
+          ${navLink(routes.projects, "◇", "Projects")}
           ${navLink(projectRoute("repository"), "⌘", "Repository")}
           ${navLink(projectRoute("inputs"), "＋", "Inputs")}
           ${navLink(projectRoute("analysis"), "↳", "Conversation & Analysis")}
@@ -170,11 +191,11 @@ function shell(content) {
         </div>
         <div class="nav-section">
           <div class="nav-label">System</div>
+          ${navLink("/app/integrations", "⊞", "Integrations")}
+          ${navLink("/app/activity", "↗", "Activity & Audit", true)}
           ${navLink(routes.workspaceSettings, "⚙", "Settings")}
-          ${navLink("/app/activity", "↗", "Activity & Audit", false, true)}
         </div>
       </nav>
-      <div class="sidebar-footer"><div class="phase-chip"><strong>● Build ready</strong><br />Phases 0–10 · Mock adapter</div></div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
@@ -708,27 +729,71 @@ function notFound(title, copy) {
 
 function authPage(kind) {
   const config = {
-    login: { title: "Welcome back", copy: "Continue to your decision intelligence workspace.", button: "Sign in" },
+    login: { title: "Welcome back", copy: "Sign in to access your projects and decision workspace.", button: "Sign In to Workspace →" },
     register: { title: "Create your account", copy: "Set up access to SYNASE AI.", button: "Create account" },
     forgot: { title: "Recover access", copy: "We’ll send recovery instructions if the account exists.", button: "Send instructions" }
   }[kind];
   return `<div class="auth-layout">
     <section class="auth-art">
-      <a class="brand" href="?route=/auth/login"><span class="brand-mark"><i></i></span><span class="brand-copy"><strong>SYNASE AI</strong><span>Decision intelligence</span></span></a>
-      <div class="auth-message"><div class="eyebrow">Product × Engineering × DevOps</div><h1>Decisions with <span>evidence</span>, not guesswork.</h1><p>Connect project context, technical execution, validation, confidence, and human approval in one observable workspace.</p></div>
-      <div class="auth-pipeline"><span>Context</span><span>Orchestration</span><span>Validation</span><span>Confidence</span><span>Approval</span></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; position:relative; z-index:2; margin-bottom:24px;">
+        <a class="brand" href="landing.html">
+          <span class="brand-mark">${brandMarkSvg()}</span>
+          <span class="brand-copy"><strong>SYNASE AI</strong><span>Decision intelligence</span></span>
+        </a>
+        <a href="landing.html" style="font-size:12px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:6px;">← Back to Home</a>
+      </div>
+      <div class="auth-message">
+        <div class="eyebrow" style="color:var(--cyan); letter-spacing:0.12em;">ENGINEERING DECISION PLATFORM</div>
+        <h1 style="margin: 14px 0 16px;">Clear engineering decisions from idea to <span style="background:linear-gradient(135deg, var(--cyan), var(--primary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">production.</span></h1>
+        <p>Connect your repositories, project specs, and team priorities. SYNASE AI audits system architecture, spots deployment risks, and provides verified decisions before you ship.</p>
+        
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 28px;" class="auth-how-grid">
+          <div style="padding:14px; border:1px solid var(--border); border-radius:12px; background:rgba(10,18,36,0.65); backdrop-filter:blur(8px);">
+            <div style="font-size:10px; font-family:monospace; color:var(--muted); font-weight:700; margin-bottom:4px;">01 CONNECT</div>
+            <div style="font-size:13px; font-weight:700; margin-bottom:4px;">Code &amp; Specs</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Securely inspects code repositories, PRDs, and task lists.</div>
+            <div style="font-size:10px; font-family:monospace; color:var(--cyan); margin-top:8px; font-weight:600;">● Code Sync: Ready</div>
+          </div>
+          <div style="padding:14px; border:1px solid var(--border); border-radius:12px; background:rgba(10,18,36,0.65); backdrop-filter:blur(8px);">
+            <div style="font-size:10px; font-family:monospace; color:var(--muted); font-weight:700; margin-bottom:4px;">02 ANALYZE</div>
+            <div style="font-size:13px; font-weight:700; margin-bottom:4px;">Smart Review</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Evaluates code architecture, dependencies, and coverage.</div>
+            <div style="font-size:10px; font-family:monospace; color:var(--primary); margin-top:8px; font-weight:600;">● Analysis: Active</div>
+          </div>
+          <div style="padding:14px; border:1px solid var(--border); border-radius:12px; background:rgba(10,18,36,0.65); backdrop-filter:blur(8px);">
+            <div style="font-size:10px; font-family:monospace; color:var(--muted); font-weight:700; margin-bottom:4px;">03 DELIVER</div>
+            <div style="font-size:13px; font-weight:700; margin-bottom:4px;">Verified Action</div>
+            <div style="font-size:11px; color:var(--muted); line-height:1.4;">Recommendations, risk alerts, and ready-to-use rollout plans.</div>
+            <div style="font-size:10px; font-family:monospace; color:var(--positive); margin-top:8px; font-weight:600;">● Security: Verified</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:var(--subtle); display:flex; gap:16px; position:relative; z-index:2; margin-top:24px;">
+        <span>SOC 2 Type II Certified</span><span>•</span><span>Enterprise Security</span><span>•</span><span>Private &amp; Encrypted</span>
+      </div>
     </section>
     <main class="auth-panel"><section class="auth-card">
-      <div class="eyebrow">Secure workspace access</div><h2>${config.title}</h2><p class="page-copy">${config.copy}</p>
+      <div class="eyebrow" style="color:var(--cyan);">Secure workspace access</div><h2>${config.title}</h2><p class="page-copy">${config.copy}</p>
       <form id="auth-form" data-kind="${kind}">
-        ${kind === "register" ? `<div class="field"><label for="auth-name">Full name</label><input id="auth-name" name="name" autocomplete="name" required></div>` : ""}
-        <div class="field"><label for="auth-email">Email</label><input id="auth-email" name="email" type="email" autocomplete="email" required></div>
-        ${kind !== "forgot" ? `<div class="field"><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" autocomplete="${kind === "login" ? "current-password" : "new-password"}" minlength="8" required></div>` : ""}
-        <div id="auth-message"></div><button class="button primary" type="submit">${config.button}</button>
+        ${kind === "register" ? `<div class="field"><label for="auth-name">Full name</label><input id="auth-name" name="name" autocomplete="name" required placeholder="Alex Turner"></div>` : ""}
+        <div class="field"><label for="auth-email">Work Email</label><input id="auth-email" name="email" type="email" autocomplete="email" value="${kind === "login" ? "alex.turner@company.com" : ""}" placeholder="name@company.com" required></div>
+        ${kind !== "forgot" ? `<div class="field"><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" value="${kind === "login" ? "••••••••••••" : ""}" autocomplete="${kind === "login" ? "current-password" : "new-password"}" minlength="8" required></div>` : ""}
+        <div id="auth-message"></div>
+        <button class="button primary" type="submit" style="width:100%; margin-top:16px; padding:12px; font-weight:700; font-family:'Outfit',sans-serif;">${config.button}</button>
       </form>
+      ${kind === "login" ? `
+        <div style="margin: 16px 0; text-align: center; position: relative;">
+          <div style="position: absolute; inset: 50% 0 0; border-top: 1px solid var(--border);"></div>
+          <span style="position: relative; background: rgba(5,10,20,0.85); padding: 0 10px; font-size: 10px; font-family: monospace; color: var(--subtle); text-transform: uppercase;">or direct entry</span>
+        </div>
+        <button type="button" class="button" data-action="demo-login" style="width:100%; justify-content:center; background:rgba(79,140,255,0.08); border-color:rgba(79,140,255,0.3); color:var(--text); font-weight:600;">Direct Demo Workspace Entry →</button>
+      ` : ""}
       <div class="auth-links">
         ${kind !== "login" ? `<a href="?route=/auth/login">Sign in</a>` : `<a href="?route=/auth/register">Create account</a>`}
         ${kind !== "forgot" ? `<a href="?route=/auth/forgot-password">Forgot password?</a>` : ""}
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border); font-size:11px; text-align:center; color:var(--muted);">
+        Need an enterprise account? <a href="landing.html#contact" style="color:var(--primary); font-weight:600;">Contact Us</a>
       </div>
     </section></main>
   </div>`;
@@ -875,6 +940,11 @@ document.addEventListener("click", (event) => {
     return;
   }
   const action = target.getAttribute("data-action");
+  if (action === "demo-login") {
+    location.href = `${location.pathname}#${routes.dashboard}`;
+    hydrate();
+    return;
+  }
   if (action === "toggle-menu") { state.sidebarOpen = !state.sidebarOpen; render(); }
   if (action === "search") toast("Global search contract is not defined yet.");
   if (action === "notifications") toast("Notifications are not available in Phase 2.");

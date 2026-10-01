@@ -6,8 +6,19 @@ await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await cp(new URL("../src/", import.meta.url), new URL("../dist/src/", import.meta.url), { recursive: true });
 await cp(new URL("../index.html", import.meta.url), new URL("../dist/index.html", import.meta.url));
+await cp(new URL("../landing.html", import.meta.url), new URL("../dist/landing.html", import.meta.url));
+await cp(new URL("../app.html", import.meta.url), new URL("../dist/app.html", import.meta.url));
+try {
+  await cp(new URL("../LOGO/", import.meta.url), new URL("../dist/LOGO/", import.meta.url), { recursive: true });
+  await cp(new URL("../src/assets/favicon.svg", import.meta.url), new URL("../dist/favicon.svg", import.meta.url));
+} catch {}
 
-const files = ["index.html", "src/styles.css", "src/app.js", "src/api.js", "src/types.d.ts", "src/phase11.css", "src/phase11.js", "src/phase11-api.js", "src/phase11-types.d.ts", "src/phase12.css", "src/phase12.js", "src/phase12-api.js", "src/phase12-types.d.ts"];
+const files = [
+  "index.html", "landing.html", "app.html",
+  "src/styles.css", "src/app.js", "src/api.js", "src/types.d.ts",
+  "src/phase11.css", "src/phase11.js", "src/phase11-api.js", "src/phase11-types.d.ts",
+  "src/phase12.css", "src/phase12.js", "src/phase12-api.js", "src/phase12-types.d.ts"
+];
 const manifest = {};
 for (const file of files) {
   const body = await readFile(new URL(`../dist/${file}`, import.meta.url));

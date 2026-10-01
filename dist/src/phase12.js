@@ -9,8 +9,7 @@ const formatDate = (value) => new Date(value).toLocaleString();
 const go = (href) => `data-p12-route="${esc(href)}"`;
 
 function installPhaseMarker() {
-  const chip = document.querySelector(".phase-chip");
-  if (chip) chip.innerHTML = `<strong>● Build ready</strong><br>Phases 0–12 · Mock adapter`;
+  // Managed declaratively
 }
 
 function metricCard(item) {

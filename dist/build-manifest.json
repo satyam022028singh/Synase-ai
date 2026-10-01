@@ -15,59 +15,67 @@
     "Phase 11",
     "Phase 12"
   ],
-  "generatedAt": "2026-10-01T06:18:02.902Z",
+  "generatedAt": "2026-10-01T11:23:40.301Z",
   "files": {
     "index.html": {
-      "bytes": 885,
-      "sha256": "b864ef2f6ef5921f73bf31fe5290ea9f0f0c9785a9a5ea9034a74602a7d8d729"
+      "bytes": 338,
+      "sha256": "93779fd99e20896287302dfb06dad7e3fb3879279fb484bb580ff85d40139f9a"
+    },
+    "landing.html": {
+      "bytes": 83433,
+      "sha256": "95fd9d55547322c66260fb09f9bf61bfb3e62fad9f1f5fae310afba12da86983"
+    },
+    "app.html": {
+      "bytes": 1103,
+      "sha256": "5ddbd74fc69c0dd28f7895e60ed2e443679388ed7c2a4e078bdeacd9eb6ffe11"
     },
     "src/styles.css": {
-      "bytes": 38780,
-      "sha256": "a06e2ffc767d28d18622d0cee84147bfcb5b7c2da3be8e420a53a047fc3f4561"
+      "bytes": 54817,
+      "sha256": "80147c2824c5d2be9be7f20d7a3c79fa786a0c31acd40d7f3e2bb6b9ec493a15"
     },
     "src/app.js": {
-      "bytes": 102843,
-      "sha256": "513abe8ee527d7cf65286a23d943197063fa3bb63342d9208893453003efb991"
+      "bytes": 110135,
+      "sha256": "060b00f0b7b6cf72cd2c8d9ef9cbdcf7b2cff5bbd8276021b7f06b206ddffde4"
     },
     "src/api.js": {
-      "bytes": 57175,
-      "sha256": "773e9edd6831c222b93dafa22c7564eb56a1df437a9842a195962c2ad9f4ec04"
+      "bytes": 58026,
+      "sha256": "6e020eead0960e1d52400f255d4786d43cc46670bd07c36b1b46214ec5f6ebbd"
     },
     "src/types.d.ts": {
-      "bytes": 12322,
-      "sha256": "d09d3e7facbe5415ad3afa9f80dda920b73541f24913894a4cf2be2296170126"
+      "bytes": 12633,
+      "sha256": "d929f3d02b17721137ea7cebdafdebbecab82248255d2ea2a1c70de2b4d5b80f"
     },
     "src/phase11.css": {
-      "bytes": 3385,
-      "sha256": "523cd95c736eee1a001e7dfb4e23abe16da6b89131e00414adcc5e60ce6e5af4"
+      "bytes": 3386,
+      "sha256": "147a06833c957dd75871e348ede728e50bdbc6f1c77d4382c6b168f6475b4aa8"
     },
     "src/phase11.js": {
-      "bytes": 13206,
-      "sha256": "132f6e2224d8b836ceec3982d7097224e8eb7661625f7f42aebfa26c9d1fb6f3"
+      "bytes": 12563,
+      "sha256": "9d3c4d9d277b0dde74578a2081de5c36f803a8160983a28d784d6eedf7ab6ad3"
     },
     "src/phase11-api.js": {
-      "bytes": 10240,
-      "sha256": "b22c9624143db8291f14ab0d1ee2f003f7611ce01816f4c5b3ab43fadc8a317a"
+      "bytes": 10310,
+      "sha256": "81df3fb6e3d66619ecf3281e4b3efdadea23bbb7b10cf16ff0204d05048b13ce"
     },
     "src/phase11-types.d.ts": {
-      "bytes": 2909,
-      "sha256": "a94ebf4d9a6ae2f1ebcc7766dc969a223caf56507b65c1b121e1c6b0fba2ccfa"
+      "bytes": 2926,
+      "sha256": "37cb12ebfedf107514483047b8895c0aaed3fe72fc5a25ed2d45ad491fbe1182"
     },
     "src/phase12.css": {
-      "bytes": 3981,
-      "sha256": "dcbb2eb850c3ad963ad0aff00abd5e89de0292175fd9ac8319c7ccca651006ac"
+      "bytes": 3982,
+      "sha256": "9d54a51627306c54de0a41b4f693d09f02acd4afcf79e710455fb111d7416728"
     },
     "src/phase12.js": {
-      "bytes": 7823,
-      "sha256": "967805c3b3b3734be80d62d4a15f1b433ee24e7edaac597d8b8cd81d75fa81fa"
+      "bytes": 7760,
+      "sha256": "8694c6425c137e3bf691fe4586f9a8e3d110f37a15826bcc1fc1dc4a5c9190ab"
     },
     "src/phase12-api.js": {
-      "bytes": 9442,
-      "sha256": "4577835fbb3f5b69cc5d663a4df023998e1eb334deb30b132ce0ad6e73b53406"
+      "bytes": 9576,
+      "sha256": "cedda5dda149d81a8e9228d56db73e44b840ed5e0da8754dbc1b9aa68158fdcf"
     },
     "src/phase12-types.d.ts": {
-      "bytes": 2161,
-      "sha256": "ce105d8e13c18c3c58e907f1eb1e9882204ad9e4563eb08373f2c8b265e6ec4b"
+      "bytes": 2170,
+      "sha256": "1f281e8ca57baf384c1463bd537784fe8fe6eba1875241c847a3c70a4736f75f"
     }
   }
 }

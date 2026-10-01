@@ -25,9 +25,7 @@ function audit() {
   return `${header("Phase 11 · Read-only projection", "Audit", "Immutable project-scoped events with safe metadata and request/correlation identifiers.")}${tabs("audit")}<div class="alert">Provisional route · Mock fixtures do not claim security-grade completeness or retention.</div><form class="filter-panel" id="p11-audit-filter"><label>Actor<select name="actor"><option value="">All actors</option><option value="usr_satyam">Satyam Singh</option><option value="usr_maya">Maya Chen</option><option value="system">System</option></select></label><label>Action<input name="action" placeholder="integration"></label><label>Outcome<select name="outcome"><option value="">All outcomes</option><option>success</option><option>accepted</option><option>warning</option></select></label><button class="button">Apply filters</button></form><div class="audit-layout"><div class="table-wrap"><table><thead><tr><th>Event</th><th>Actor</th><th>Action</th><th>Resource</th><th>Outcome</th><th>Timestamp</th></tr></thead><tbody>${rows}</tbody></table></div>${detail}</div>`;
 }
 function installNav() {
-  const nav = document.querySelector(".sidebar nav"); if (!nav || nav.querySelector("[data-phase11-nav]")) return;
-  nav.insertAdjacentHTML("beforeend", `<div class="nav-section" data-phase11-nav><div class="nav-label">Phase 11</div><button class="nav-link" data-p11-route="/app/integrations"><span class="nav-icon">I</span><span>Integrations</span></button><button class="nav-link" data-p11-route="/app/activity"><span class="nav-icon">↗</span><span>Activity</span></button><button class="nav-link" data-p11-route="/app/audit"><span class="nav-icon">§</span><span>Audit</span></button></div>`);
-  const chip = document.querySelector(".phase-chip"); if (chip) chip.innerHTML = `<strong>● Build ready</strong><br>Phases 0–11 · Mock adapter`;
+  // Navigation is managed declaratively by the main shell
 }
 function render() {
   installNav(); if (!isPhase11()) return; const main = document.querySelector("#main"); if (!main) return;

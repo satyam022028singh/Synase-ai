@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "brain": "node scripts/brain-extract.mjs && node scripts/brain.mjs",
+    "brain:query": "node scripts/brain-query.mjs"
   }
 }
