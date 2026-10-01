@@ -295,7 +295,8 @@ Do not infer these behaviors from fixtures or UI copy.
 - `dist/` — generated static production build
 - `dist/build-manifest.json` — asset sizes and SHA-256 digests
 - `phase12-validation.json` — validation evidence
-- `SYNASE_AI_Phases_0_12_Frontend.zip` — packaged source and production build
+
+Clone the repository to obtain the complete project. Generated ZIP archives are intentionally not committed.
 
 ## Project status
 

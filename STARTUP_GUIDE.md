@@ -250,7 +250,8 @@ The latest release evidence is stored in:
 
 - `phase12-validation.json`
 - `dist/build-manifest.json`
-- `SYNASE_AI_Phases_0_12_Frontend.zip`
+
+Use `git clone` or `git pull` to obtain the complete project. Generated ZIP archives are intentionally excluded from version control.
 
 `phase12-validation.json` records:
 

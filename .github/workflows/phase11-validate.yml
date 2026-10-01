@@ -1,4 +1,4 @@
-name: Phase 12 validation and package
+name: Phase 12 validation
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
     branches: [main]
     paths-ignore:
       - "dist/**"
-      - "SYNASE_AI_Phases_0_12_Frontend.zip"
       - "phase12-validation.json"
 
 permissions:
@@ -49,21 +48,15 @@ jobs:
             "validatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
-      - name: Package source and production build
-        shell: bash
-        run: |
-          rm -f SYNASE_AI_Phases_0_12_Frontend.zip
-          zip -qr SYNASE_AI_Phases_0_12_Frontend.zip . \
-            -x '.git/*' '.github/*' 'node_modules/*' 'phase12-test-output.log' 'SYNASE_AI_Phases_0_12_Frontend.zip'
-      - name: Commit validated build and package
+      - name: Commit validated build
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist phase12-validation.json SYNASE_AI_Phases_0_12_Frontend.zip
+          git add dist phase12-validation.json
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "chore: validate and package phase 12 [skip ci]"
+            git commit -m "chore: validate phase 12 [skip ci]"
             git push origin HEAD:main
           fi
