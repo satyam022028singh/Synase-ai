@@ -157,9 +157,17 @@ There are currently no third-party package dependencies, so an install step is n
 
 The prototype uses hash-based navigation so it can run from any static file server.
 
+### Chat (standalone)
+
+The post-login surface. Renders outside the console shell — no sidebar, no
+topbar — with a header toggle that switches to Work.
+
+- `#/app/chat` — surface toggle, contextual mode menu, composer, artifact panel
+- `#/app/chat/:sessionId`
+
 ### Workspace and project
 
-- `#/app/dashboard`
+- `#/app/dashboard` — the Work view
 - `#/app/projects`
 - `#/app/projects/create`
 - `#/app/projects/:projectId/overview`
@@ -215,8 +223,9 @@ A `?route=/app/...` query parameter is also recognized by the prototype and take
 │   ├── context/              # Shared context + knowledge pages + api
 │   ├── outputs/              # Reports + approvals pages + api
 │   ├── integrations/         # Integrations/activity/audit pages + api
+│   ├── work/                 # Chat & Work surface: pages, components, constants, api
 │   ├── shared/               # api · state · components · utils · services · types
-│   ├── styles/               # app.css · home/ · integrations/ · landing/
+│   ├── styles/               # app.css · home/ · integrations/ · landing/ · work/
 │   └── assets/               # Branding and images
 ├── test/                     # Node contract tests
 ├── index.html                # Static application entry

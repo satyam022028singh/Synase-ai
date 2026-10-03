@@ -51,11 +51,11 @@ async function handleAuth(event, kind) {
     });
     if (res.ok) {
       closeAuth();
-      window.location.href = 'app.html#/app/dashboard';
+      window.location.href = 'app.html#/app/chat';
     } else if (res.status === 404 || res.status === 0) {
       /* Dev: mock adapter not connected — go straight to app */
       closeAuth();
-      window.location.href = 'app.html#/app/dashboard';
+      window.location.href = 'app.html#/app/chat';
     } else {
       const data = await res.json().catch(() => ({}));
       throw new Error(data?.error?.message || (kind === 'login' ? 'Invalid credentials.' : 'Registration failed.'));
@@ -66,7 +66,7 @@ async function handleAuth(event, kind) {
     } else {
       /* Network down / local dev — fall through to app */
       closeAuth();
-      window.location.href = 'app.html#/app/dashboard';
+      window.location.href = 'app.html#/app/chat';
     }
   } finally {
     btn.disabled = false;
@@ -77,10 +77,10 @@ async function handleAuth(event, kind) {
 /* ── NAV BUTTONS ──────────────────────────────────── */
 document.getElementById('login-btn').addEventListener('click', openAuth);
 document.getElementById('start-now-btn').addEventListener('click', () => {
-  window.location.href = 'app.html#/app/dashboard';
+  window.location.href = 'app.html#/app/chat';
 });
 document.getElementById('hero-start-btn').addEventListener('click', () => {
-  window.location.href = 'app.html#/app/dashboard';
+  window.location.href = 'app.html#/app/chat';
 });
 
 // Auto-open login if route or hash specifies auth

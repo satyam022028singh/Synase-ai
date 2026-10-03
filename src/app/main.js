@@ -15,6 +15,7 @@ import { contextApi } from "../context/api/index.js";
 import { outputsApi } from "../outputs/api/index.js";
 import { phase11Api, createPhase11IdempotencyKey } from "../integrations/api/client.js";
 import { phase12Api } from "../home/workspace/dashboard/api.js";
+import { createWorkController } from "./actions/work.js";
 
 import { state, resetProjectScope } from "../shared/state/store.js";
 import { escapeHtml } from "../shared/utils/format.js";
@@ -49,6 +50,11 @@ export function render() {
     }
   });
 }
+
+/* The Chat & Work surface has its own controller so this module stays an
+   orchestrator rather than an accumulator. render/toast are injected because
+   they close over the router and the shell. */
+const work = createWorkController({ render, toast });
 
 /* ── route-scoped data ────────────────────────────────────────────────
    The former phase12 dashboard and phase11 integrations pages each fetched
@@ -246,6 +252,11 @@ document.addEventListener("click", (event) => {
     ? event.target.closest("[data-route],[data-action]")
     : null;
   if (!target) return;
+  /* dismiss the contextual composer menu on any outside click */
+  if (state.workMenu && !target.closest(".work-menu, .work-plus, .work-chip.is-effort")) {
+    state.workMenu = "";
+    render();
+  }
   const route = target.getAttribute("data-route");
   if (route) {
     event.preventDefault();
@@ -258,7 +269,7 @@ document.addEventListener("click", (event) => {
 
   /* chrome */
   if (action === "demo-login") {
-    location.href = `${location.pathname}#${routes.dashboard}`;
+    location.href = `${location.pathname}#${routes.chat}`;
     hydrate();
     return;
   }
@@ -458,6 +469,9 @@ document.addEventListener("click", (event) => {
     }).catch((error) => { state.integrationError = error instanceof Error ? error.message : "Action failed"; render(); });
   }
   if (action === "audit-close") { state.auditDetail = null; render(); }
+
+  /* Chat & Work owns its own actions */
+  if (work.handleWorkAction(action, target)) return;
 });
 
 /**
@@ -505,6 +519,11 @@ document.addEventListener("change", async (event) => {
 document.addEventListener("input", (event) => {
   const target = event.target;
   if (target instanceof HTMLInputElement && target.id === "project-search") filterProjects();
+  /* the composer is uncontrolled between renders, so mirror it into state
+     without re-rendering on every keystroke */
+  if (target instanceof HTMLInputElement && target.id === "work-input") {
+    state.workComposer = target.value;
+  }
 });
 
 function filterProjects() {
@@ -521,6 +540,14 @@ function filterProjects() {
 document.addEventListener("submit", async (event) => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement)) return;
+
+  /* Chat & Work composer */
+  if (form.id === "work-composer-form") {
+    event.preventDefault();
+    await work.sendWorkMessage();
+    work.focusWorkInput();
+    return;
+  }
 
   /* integrations filters (was src/phase11.js) */
   if (form.id === "integration-activity-filter" || form.id === "integration-audit-filter") {
@@ -596,7 +623,8 @@ document.addEventListener("submit", async (event) => {
     try {
       if (kind === "login") {
         await workspaceApi.login(values);
-        location.href = `${location.pathname}#${routes.dashboard}`;
+        /* signing in lands on Chat, not the Work dashboard */
+        location.href = `${location.pathname}#${routes.chat}`;
         await hydrate();
       } else if (kind === "register") {
         await workspaceApi.register(values);
@@ -710,10 +738,14 @@ document.addEventListener("submit", async (event) => {
 
 /* ── navigation ───────────────────────────────────────────────────── */
 
+/* ── Chat & Work ─────────────────────────────────────────────────── */
+
+
 /** Loads whatever the incoming route needs beyond core hydration. */
 function loadRouteData() {
   const path = currentPath();
   if (path === routes.dashboard) loadDashboard();
+  if (path === routes.chat || path.startsWith(`${routes.chat}/`)) work.loadWork();
   if (isIntegrationsRoute(path)) loadIntegrations();
 }
 

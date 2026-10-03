@@ -3,18 +3,18 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-03T18:59:29.220Z",
+    "generatedAt": "2026-10-03T22:52:04.068Z",
     "version": "0.12.0",
-    "sourceLines": 6244,
+    "sourceLines": 8129,
     "testLines": 332,
-    "trackedFiles": 51,
-    "architectureLayers": 11,
+    "trackedFiles": 57,
+    "architectureLayers": 12,
     "contractTests": 64,
     "typeExports": 96,
-    "dbCollections": 39,
-    "routes": 33,
+    "dbCollections": 42,
+    "routes": 35,
     "serviceMethods": 87,
-    "invariants": 20,
+    "invariants": 22,
     "gaps": 12,
     "risks": 10,
     "openRisks": 8,
@@ -31,6 +31,13 @@
       "backendConnected": false
     },
     {
+      "id": "src/app/actions/work.js",
+      "kind": "source-file",
+      "label": "work.js",
+      "layer": "app",
+      "lines": 292
+    },
+    {
       "id": "src/app/auth.js",
       "kind": "source-file",
       "label": "auth.js",
@@ -42,28 +49,28 @@
       "kind": "source-file",
       "label": "main.js",
       "layer": "app",
-      "lines": 739
+      "lines": 771
     },
     {
       "id": "src/app/paths.js",
       "kind": "source-file",
       "label": "paths.js",
       "layer": "app",
-      "lines": 67
+      "lines": 69
     },
     {
       "id": "src/app/router.js",
       "kind": "source-file",
       "label": "router.js",
       "layer": "app",
-      "lines": 110
+      "lines": 117
     },
     {
       "id": "src/app/shell.js",
       "kind": "source-file",
       "label": "shell.js",
       "layer": "app",
-      "lines": 100
+      "lines": 104
     },
     {
       "id": "src/context/api/index.js",
@@ -141,7 +148,7 @@
       "kind": "source-file",
       "label": "view.js",
       "layer": "home",
-      "lines": 65
+      "lines": 71
     },
     {
       "id": "src/home/workspace/pages/analysis.js",
@@ -254,7 +261,7 @@
       "kind": "source-file",
       "label": "db.js",
       "layer": "shared",
-      "lines": 347
+      "lines": 445
     },
     {
       "id": "src/shared/api/errors.js",
@@ -289,7 +296,7 @@
       "kind": "source-file",
       "label": "mock.js",
       "layer": "shared",
-      "lines": 481
+      "lines": 758
     },
     {
       "id": "src/shared/api/redaction.js",
@@ -317,7 +324,7 @@
       "kind": "source-file",
       "label": "store.js",
       "layer": "shared",
-      "lines": 127
+      "lines": 150
     },
     {
       "id": "src/shared/types/types.d.ts",
@@ -346,7 +353,7 @@
       "kind": "source-file",
       "label": "dashboard.css",
       "layer": "styles",
-      "lines": 2
+      "lines": 8
     },
     {
       "id": "src/styles/integrations/integrations.css",
@@ -361,6 +368,41 @@
       "label": "landing.css",
       "layer": "styles",
       "lines": 904
+    },
+    {
+      "id": "src/styles/work/work.css",
+      "kind": "source-file",
+      "label": "work.css",
+      "layer": "styles",
+      "lines": 749
+    },
+    {
+      "id": "src/work/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "work",
+      "lines": 37
+    },
+    {
+      "id": "src/work/components/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "work",
+      "lines": 194
+    },
+    {
+      "id": "src/work/constants.js",
+      "kind": "source-file",
+      "label": "constants.js",
+      "layer": "work",
+      "lines": 55
+    },
+    {
+      "id": "src/work/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "work",
+      "lines": 103
     },
     {
       "id": "test/api.test.mjs",
@@ -399,7 +441,7 @@
       "kind": "layer",
       "label": "L0 Application shell",
       "ordinal": 0,
-      "responsibility": "Route resolution, one delegated event listener, hydration, route-scoped data loading."
+      "responsibility": "Route resolution, one delegated event listener, hydration, route-scoped data loading, per-surface controllers."
     },
     {
       "id": "l1-view",
@@ -2158,6 +2200,36 @@
       "gap": "No interface exists in any .d.ts file. Frontend and backend will drift silently."
     },
     {
+      "id": "r-chat",
+      "kind": "route",
+      "label": "#/app/chat",
+      "path": "/app/chat",
+      "match": "^/app/chat(?:/([^/]+))?$",
+      "view": "chatPage()",
+      "module": "src/work/pages/index.js",
+      "phase": 14,
+      "navSection": "standalone",
+      "shellWrapped": false,
+      "status": "mock",
+      "backendSupported": false,
+      "navLabel": "Chat",
+      "navHref": "#/app/chat"
+    },
+    {
+      "id": "r-chat-session",
+      "kind": "route",
+      "label": "#/app/chat/:sessionId",
+      "path": "/app/chat/:sessionId",
+      "match": "^/app/chat(?:/([^/]+))?$",
+      "view": "chatPage()",
+      "module": "src/work/pages/index.js",
+      "phase": 14,
+      "navSection": "standalone",
+      "shellWrapped": false,
+      "status": "mock",
+      "backendSupported": false
+    },
+    {
       "id": "r-auth-login",
       "kind": "route",
       "label": "#/auth/login",
@@ -2654,6 +2726,13 @@
       "backendSupported": false
     },
     {
+      "id": "nav-assist",
+      "kind": "nav-section",
+      "label": "Assist",
+      "module": "src/app/shell.js",
+      "items": 1
+    },
+    {
       "id": "nav-workspace",
       "kind": "nav-section",
       "label": "Workspace",
@@ -2780,6 +2859,18 @@
         "audit"
       ],
       "within": "r-integrations"
+    },
+    {
+      "id": "t-surface",
+      "kind": "in-page-tab",
+      "label": "route segment",
+      "state": "route segment",
+      "param": null,
+      "values": [
+        "chat",
+        "work"
+      ],
+      "within": "r-chat"
     },
     {
       "id": "inv-01",
@@ -2987,11 +3078,31 @@
       "id": "inv-20",
       "kind": "invariant",
       "label": "Domains do not import domains",
-      "statement": "product, devops, mcp, context, outputs and integrations import only from shared/ and app/paths.js. shared/ imports nothing outside itself.",
+      "statement": "product, devops, mcp, context, outputs, integrations and work import only from shared/ and app/paths.js. shared/ imports nothing outside itself.",
       "enforcedBy": [
         "ARCHITECTURE.md section 9"
       ],
       "layer": "l0-composition"
+    },
+    {
+      "id": "inv-21",
+      "kind": "invariant",
+      "label": "The work surface calls no model or tool",
+      "statement": "Every assistant reply is a deterministic fixture. The receipt always reports externalContacted, downstreamExecuted and modelInvoked as false.",
+      "enforcedBy": [
+        "shared/api/mock.js runWorkAssistant"
+      ],
+      "layer": "l3-adapter"
+    },
+    {
+      "id": "inv-22",
+      "kind": "invariant",
+      "label": "Chat artifacts are never confirmed state",
+      "statement": "Artifacts carry provenance ai_suggested and render as a proposal, never as authoritative output.",
+      "enforcedBy": [
+        "work/components/index.js workArtifactPanel"
+      ],
+      "layer": "l1-view"
     },
     {
       "id": "gap-01",
@@ -3179,7 +3290,7 @@
       "kind": "risk",
       "label": "Single large orchestration module",
       "severity": "low",
-      "detail": "app/main.js is 700+ lines because it owns hydration, route-scoped loading and every delegated action. It is cohesive but is the next place to split if the surface keeps growing.",
+      "detail": "app/main.js is 771 lines because it owns hydration, route-scoped loading and every delegated action outside a per-surface controller. The Chat & Work controller was extracted to hold the line, but a second extraction will be needed if the surface keeps growing.",
       "where": "src/app/main.js",
       "anchors": "l0-composition"
     },
@@ -3270,6 +3381,22 @@
       "label": "One fixture store, partitioned API surface",
       "decision": "The mock db stays in shared/api/db.js because its tables are cross-referenced; each domain exposes a narrow facade in <domain>/api/index.js instead.",
       "consequence": "There is still exactly one implementation of every method, and the boundary is explicit without rewriting the most-executed file. Cost: the facades add one indirection.",
+      "status": "active"
+    },
+    {
+      "id": "dec-11",
+      "kind": "decision",
+      "label": "Chat renders outside the console shell",
+      "decision": "/app/chat returns its markup without shell(), and the router checks it before the loading branch. Work is the existing dashboard inside the shell.",
+      "consequence": "Signing in opens only the chat canvas, and the console chrome can never flash first. Cost: the chat needs its own header and cannot reuse shell-level controls.",
+      "status": "active"
+    },
+    {
+      "id": "dec-12",
+      "kind": "decision",
+      "label": "Three composer controls, not one cascading menu",
+      "decision": "The + chip is Agent Mode and nothing else; the layer and effort chips each open their own popover. The artifact panel is collapsible and keeps its selection across a collapse.",
+      "consequence": "A session already scoped to Product or DevOps cannot re-pick its layer from Agent Mode, and the panels cannot grow into one list. Cost: three popovers instead of one, each with its own anchor.",
       "status": "active"
     },
     {
@@ -3400,9 +3527,18 @@
     },
     {
       "id": "ph-14",
-      "kind": "phase-planned",
+      "kind": "phase",
       "label": "Phase 14",
       "number": 14,
+      "name": "Chat and Work surfaces",
+      "status": "mock-backed",
+      "capability": "Standalone chat page outside the console shell; surface toggle to Work; three composer controls where the + chip is Agent Mode only and layer/effort open from their own chips; collapsible artifact panel"
+    },
+    {
+      "id": "ph-15",
+      "kind": "phase-planned",
+      "label": "Phase 15",
+      "number": 15,
       "name": "Contract registry and freeze",
       "status": "planned",
       "prereq": null,
@@ -3418,13 +3554,13 @@
       ]
     },
     {
-      "id": "ph-15",
+      "id": "ph-16",
       "kind": "phase-planned",
-      "label": "Phase 15",
-      "number": 15,
+      "label": "Phase 16",
+      "number": 16,
       "name": "Auth and session lifecycle",
       "status": "planned",
-      "prereq": "ph-14",
+      "prereq": "ph-15",
       "rationale": "Replace the hardcoded authenticated flag with a real session contract, capability fields beyond roles, and explicit active-context encoding.",
       "deliverables": [
         "SessionProvider at the composition root",
@@ -3438,13 +3574,13 @@
       ]
     },
     {
-      "id": "ph-16",
+      "id": "ph-17",
       "kind": "phase-planned",
-      "label": "Phase 16",
-      "number": 16,
+      "label": "Phase 17",
+      "number": 17,
       "name": "Backend aggregate endpoints",
       "status": "planned",
-      "prereq": "ph-14",
+      "prereq": "ph-15",
       "rationale": "Give the dashboard real workspace-scoped aggregates so cross-domain pages stop needing browser-side relational reconstruction.",
       "deliverables": [
         "GET /api/v1/dashboard implemented server-side",
@@ -3457,13 +3593,13 @@
       ]
     },
     {
-      "id": "ph-17",
+      "id": "ph-18",
       "kind": "phase-planned",
-      "label": "Phase 17",
-      "number": 17,
+      "label": "Phase 18",
+      "number": 18,
       "name": "Authoritative workflow streaming",
       "status": "planned",
-      "prereq": "ph-15",
+      "prereq": "ph-16",
       "rationale": "Replace db.workflowScripts with a real SSE channel that carries authoritative event and snapshot state with replay and heartbeat.",
       "deliverables": [
         "SSE envelope + X-Request-ID correlation",
@@ -3475,13 +3611,13 @@
       ]
     },
     {
-      "id": "ph-18",
+      "id": "ph-19",
       "kind": "phase-planned",
-      "label": "Phase 18",
-      "number": 18,
+      "label": "Phase 19",
+      "number": 19,
       "name": "Signed input pipeline",
       "status": "planned",
-      "prereq": "ph-16",
+      "prereq": "ph-17",
       "rationale": "Replace the mock-upload: URL with signed initiation and completion, keeping security scan and extraction as distinct states.",
       "deliverables": [
         "initiateUpload/completeUpload against storage",
@@ -3493,13 +3629,13 @@
       ]
     },
     {
-      "id": "ph-19",
+      "id": "ph-20",
       "kind": "phase-planned",
-      "label": "Phase 19",
-      "number": 19,
+      "label": "Phase 20",
+      "number": 20,
       "name": "Governed audit and notifications",
       "status": "planned",
-      "prereq": "ph-17",
+      "prereq": "ph-18",
       "rationale": "Move audit from a read-only fixture to a governed append-only store with a stated retention policy, and add a delivery channel.",
       "deliverables": [
         "append-only audit with retention statement",
@@ -3538,7 +3674,7 @@
       "kind": "script",
       "label": "build.mjs",
       "role": "Recreates dist/, copies src/, writes SHA-256 manifest",
-      "assets": 35,
+      "assets": 41,
       "command": "node scripts/build.mjs"
     },
     {
@@ -3567,8 +3703,8 @@
       "id": "arch-app",
       "kind": "architecture-layer",
       "label": "src/app",
-      "files": 5,
-      "lines": 1093,
+      "files": 6,
+      "lines": 1430,
       "importsNothingOutsideShared": false
     },
     {
@@ -3592,7 +3728,7 @@
       "kind": "architecture-layer",
       "label": "src/home",
       "files": 12,
-      "lines": 814,
+      "lines": 820,
       "importsNothingOutsideShared": false
     },
     {
@@ -3632,15 +3768,15 @@
       "kind": "architecture-layer",
       "label": "src/shared",
       "files": 12,
-      "lines": 1560,
+      "lines": 1958,
       "importsNothingOutsideShared": true
     },
     {
       "id": "arch-styles",
       "kind": "architecture-layer",
       "label": "src/styles",
-      "files": 4,
-      "lines": 2273,
+      "files": 5,
+      "lines": 3028,
       "importsNothingOutsideShared": false
     },
     {
@@ -3649,6 +3785,14 @@
       "label": "src/test",
       "files": 4,
       "lines": 332,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-work",
+      "kind": "architecture-layer",
+      "label": "src/work",
+      "files": 4,
+      "lines": 389,
       "importsNothingOutsideShared": false
     }
   ],
@@ -3676,6 +3820,11 @@
     {
       "from": "l0-composition",
       "to": "src/app/paths.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l0-composition",
+      "to": "src/app/actions/work.js",
       "rel": "implemented-by"
     },
     {
@@ -3755,6 +3904,16 @@
     },
     {
       "from": "l1-view",
+      "to": "src/work/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/work/components/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
       "to": "src/home/workspace/dashboard/view.js",
       "rel": "implemented-by"
     },
@@ -3796,6 +3955,11 @@
     {
       "from": "l2-service",
       "to": "src/outputs/api/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l2-service",
+      "to": "src/work/api/index.js",
       "rel": "implemented-by"
     },
     {
@@ -5339,6 +5503,26 @@
       "rel": "blocked-by"
     },
     {
+      "from": "src/work/pages/index.js",
+      "to": "r-chat",
+      "rel": "routes-to"
+    },
+    {
+      "from": "r-chat",
+      "to": "svc-mock",
+      "rel": "reads-from"
+    },
+    {
+      "from": "src/work/pages/index.js",
+      "to": "r-chat-session",
+      "rel": "routes-to"
+    },
+    {
+      "from": "r-chat-session",
+      "to": "svc-mock",
+      "rel": "reads-from"
+    },
+    {
       "from": "src/app/auth.js",
       "to": "r-auth-login",
       "rel": "routes-to"
@@ -5670,6 +5854,16 @@
     },
     {
       "from": "src/app/shell.js",
+      "to": "nav-assist",
+      "rel": "renders-nav"
+    },
+    {
+      "from": "nav-assist",
+      "to": "r-chat",
+      "rel": "links-to"
+    },
+    {
+      "from": "src/app/shell.js",
       "to": "nav-workspace",
       "rel": "renders-nav"
     },
@@ -5841,6 +6035,16 @@
     {
       "from": "r-integrations",
       "to": "t-integrations",
+      "rel": "contains-tab"
+    },
+    {
+      "from": "src/work/pages/index.js",
+      "to": "t-surface",
+      "rel": "declares-tab"
+    },
+    {
+      "from": "r-chat",
+      "to": "t-surface",
       "rel": "contains-tab"
     },
     {
@@ -6041,6 +6245,26 @@
     {
       "from": "synase-ai",
       "to": "inv-20",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-21",
+      "to": "l3-adapter",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-21",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-22",
+      "to": "l1-view",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-22",
       "rel": "guarantees"
     },
     {
@@ -6295,6 +6519,16 @@
     },
     {
       "from": "synase-ai",
+      "to": "dec-11",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
+      "to": "dec-12",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
       "to": "ph-0",
       "rel": "delivered-phase"
     },
@@ -6529,62 +6763,57 @@
       "rel": "delivered-phase"
     },
     {
+      "from": "synase-ai",
+      "to": "ph-14",
+      "rel": "delivered-phase"
+    },
+    {
       "from": "ph-14",
+      "to": "r-chat",
+      "rel": "surfaced-route"
+    },
+    {
+      "from": "ph-14",
+      "to": "r-chat-session",
+      "rel": "surfaced-route"
+    },
+    {
+      "from": "ph-15",
       "to": "gap-02",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
+      "from": "ph-15",
       "to": "gap-11",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
-      "to": "ph-14",
-      "rel": "precedes"
-    },
-    {
       "from": "ph-14",
-      "to": "ph-15",
-      "rel": "unblocks"
-    },
-    {
-      "from": "ph-15",
-      "to": "gap-01",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-15",
-      "to": "gap-05",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-15",
-      "to": "gap-06",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-13",
       "to": "ph-15",
       "rel": "precedes"
     },
     {
-      "from": "ph-14",
+      "from": "ph-15",
       "to": "ph-16",
       "rel": "unblocks"
     },
     {
       "from": "ph-16",
-      "to": "gap-04",
+      "to": "gap-01",
       "rel": "resolves"
     },
     {
       "from": "ph-16",
-      "to": "gap-03",
+      "to": "gap-05",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
+      "from": "ph-16",
+      "to": "gap-06",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-14",
       "to": "ph-16",
       "rel": "precedes"
     },
@@ -6595,11 +6824,16 @@
     },
     {
       "from": "ph-17",
-      "to": "gap-07",
+      "to": "gap-04",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
+      "from": "ph-17",
+      "to": "gap-03",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-14",
       "to": "ph-17",
       "rel": "precedes"
     },
@@ -6610,11 +6844,11 @@
     },
     {
       "from": "ph-18",
-      "to": "gap-08",
+      "to": "gap-07",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
+      "from": "ph-14",
       "to": "ph-18",
       "rel": "precedes"
     },
@@ -6625,22 +6859,37 @@
     },
     {
       "from": "ph-19",
+      "to": "gap-08",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-14",
+      "to": "ph-19",
+      "rel": "precedes"
+    },
+    {
+      "from": "ph-18",
+      "to": "ph-20",
+      "rel": "unblocks"
+    },
+    {
+      "from": "ph-20",
       "to": "gap-12",
       "rel": "resolves"
     },
     {
-      "from": "ph-19",
+      "from": "ph-20",
       "to": "gap-09",
       "rel": "resolves"
     },
     {
-      "from": "ph-19",
+      "from": "ph-20",
       "to": "gap-10",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
-      "to": "ph-19",
+      "from": "ph-14",
+      "to": "ph-20",
       "rel": "precedes"
     },
     {
@@ -6681,6 +6930,11 @@
     {
       "from": "scr-build",
       "to": "src/app/auth.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/app/actions/work.js",
       "rel": "bundles"
     },
     {
@@ -6780,6 +7034,26 @@
     },
     {
       "from": "scr-build",
+      "to": "src/work/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/work/constants.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/work/pages/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/work/components/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
       "to": "src/integrations/api/client.js",
       "rel": "bundles"
     },
@@ -6816,6 +7090,11 @@
     {
       "from": "scr-build",
       "to": "src/styles/landing/landing.css",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/work/work.css",
       "rel": "bundles"
     },
     {
@@ -6877,6 +7156,11 @@
       "from": "synase-ai",
       "to": "arch-app",
       "rel": "organised-as"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/actions/work.js",
+      "rel": "contains"
     },
     {
       "from": "arch-app",
@@ -7159,6 +7443,11 @@
       "rel": "contains"
     },
     {
+      "from": "arch-styles",
+      "to": "src/styles/work/work.css",
+      "rel": "contains"
+    },
+    {
       "from": "synase-ai",
       "to": "arch-test",
       "rel": "organised-as"
@@ -7181,6 +7470,31 @@
     {
       "from": "arch-test",
       "to": "test/phase12.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-work",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-work",
+      "to": "src/work/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-work",
+      "to": "src/work/components/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-work",
+      "to": "src/work/constants.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-work",
+      "to": "src/work/pages/index.js",
       "rel": "contains"
     }
   ]

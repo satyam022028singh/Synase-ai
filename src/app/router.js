@@ -41,6 +41,7 @@ import {
   approvalsPage
 } from "../outputs/pages/index.js";
 import { integrationsPage } from "../integrations/pages/index.js";
+import { chatPage } from "../work/pages/index.js";
 
 /**
  * Resolves the current path to its page body, wrapped in the shell.
@@ -56,9 +57,15 @@ export function renderPage() {
     return authPage("login");
   }
 
+  /* Chat renders standalone: no console chrome, it owns the viewport.
+     Checked before the loading branch so the page never flashes the shell.
+     "Work" is the dashboard below, which stays inside the shell. */
+  const chat = path.match(/^\/app\/chat(?:\/([^/]+))?$/);
+  if (chat) return chatPage();
+
   if (state.loading) return shell(loading());
 
-  /* declared owner: decision dashboard (was src/phase12.js) */
+  /* declared owner: Work view = decision dashboard (was src/phase12.js) */
   if (path === routes.dashboard) return shell(decisionDashboardPage());
 
   /* declared owner: integrations (was src/phase11.js) */

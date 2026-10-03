@@ -101,6 +101,22 @@ export const state = {
   integrationReceipt: null,
   integrationError: "",
 
+  // ── work domain (Chat & Work surface) ──
+  workSessions: [],
+  workSessionId: "",
+  workMessages: [],
+  workArtifacts: [],
+  workArtifactId: "",
+  workArtifactsOpen: true,
+  workRepository: null,
+  workMode: "chat",
+  workLayer: "",
+  workCapability: "",
+  workEffort: "auto",
+  workMenu: "",
+  workComposer: "",
+  workThinking: false,
+
   // ── chrome + transient UI (local) ──
   loading: true,
   sidebarOpen: false,
@@ -124,4 +140,11 @@ export function resetProjectScope() {
   state.workflows = [];
   state.workflowTasks = [];
   state.workflowEvents = [];
+  state.workSessions = [];
+  state.workSessionId = "";
+  state.workMessages = [];
+  state.workArtifacts = [];
+  state.workArtifactId = "";
+  state.workArtifactsOpen = false;
+  state.workRepository = null;
 }

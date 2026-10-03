@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T18:59:29.220Z",
+  "generatedAt": "2026-10-03T22:52:04.068Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -15,70 +15,75 @@
     }
   },
   "files": {
+    "src/app/actions/work.js": {
+      "layer": "app",
+      "lines": 292,
+      "bytes": 9395
+    },
     "src/app/auth.js": {
       "layer": "app",
       "lines": 77,
-      "bytes": 6829
+      "bytes": 6905
     },
     "src/app/main.js": {
       "layer": "app",
-      "lines": 739,
-      "bytes": 33970
+      "lines": 771,
+      "bytes": 35312
     },
     "src/app/paths.js": {
       "layer": "app",
-      "lines": 67,
-      "bytes": 1901
+      "lines": 69,
+      "bytes": 2016
     },
     "src/app/router.js": {
       "layer": "app",
-      "lines": 110,
-      "bytes": 4654
+      "lines": 117,
+      "bytes": 5139
     },
     "src/app/shell.js": {
       "layer": "app",
-      "lines": 100,
-      "bytes": 4739
+      "lines": 104,
+      "bytes": 4982
     },
     "src/context/api/index.js": {
       "layer": "context",
       "lines": 14,
-      "bytes": 640
+      "bytes": 653
     },
     "src/context/pages/index.js": {
       "layer": "context",
       "lines": 47,
-      "bytes": 5471
+      "bytes": 5517
     },
     "src/devops/api/index.js": {
       "layer": "devops",
       "lines": 15,
-      "bytes": 705
+      "bytes": 719
     },
     "src/devops/components/index.js": {
       "layer": "devops",
       "lines": 8,
-      "bytes": 748
+      "bytes": 755
     },
     "src/devops/pages/index.js": {
       "layer": "devops",
       "lines": 43,
-      "bytes": 4481
+      "bytes": 4523
     },
     "src/home/landing/landing.js": {
       "layer": "home",
       "lines": 156,
-      "bytes": 6793
+      "bytes": 6923
     },
     "src/home/settings/pages/index.js": {
       "layer": "home",
       "lines": 37,
-      "bytes": 2716
+      "bytes": 2752
     },
     "src/home/workspace/api/index.js": {
       "layer": "home",
       "lines": 73,
-      "bytes": 3374
+      "bytes": 3446
     },
     "src/home/workspace/dashboard/api.js": {
       "layer": "home",
@@ -93,38 +98,38 @@
     },
     "src/home/workspace/dashboard/view.js": {
       "layer": "home",
-      "lines": 65,
-      "bytes": 7154
+      "lines": 71,
+      "bytes": 7590
     },
     "src/home/workspace/pages/analysis.js": {
       "layer": "home",
       "lines": 90,
-      "bytes": 9371
+      "bytes": 9460
     },
     "src/home/workspace/pages/inputs.js": {
       "layer": "home",
       "lines": 62,
-      "bytes": 5747
+      "bytes": 5808
     },
     "src/home/workspace/pages/members.js": {
       "layer": "home",
       "lines": 18,
-      "bytes": 1037
+      "bytes": 1054
     },
     "src/home/workspace/pages/projects.js": {
       "layer": "home",
       "lines": 73,
-      "bytes": 5993
+      "bytes": 6065
     },
     "src/home/workspace/pages/repository.js": {
       "layer": "home",
       "lines": 45,
-      "bytes": 4721
+      "bytes": 4765
     },
     "src/home/workspace/pages/runs.js": {
       "layer": "home",
       "lines": 50,
-      "bytes": 4584
+      "bytes": 4633
     },
     "src/integrations/api/client.js": {
       "layer": "integrations",
@@ -140,87 +145,87 @@
     "src/integrations/pages/index.js": {
       "layer": "integrations",
       "lines": 93,
-      "bytes": 10067
+      "bytes": 10159
     },
     "src/mcp/api/index.js": {
       "layer": "mcp",
       "lines": 20,
-      "bytes": 781
+      "bytes": 800
     },
     "src/mcp/pages/index.js": {
       "layer": "mcp",
       "lines": 58,
-      "bytes": 6173
+      "bytes": 6230
     },
     "src/outputs/api/index.js": {
       "layer": "outputs",
       "lines": 23,
-      "bytes": 1146
+      "bytes": 1168
     },
     "src/outputs/pages/index.js": {
       "layer": "outputs",
       "lines": 39,
-      "bytes": 6941
+      "bytes": 6979
     },
     "src/product/api/index.js": {
       "layer": "product",
       "lines": 18,
-      "bytes": 762
+      "bytes": 779
     },
     "src/product/pages/index.js": {
       "layer": "product",
       "lines": 37,
-      "bytes": 3999
+      "bytes": 4035
     },
     "src/shared/api/db.js": {
       "layer": "shared",
-      "lines": 347,
-      "bytes": 27516
+      "lines": 445,
+      "bytes": 34675
     },
     "src/shared/api/errors.js": {
       "layer": "shared",
       "lines": 14,
-      "bytes": 356
+      "bytes": 369
     },
     "src/shared/api/idempotency.js": {
       "layer": "shared",
       "lines": 5,
-      "bytes": 221
+      "bytes": 225
     },
     "src/shared/api/index.js": {
       "layer": "shared",
       "lines": 20,
-      "bytes": 731
+      "bytes": 750
     },
     "src/shared/api/live.js": {
       "layer": "shared",
       "lines": 11,
-      "bytes": 312
+      "bytes": 322
     },
     "src/shared/api/mock.js": {
       "layer": "shared",
-      "lines": 481,
-      "bytes": 28907
+      "lines": 758,
+      "bytes": 40559
     },
     "src/shared/api/redaction.js": {
       "layer": "shared",
       "lines": 21,
-      "bytes": 800
+      "bytes": 820
     },
     "src/shared/components/ui.js": {
       "layer": "shared",
       "lines": 110,
-      "bytes": 4372
+      "bytes": 4481
     },
     "src/shared/services/theme.js": {
       "layer": "shared",
       "lines": 63,
-      "bytes": 2266
+      "bytes": 2328
     },
     "src/shared/state/store.js": {
       "layer": "shared",
-      "lines": 127,
-      "bytes": 3414
+      "lines": 150,
+      "bytes": 4117
     },
     "src/shared/types/types.d.ts": {
       "layer": "shared",
@@ -231,17 +236,17 @@
     "src/shared/utils/format.js": {
       "layer": "shared",
       "lines": 49,
-      "bytes": 1086
+      "bytes": 1134
     },
     "src/styles/app.css": {
       "layer": "styles",
       "lines": 1365,
-      "bytes": 59377
+      "bytes": 60741
     },
     "src/styles/home/dashboard.css": {
       "layer": "styles",
-      "lines": 2,
-      "bytes": 3966
+      "lines": 8,
+      "bytes": 4549
     },
     "src/styles/integrations/integrations.css": {
       "layer": "styles",
@@ -251,7 +256,32 @@
     "src/styles/landing/landing.css": {
       "layer": "styles",
       "lines": 904,
-      "bytes": 48443
+      "bytes": 49346
+    },
+    "src/styles/work/work.css": {
+      "layer": "styles",
+      "lines": 749,
+      "bytes": 15995
+    },
+    "src/work/api/index.js": {
+      "layer": "work",
+      "lines": 37,
+      "bytes": 1819
+    },
+    "src/work/components/index.js": {
+      "layer": "work",
+      "lines": 194,
+      "bytes": 9882
+    },
+    "src/work/constants.js": {
+      "layer": "work",
+      "lines": 55,
+      "bytes": 2934
+    },
+    "src/work/pages/index.js": {
+      "layer": "work",
+      "lines": 103,
+      "bytes": 4475
     },
     "test/api.test.mjs": {
       "layer": "test",
@@ -422,7 +452,10 @@
     "knowledgeGraphs",
     "reports",
     "approvals",
-    "exportArtifacts"
+    "exportArtifacts",
+    "workSessions",
+    "workMessages",
+    "workArtifacts"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -433,6 +466,13 @@
     "brain:query": "node scripts/brain-query.mjs"
   },
   "dependencies": {
+    "src/app/actions/work.js": [
+      "../../shared/state/store.js",
+      "../../shared/api/index.js",
+      "../../home/workspace/api/index.js",
+      "../../work/api/index.js",
+      "../../work/constants.js"
+    ],
     "src/app/auth.js": [
       "./paths.js",
       "../shared/components/ui.js",
@@ -448,6 +488,7 @@
       "../outputs/api/index.js",
       "../integrations/api/client.js",
       "../home/workspace/dashboard/api.js",
+      "./actions/work.js",
       "../shared/state/store.js",
       "../shared/utils/format.js",
       "../home/workspace/pages/projects.js",
@@ -478,7 +519,8 @@
       "../mcp/pages/index.js",
       "../context/pages/index.js",
       "../outputs/pages/index.js",
-      "../integrations/pages/index.js"
+      "../integrations/pages/index.js",
+      "../work/pages/index.js"
     ],
     "src/app/shell.js": [
       "../shared/state/store.js",
@@ -601,6 +643,21 @@
     ],
     "src/shared/components/ui.js": [
       "../utils/format.js"
+    ],
+    "src/work/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/work/components/index.js": [
+      "../../shared/state/store.js",
+      "../../shared/components/ui.js",
+      "../constants.js"
+    ],
+    "src/work/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../shared/components/ui.js",
+      "../../shared/services/theme.js",
+      "../../shared/utils/format.js",
+      "../components/index.js"
     ]
   },
   "layers": [
@@ -614,7 +671,8 @@
     "product",
     "shared",
     "styles",
-    "test"
+    "test",
+    "work"
   ],
   "buildAssets": [
     "index.html",
@@ -625,6 +683,7 @@
     "src/app/shell.js",
     "src/app/paths.js",
     "src/app/auth.js",
+    "src/app/actions/work.js",
     "src/shared/api/index.js",
     "src/shared/api/mock.js",
     "src/shared/api/db.js",
@@ -644,6 +703,10 @@
     "src/mcp/api/index.js",
     "src/context/api/index.js",
     "src/outputs/api/index.js",
+    "src/work/api/index.js",
+    "src/work/constants.js",
+    "src/work/pages/index.js",
+    "src/work/components/index.js",
     "src/integrations/api/client.js",
     "src/integrations/api/types.d.ts",
     "src/home/workspace/dashboard/api.js",
@@ -651,7 +714,8 @@
     "src/styles/app.css",
     "src/styles/home/dashboard.css",
     "src/styles/integrations/integrations.css",
-    "src/styles/landing/landing.css"
+    "src/styles/landing/landing.css",
+    "src/styles/work/work.css"
   ],
   "entryPoints": {
     "index": [],
@@ -662,6 +726,7 @@
       "./src/styles/app.css",
       "./src/styles/home/dashboard.css",
       "./src/styles/integrations/integrations.css",
+      "./src/styles/work/work.css",
       "#main",
       "./src/app/main.js"
     ],

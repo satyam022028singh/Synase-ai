@@ -50,15 +50,21 @@ export function dashboardView(data) {
 }
 
 /**
- * Body for /app/dashboard including its loading and error states.
+ * Body for the Work view (/app/dashboard) including its loading and error
+ * states. Wraps the verbatim dashboardView template with a switch back to Chat.
  * @returns {string}
  */
 export function decisionDashboardPage() {
+  const switchToChat = `<div class="p12-surface-switch">
+    <button class="p12-surface-tab is-active" aria-current="page">Work</button>
+    <button class="p12-surface-tab" data-route="/app/chat">Switch to Chat</button>
+  </div>`;
+
   if (state.decisionDashboardError) {
-    return `<section class="card empty"><div><h1>Dashboard unavailable</h1><p>${esc(state.decisionDashboardError)}</p><button class="button primary" data-action="dashboard-retry">Retry</button></div></section>`;
+    return `${switchToChat}<section class="card empty"><div><h1>Dashboard unavailable</h1><p>${esc(state.decisionDashboardError)}</p><button class="button primary" data-action="dashboard-retry">Retry</button></div></section>`;
   }
   if (!state.decisionDashboard) {
-    return `<div class="loading"><div><div class="spinner"></div>Loading dashboard contract…</div></div>`;
+    return `${switchToChat}<div class="loading"><div><div class="spinner"></div>Loading dashboard contract…</div></div>`;
   }
-  return dashboardView(state.decisionDashboard);
+  return switchToChat + dashboardView(state.decisionDashboard);
 }

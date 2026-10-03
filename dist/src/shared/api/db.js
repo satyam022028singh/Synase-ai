@@ -338,7 +338,105 @@ export const db = {
       allowedActions: ["approve", "reject", "comment", "cancel"], executed: false, comments: []
     }
   ],
-  exportArtifacts: []
+  exportArtifacts: [],
+
+  /* ── Chat & Work surface ──────────────────────────────────────────
+     Every assistant reply here is a deterministic mock draft. Nothing in
+     this table is the result of a model call, a tool call, or a real
+     artifact. externalContacted and downstreamExecuted stay false so the
+     platform's safety invariants continue to hold. */
+
+  workSessions: [
+    {
+      id: "wrk_prioritise", projectId: "prj_platform",
+      title: "Prioritise Q4 platform requirements", status: "active",
+      mode: "work", layer: "product", capability: "", effort: "high",
+      createdAt: "2026-09-30T09:12:00Z", updatedAt: "2026-09-30T09:41:00Z", mock: true
+    },
+    {
+      id: "wrk_deployrisk", projectId: "prj_platform",
+      title: "Staging deployment risk review", status: "active",
+      mode: "work", layer: "devops", capability: "", effort: "max",
+      createdAt: "2026-09-29T16:05:00Z", updatedAt: "2026-09-29T16:22:00Z", mock: true
+    },
+    {
+      id: "wrk_archdoc", projectId: "prj_platform",
+      title: "Draft the gateway architecture note", status: "active",
+      mode: "work", layer: "", capability: "code", effort: "medium",
+      createdAt: "2026-09-28T11:30:00Z", updatedAt: "2026-09-28T11:44:00Z", mock: true
+    },
+    {
+      id: "wrk_research", projectId: "prj_platform",
+      title: "Research competitor onboarding", status: "archived",
+      mode: "chat", layer: "", capability: "text", effort: "auto",
+      createdAt: "2026-09-27T08:00:00Z", updatedAt: "2026-09-27T08:02:00Z", mock: true
+    }
+  ],
+
+  workMessages: [
+    {
+      id: "wmsg_01", sessionId: "wrk_prioritise", role: "user",
+      text: "Which Q4 requirements should we build first if delivery capacity is four engineers?",
+      createdAt: "2026-09-30T09:12:00Z", status: "accepted", mock: true
+    },
+    {
+      id: "wmsg_02", sessionId: "wrk_prioritise", role: "assistant",
+      text: "Mock draft — no model was called. Ranking the twelve open requirements by business value against delivery risk puts four in the build band. The scored table and the rejected candidates are in the attached artifact, clearly separated from confirmed project state.",
+      createdAt: "2026-09-30T09:41:00Z", status: "accepted", mock: true,
+      layer: "product", effort: "high", artifactId: "wart_prioritise"
+    },
+    {
+      id: "wmsg_03", sessionId: "wrk_deployrisk", role: "user",
+      text: "Walk me through the staging rollout risk before Friday.",
+      createdAt: "2026-09-29T16:05:00Z", status: "accepted", mock: true
+    },
+    {
+      id: "wmsg_04", sessionId: "wrk_deployrisk", role: "assistant",
+      text: "Mock draft — no deployment was planned or executed. Three open findings and one unapproved change gate the rollout. The review checklist is attached as an artifact.",
+      createdAt: "2026-09-29T16:22:00Z", status: "accepted", mock: true,
+      layer: "devops", effort: "max", artifactId: "wart_deployrisk"
+    },
+    {
+      id: "wmsg_05", sessionId: "wrk_archdoc", role: "user",
+      text: "Sketch the API gateway boundary for the platform service.",
+      createdAt: "2026-09-28T11:30:00Z", status: "accepted", mock: true
+    },
+    {
+      id: "wmsg_06", sessionId: "wrk_archdoc", role: "assistant",
+      text: "Mock draft — no code was generated or written anywhere. The proposed boundary and its open questions are in the attached artifact for a human to review.",
+      createdAt: "2026-09-28T11:44:00Z", status: "accepted", mock: true,
+      capability: "code", effort: "medium", artifactId: "wart_archdoc"
+    },
+    {
+      id: "wmsg_07", sessionId: "wrk_research", role: "user",
+      text: "How do comparable platforms handle first-run onboarding?",
+      createdAt: "2026-09-27T08:00:00Z", status: "accepted", mock: true
+    }
+  ],
+
+  workArtifacts: [
+    {
+      id: "wart_prioritise", sessionId: "wrk_prioritise", messageId: "wmsg_02",
+      kind: "report", title: "Q4 requirement scoring (mock draft)", language: "markdown",
+      provenance: "ai_suggested", confidence: 0.72,
+      createdAt: "2026-09-30T09:41:00Z", updatedAt: "2026-09-30T09:41:00Z", mock: true,
+      content: "# Q4 requirement scoring (mock draft)\n\nDeterministic fixture. No ranking engine ran.\n\n| Requirement | Value | Risk | Band |\n| --- | --- | --- | --- |\n| Multi-tenant billing isolation | 5 | 4 | build |\n| Repository context ingestion | 5 | 3 | build |\n| Report approval checkpoints | 4 | 2 | build |\n| MCP directory discovery UI | 3 | 3 | build |\n| Workflow replay timeline | 3 | 4 | defer |\n| Multi-region deploy targets | 2 | 5 | defer |\n\n## Open questions\n\n- Capacity assumption is unverified; four engineers was supplied in chat, not confirmed.\n- Value and risk scores are fixture values, not measured outcomes.\n- Nothing here is approved. Route through the approvals queue to record a human decision."
+    },
+    {
+      id: "wart_deployrisk", sessionId: "wrk_deployrisk", messageId: "wmsg_04",
+      kind: "report", title: "Staging rollout review (mock draft)", language: "markdown",
+      provenance: "ai_suggested", confidence: 0.64,
+      createdAt: "2026-09-29T16:22:00Z", updatedAt: "2026-09-29T16:22:00Z", mock: true,
+      content: "# Staging rollout review (mock draft)\n\nNo deployment step was planned, approved, or executed.\n\n## Blocking\n\n1. FIND-SEC-01 — secret-scan policy is not implemented.\n2. Deployment plan apr_deploy_02 is still pending human approval.\n3. Three integration providers are unavailable in the fixture set.\n\n## Required before execution\n\n- A named approver records a decision in the approvals queue.\n- Connection, authorization, and health are verified per provider.\n- The signed-upload contract is resolved.\n\nExecuted: No."
+    },
+    {
+      id: "wart_archdoc", sessionId: "wrk_archdoc", messageId: "wmsg_06",
+      kind: "spec", title: "API gateway boundary (mock draft)", language: "markdown",
+      provenance: "ai_suggested", confidence: 0.58,
+      createdAt: "2026-09-28T11:44:00Z", updatedAt: "2026-09-28T11:44:00Z", mock: true,
+      content: "# API gateway boundary (mock draft)\n\nProposal only. No code was generated, written, or deployed.\n\n- North-south traffic terminates at the gateway; domain services stay internal.\n- Authentication resolves to a session before routing, never after.\n- Every forwarded request carries a correlation id that survives into audit.\n- Rate limits are declared per domain service, not globally.\n\n## Unresolved\n\n- The authentication and session contract is not frozen.\n- Active workspace/project context encoding is undefined.\n- No server exists in this repository to route to."
+    }
+  ]
 };
 
 export function page(data) {

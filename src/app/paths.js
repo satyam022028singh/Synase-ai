@@ -7,6 +7,8 @@
 import { state } from "../shared/state/store.js";
 
 export const routes = {
+  chat: "/app/chat",
+  work: "/app/dashboard",
   dashboard: "/app/dashboard",
   projects: "/app/projects",
   createProject: "/app/projects/create",

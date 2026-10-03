@@ -15,7 +15,8 @@ try {
 
 const files = [
   "index.html", "landing.html", "app.html",
-  "src/app/main.js", "src/app/router.js", "src/app/shell.js", "src/app/paths.js", "src/app/auth.js",
+  "src/app/main.js", "src/app/router.js", "src/app/shell.js", "src/app/paths.js",
+  "src/app/auth.js", "src/app/actions/work.js",
   "src/shared/api/index.js", "src/shared/api/mock.js", "src/shared/api/db.js",
   "src/shared/api/errors.js", "src/shared/api/live.js",
   "src/shared/api/idempotency.js", "src/shared/api/redaction.js",
@@ -25,10 +26,13 @@ const files = [
   "src/home/landing/landing.js", "src/home/workspace/api/index.js",
   "src/product/api/index.js", "src/devops/api/index.js", "src/mcp/api/index.js",
   "src/context/api/index.js", "src/outputs/api/index.js",
+  "src/work/api/index.js", "src/work/constants.js", "src/work/pages/index.js",
+  "src/work/components/index.js",
   "src/integrations/api/client.js", "src/integrations/api/types.d.ts",
   "src/home/workspace/dashboard/api.js", "src/home/workspace/dashboard/types.d.ts",
   "src/styles/app.css", "src/styles/home/dashboard.css",
-  "src/styles/integrations/integrations.css", "src/styles/landing/landing.css"
+  "src/styles/integrations/integrations.css", "src/styles/landing/landing.css",
+  "src/styles/work/work.css"
 ];
 const manifest = {};
 for (const file of files) {

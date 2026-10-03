@@ -32,16 +32,16 @@ Measured shape at generation time:
 | Measure | Value |
 | --- | --- |
 | Version | `0.12.0` |
-| Source lines (src + HTML) | 6,244 |
-| Tracked files across 11 architecture layers | 51 |
+| Source lines (src + HTML) | 7,991 |
+| Tracked files across 12 architecture layers | 57 |
 | Test lines | 332 |
 | Contract tests | 64 |
 | Declared types across three `.d.ts` files | 96 |
-| Mock fixture collections in `db` | 39 |
-| Routes | 33 |
+| Mock fixture collections in `db` | 42 |
+| Routes | 35 |
 | Domain service methods | 87 across 3 services |
 | Typed entities | 46, plus 7 with no interface at all |
-| Safety invariants | 20 |
+| Safety invariants | 22 |
 | Known contract gaps | 12 |
 | Structural risks | 10, of which 2 resolved |
 
@@ -51,8 +51,8 @@ Measured shape at generation time:
 
 ```
 Route
-  → application shell          L0  src/app/main.js, router.js, shell.js, paths.js
-  → domain view templates      L1  src/{home,product,devops,mcp,context,outputs,integrations}
+  → application shell          L0  src/app/main.js, router.js, shell.js, paths.js, actions/work.js
+  → domain view templates      L1  src/{home,product,devops,mcp,context,outputs,integrations,work}
   → domain service surface     L2  src/<domain>/api/index.js — named facades
   → mock or live adapter       L3  shared/api/mock.js + db.js; live fails closed
   → shared HTTP/SSE transport  L4  only exercised by tests today
@@ -93,13 +93,22 @@ live path whatsoever. Live mode is never enabled from an environment variable, a
 
 ## 3. Routing: one router, one listener
 
-`src/app/router.js` owns `renderPage()` and resolves all 33 routes. Three auth routes
+`src/app/router.js` owns `renderPage()` and resolves all 35 routes. Three auth routes
 render without the shell; everything else is wrapped in `shell()`. A single delegated
 `click` / `change` / `input` / `submit` listener in `src/app/main.js` handles every
 action, and views never attach listeners of their own.
 
 Path resolution order: `?route=` query parameter → `location.hash` → `/app/dashboard`.
 Navigation uses `history.replaceState`, so the back button does not walk your history.
+
+`/app/chat` is the post-login surface: the landing CTAs and a successful sign-in all
+land there. It renders **outside** the shell — no platform sidebar or topbar — and
+the router checks it before the loading branch so the console chrome never flashes.
+`/app/dashboard` is the Work view and stays inside the shell. A surface toggle sits in
+the chat header and above the dashboard.
+
+The chat controller lives in `src/app/actions/work.js` with `render`/`toast` injected,
+because importing them back would create a cycle with `main.js`.
 
 > **Resolved.** This section previously described two modules (`phase11.js`,
 > `phase12.js`) taking over `#main` from outside the router via a
@@ -178,7 +187,7 @@ when a real backend arrives. They are tagged `entity-untyped` in the graph.
 
 ---
 
-## 5. The 20 invariants
+## 5. The 22 invariants
 
 These are the project's actual product. Each is asserted by a test rather than
 documented and hoped for.
@@ -203,6 +212,8 @@ documented and hoped for.
 18. Every interpolated value is escaped before reaching `innerHTML`
 19. One router owns `#main`, and one delegated listener handles every action
 20. No domain imports another domain, and `shared/` imports nothing outside itself
+21. The work surface calls no model or tool — `modelInvoked`, `toolInvoked`, `externalContacted` and `downstreamExecuted` are always false
+22. Chat & Work artifacts are always `ai_suggested` and render as a proposal, never as confirmed state
 
 Query them all with `npm run brain:query invariant`.
 
@@ -261,9 +272,10 @@ live references into `db`, while the integrations and dashboard services use
 `structuredClone`. List reads are mutable, single reads are snapshots. A caller can
 mutate the fixture by accident.
 
-**`rsk-09` One large orchestration module (low).** `src/app/main.js` is 700+ lines
-because it owns hydration, route-scoped loading, and every delegated action. It is
-cohesive, but it is the next place to split if the surface keeps growing.
+**`rsk-09` One large orchestration module (low).** `src/app/main.js` is 771 lines
+because it owns hydration, route-scoped loading, and every delegated action outside a
+per-surface controller. The Chat & Work controller was extracted to hold the line, but
+a second extraction will be needed if the surface keeps growing.
 
 Also: `rsk-07` CI workflow file named `phase11-validate.yml` running the full suite,
 `rsk-08` `npm run dev` needs `npm run build` first, `rsk-10` no lint or typecheck
@@ -285,36 +297,38 @@ script.
 | `dec-08` One router, one delegated listener | Route ownership is declared, not raced. Cost: a new module can no longer self-register without editing the router. |
 | `dec-09` Domain layers with a shared leaf (`app/` → domains → `shared/`) | Boundaries are greppable and mechanically checkable. Cross-domain needs must be lifted into `shared/`. |
 | `dec-10` One fixture store, partitioned API surface | Still exactly one implementation of every method, with an explicit per-domain facade. Cost: one extra indirection. |
+| `dec-11` Chat renders outside the console shell | Signing in opens only the chat canvas, and the console chrome can never flash first. Cost: the chat carries its own header. |
+| `dec-12` Three composer controls, not one cascading menu | `+` is Agent Mode only; layer and effort own their popovers, and the artifact panel collapses without losing its selection. Cost: three popovers, each with its own anchor. |
 
 ---
 
 ## 9. Where to go next
 
-Phases 0–13 ship. Everything below is planned, ordered, and traces back to the gaps
+Phases 0–14 ship. Everything below is planned, ordered, and traces back to the gaps
 it closes.
 
-**Phase 14 — Contract registry and freeze.** Publish authoritative DTO, error,
+**Phase 15 — Contract registry and freeze.** Publish authoritative DTO, error,
 pagination, and versioning contracts before writing any adapter code. Turns 12 gaps
 into tracked documents with tests. No prerequisites. *Start here.*
 
-**Phase 15 — Auth and session lifecycle.** Requires 14. Replaces the hardcoded
+**Phase 16 — Auth and session lifecycle.** Requires 15. Replaces the hardcoded
 `authenticated: true` with a real session contract, adds capability fields
 beyond roles, and defines active-context encoding. Closes `gap-01`, `gap-05`, `gap-06`.
 
-**Phase 16 — Backend aggregate endpoints.** Requires 14. Real workspace-scoped
+**Phase 17 — Backend aggregate endpoints.** Requires 15. Real workspace-scoped
 aggregates so cross-domain pages stop needing browser-side relational reconstruction;
 server-side pagination. Closes `gap-04`, `gap-03`, and flips
 `aggregateContractStatus` from `unresolved` to resolved.
 
-**Phase 17 — Authoritative workflow streaming.** Requires 15. Replaces
+**Phase 18 — Authoritative workflow streaming.** Requires 16. Replaces
 `db.workflowScripts` with a real SSE channel carrying event and snapshot state, replay,
 and heartbeat. Closes `gap-07`.
 
-**Phase 18 — Signed input pipeline.** Requires 16. Replaces the `mock-upload:` URL
+**Phase 19 — Signed input pipeline.** Requires 17. Replaces the `mock-upload:` URL
 with signed initiation and completion, keeping scan and extraction as distinct states.
 Closes `gap-08`.
 
-**Phase 19 — Governed audit and notifications.** Requires 17. Append-only audit with a
+**Phase 20 — Governed audit and notifications.** Requires 18. Append-only audit with a
 stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `gap-10`.
 
 ---
@@ -325,7 +339,7 @@ stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `ga
    receipts should say so in the UI, as the existing surfaces do.
 2. **Never claim what you cannot prove.** If a green build is the only evidence, the
    claim is "frontend builds", not "backend connected".
-3. **Keep the invariant count at 20 or make it 21.** If your change breaks one, fix the
+3. **Keep the invariant count at 22 or make it 23.** If your change breaks one, fix the
    code. If it adds a guarantee, add an invariant and a test in the same commit.
 4. **Do not infer gap behavior from fixtures.** The fixtures are examples, not specs.
 5. **Respect the dependency direction.** `app/` → domains → `shared/`. A domain must
@@ -349,7 +363,7 @@ npm run brain:query route mcp/models   # route, view, matcher, service, tabs
 npm run brain:query entity approval    # fixture, methods, views, caveats
 npm run brain:query service            # service surfaces and their risks
 npm run brain:query trace svc-p12 2    # downstream impact of a change
-npm run brain:query invariant          # the 20 guarantees
+npm run brain:query invariant          # the 22 guarantees
 npm run brain:query gap                # the 12 gaps and who plans them
 npm run brain:query risk               # the 10 risks, most severe first
 npm run brain:query phase              # shipped and planned phases

@@ -78,6 +78,7 @@ src/
 │   ├── router.js            the only route → page mapping
 │   ├── shell.js             sidebar, topbar, switchers, toast
 │   ├── paths.js             route table, currentPath(), navigate(), isActive()
+│   ├── actions/work.js      Chat & Work controller (render/toast injected)
 │   └── auth.js              login / register / recover screens
 │
 ├── home/
@@ -117,6 +118,12 @@ src/
 │   ├── pages/index.js
 │   └── api/{client.js,types.d.ts}
 │
+├── work/                    Chat & Work — the post-login surface
+│   ├── constants.js         layers, agent capabilities, effort levels, starters
+│   ├── pages/index.js       the standalone chat page
+│   ├── components/index.js  thread, contextual menu, composer chips, artifact panel
+│   └── api/index.js
+│
 ├── shared/                  Everything with more than one consumer
 │   ├── api/                 db · mock · live · errors · idempotency · redaction
 │   ├── components/ui.js     escapeHtml · status · pageHeader · metricCard · …
@@ -129,7 +136,8 @@ src/
 │   ├── app.css              design tokens + shell + all component styles
 │   ├── home/dashboard.css
 │   ├── integrations/integrations.css
-│   └── landing/landing.css
+│   ├── landing/landing.css
+│   └── work/work.css        Chat & Work surface, scoped to .work-*
 │
 └── assets/                  branding and images
 ```
@@ -226,6 +234,50 @@ dependencies.
 `home/workspace/dashboard/` holds the decision dashboard that formerly lived
 in `src/phase12.js`, and `integrations/` holds the views formerly in
 `src/phase11.js`.
+
+### work — Chat and Work surfaces
+
+**Chat is standalone.** Landing CTAs and a successful sign-in both land on
+`/app/chat`, which renders **without** `shell()` and owns the full viewport —
+no platform sidebar, no topbar. `app/router.js` checks the chat route *before*
+the loading branch so the page never flashes the console chrome.
+
+**Work is the existing dashboard.** `/app/dashboard` stays inside the shell and
+is now labelled "Work" in the sidebar. A surface switch sits above the
+dashboard, and the chat header carries the matching toggle.
+
+The loop is closed in both directions: the chat header's "Work" tab goes to the
+dashboard, and the dashboard's "Switch to Chat" plus the sidebar's "Chat" entry
+return.
+
+`work/` is a sibling domain, not a sibling page: it has its own views, its own
+constants, and its own API facade, and it imports only from `shared/`.
+
+Three independent controls sit in the composer, each owning one popover:
+
+| Control | Opens | Contents |
+| --- | --- | --- |
+| `＋` | Agent Mode | Video · Image · Web-Search · Code · Text |
+| layer chip | layer | Product Layer · DevOps Layer |
+| effort chip | effort | Auto · Low · Medium · High · Max |
+
+The `＋` control is Agent Mode and nothing else, so a session already scoped
+to Product or DevOps cannot re-pick its layer from it. Layer and effort are
+changed from the chips that display them, which is why the three popovers are
+independent rather than one cascading menu.
+
+`src/work/constants.js` holds the vocabulary. Adding a capability means adding
+one entry — no other file changes.
+
+`src/app/actions/work.js` is a controller rather than a page module because the
+surface needs `render()` and `toast()`, which close over the router and the
+shell. Those are injected at boot; importing them would make the two modules
+mutually dependent.
+
+**The surface calls nothing.** `runWorkAssistant` returns a receipt with
+`modelInvoked`, `toolInvoked`, `externalContacted` and `downstreamExecuted`
+all false, artifacts carry `provenance: "ai_suggested"`, and the same prompt
+always produces the same reply. See invariants `inv-21` and `inv-22`.
 
 ---
 
@@ -364,6 +416,7 @@ Forbidden:
 product/  →  devops/…          ✗
 devops/   →  product/…         ✗
 mcp/      →  product/…         ✗
+work/     →  product/…         ✗
 domain    →  app/ (except paths.js)   ✗
 shared/   →  anything else     ✗
 ```

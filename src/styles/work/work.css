@@ -1,0 +1,749 @@
+/* Chat & Work surface.
+
+   The chat page renders outside the console shell, so it owns the whole
+   viewport. Styling is scoped to .chat-* and .work-* so neither can leak into
+   the console chrome. Colour comes entirely from the theme tokens in
+   styles/app.css, so both themes are covered without a second set of rules. */
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+.chat-page {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+.chat-page:has(.work-artifacts) {
+  grid-template-columns: 232px minmax(0, 1fr) minmax(0, 0.85fr);
+}
+
+.chat-rail {
+  border-right: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.chat-new {
+  margin: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.chat-new:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-3);
+}
+.chat-session-list {
+  overflow-y: auto;
+  padding: 0 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chat-session {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.chat-session:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.chat-session.is-active {
+  background: var(--accent-tint);
+  border-color: var(--accent-line);
+  color: var(--text);
+}
+.chat-session-title {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-session-meta {
+  font-size: 11px;
+  color: var(--subtle);
+  text-transform: capitalize;
+}
+.chat-session-empty {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+}
+
+/* ── TOP BAR: brand · Chat/Work toggle · actions ────────────────── */
+.chat-topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.chat-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: start;
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.chat-brand-mark {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border: 1px solid var(--mark-line);
+  background: var(--mark-tile);
+}
+.chat-brand-mark svg { width: 20px; height: 18px; }
+.chat-tabs {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.chat-tab {
+  min-width: 84px;
+  padding: 7px 18px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-tab:hover {
+  color: var(--text);
+}
+.chat-tab.is-active {
+  background: var(--primary-fill);
+  color: var(--on-primary);
+}
+.chat-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: end;
+}
+.chat-avatar {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── THREAD ─────────────────────────────────────────────────────── */
+.chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+}
+
+.work-empty {
+  margin: auto;
+  max-width: 620px;
+  text-align: center;
+}
+.work-empty h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.work-empty-copy {
+  margin: 0 auto 26px;
+  max-width: 46ch;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.work-starters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  text-align: left;
+}
+.work-starter {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.work-starter:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-wash-0);
+}
+.work-starter-glyph {
+  font-size: 15px;
+  color: var(--accent);
+  line-height: 1.4;
+}
+.work-starter strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.work-starter small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+
+.work-msg {
+  max-width: 720px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.work-msg.is-user {
+  align-self: flex-end;
+  background: var(--accent-tint);
+  border-color: var(--accent-line-soft);
+}
+.work-msg.is-assistant {
+  align-self: flex-start;
+  background: var(--surface);
+}
+.work-msg-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.work-msg-who {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+.work-tag {
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  background: var(--surface-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.work-msg-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+}
+.work-mock-tag {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--subtle);
+}
+
+.work-artifact-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+.work-artifact-card:hover {
+  border-color: var(--accent-line);
+}
+.work-artifact-card strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.work-artifact-card small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--subtle);
+}
+.work-artifact-open {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.work-artifact-kind {
+  font-size: 15px;
+  color: var(--accent);
+}
+
+/* ── COMPOSER ───────────────────────────────────────────────────── */
+.chat-composer-area {
+  padding: 0 20px 14px;
+}
+.chat-composer {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-sm);
+}
+.chat-composer:focus-within {
+  border-color: var(--accent-line);
+}
+.chat-composer-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chat-plus {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.chat-plus:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14.5px;
+}
+.chat-input:focus {
+  outline: none;
+}
+.chat-tool {
+  flex: 0 0 auto;
+  height: 30px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-tool:hover {
+  color: var(--text);
+}
+.chat-tool[aria-pressed="true"] {
+  border-color: var(--accent-line);
+  background: var(--accent-tint);
+  color: var(--text);
+}
+.chat-tool.is-icon {
+  width: 30px;
+  padding: 0;
+  font-size: 13px;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.chat-send {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: var(--primary-fill);
+  color: var(--on-primary);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.chat-send:hover {
+  background: var(--primary-fill-hover);
+}
+
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 2px 2px;
+}
+.work-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-tint);
+  color: var(--text);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.work-chip b {
+  color: var(--muted);
+  font-weight: 700;
+}
+.work-chip.is-effort {
+  border-color: var(--border);
+  background: var(--surface-3);
+  color: var(--muted);
+}
+.work-chip.is-layer {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+.work-chip.is-layer span,
+.work-chip.is-effort span,
+.work-chip.is-artifacts span {
+  color: var(--accent);
+}
+.work-chip.is-artifacts {
+  border-color: var(--border);
+  background: var(--surface-3);
+  color: var(--muted);
+  margin-left: auto;
+}
+.work-chip.is-artifacts.is-on {
+  border-color: var(--accent-line);
+  background: var(--accent-tint);
+  color: var(--text);
+}
+
+.chat-disclaimer {
+  max-width: 820px;
+  margin: 8px auto 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--subtle);
+}
+
+/* ── CONTEXTUAL MENUS ────────────────────────────────────────────
+   Three independent popovers, each opened by its own chip: the "+" chip
+   (Agent Mode), the layer chip and the effort chip. Anchoring keeps each
+   one beside the control that owns it. */
+.chat-chips {
+  position: relative;
+}
+.work-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  z-index: 20;
+  width: min(330px, calc(100vw - 48px));
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.work-menu.is-agent,
+.work-menu.is-layer {
+  left: 0;
+}
+.work-menu.is-effort {
+  right: 0;
+}
+.work-menu-heading {
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+.work-menu-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.work-menu-item:hover {
+  background: var(--hover);
+}
+.work-menu-item.is-selected {
+  background: var(--accent-wash-0);
+}
+.work-menu-glyph {
+  flex: 0 0 22px;
+  font-size: 13px;
+  color: var(--accent);
+  line-height: 1.5;
+}
+.work-menu-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.work-menu-copy {
+  display: block;
+  margin-top: 1px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--subtle);
+}
+.work-menu-copy-inline {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.work-menu-caret {
+  margin-left: auto;
+  color: var(--subtle);
+}
+.work-menu-check {
+  margin-left: auto;
+  color: var(--accent);
+  font-weight: 700;
+}
+.work-menu-sep {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--hairline);
+}
+
+/* ── REPOSITORY BANNER ──────────────────────────────────────────── */
+.work-connect {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 820px;
+  margin: 0 auto 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.work-connect strong {
+  color: var(--text);
+}
+.work-connect-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+}
+.work-connect-btn {
+  margin-left: auto;
+  padding: 5px 13px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.work-connect-btn:hover {
+  border-color: var(--accent-line-strong);
+}
+.work-connect.is-connected .work-connect-dot {
+  background: var(--positive);
+}
+.work-badge {
+  padding: 2px 6px;
+  background: var(--accent);
+  color: var(--on-primary);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* ── ARTIFACT PANEL ─────────────────────────────────────────────── */
+.work-artifacts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.work-artifacts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.work-artifacts-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.work-artifact-count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-3);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.work-artifact-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--hairline);
+}
+.work-artifact-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 200px;
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.work-artifact-tab.is-active {
+  border-color: var(--accent-line);
+  color: var(--text);
+}
+.work-artifact-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+.work-artifact-body h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.work-artifact-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  flex-wrap: wrap;
+}
+.work-artifact-content {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.work-artifact-foot {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--subtle);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .work,
+  .chat-page:has(.work-artifacts) {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .work:has(.work-artifacts) .work-artifacts {
+    position: fixed;
+    inset: 64px 0 0 auto;
+    z-index: 30;
+    width: min(420px, 92vw);
+    border-left: 1px solid var(--border-strong);
+    box-shadow: var(--shadow);
+  }
+}
+
+@media (max-width: 720px) {
+  .work,
+  .chat-page:has(.work-artifacts) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chat-rail {
+    display: none;
+  }
+  .work-starters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chat-topbar {
+    padding: 10px 14px 8px;
+  }
+  .work-thread,
+  .chat-composer-area {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .work-msg {
+    max-width: none;
+  }
+}

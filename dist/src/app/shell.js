@@ -49,8 +49,12 @@ export function shell(content) {
       </a>
       <nav>
         <div class="nav-section">
+          <div class="nav-label">Assist</div>
+          ${navLink(routes.chat, "✳", "Chat", true)}
+        </div>
+        <div class="nav-section">
           <div class="nav-label">Workspace</div>
-          ${navLink(routes.dashboard, "⌂", "Dashboard")}
+          ${navLink(routes.work, "⌂", "Work")}
           ${navLink(routes.projects, "◇", "Projects")}
           ${navLink(projectRoute("repository"), "⌘", "Repository")}
           ${navLink(projectRoute("inputs"), "＋", "Inputs")}

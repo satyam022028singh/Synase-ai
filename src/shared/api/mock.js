@@ -6,6 +6,90 @@ module boundaries moved. Every method returns { data, meta }. */
 import { db, page, sleep } from "./db.js";
 import { ApiError } from "./errors.js";
 
+/* ── Chat & Work helpers ───────────────────────────────────────────
+   Deterministic on purpose: the same prompt, layer, capability and effort
+   always produce the same reply and artifact, so the surface is testable and
+   never implies a model call happened. */
+
+/**
+ * @param {string} prefix
+ * @returns {string}
+ */
+function createMockId(prefix) {
+  return `${prefix}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/**
+ * @param {string} effort
+ * @returns {number}
+ */
+function mockConfidence(effort) {
+  return { auto: 0.5, low: 0.55, medium: 0.66, high: 0.78, max: 0.86 }[effort] ?? 0.5;
+}
+
+/**
+ * @param {{layer?: string, capability?: string, effort?: string, prompt?: string}} input
+ * @returns {string}
+ */
+function composeMockReply({ layer, capability, effort, prompt }) {
+  const scope =
+    layer === "product"
+      ? "Product layer"
+      : layer === "devops"
+        ? "DevOps layer"
+        : capability
+          ? `Agent capability ${capability.replace(/_/g, " ")}`
+          : "Chat mode with no layer or capability selected";
+  const effortNote =
+    effort === "auto"
+      ? "Effort is on auto, which routes to the default modality in this mock."
+      : `Effort is set to ${effort}.`;
+  const artefactNote = capability === "code" || layer
+    ? "A mock draft artifact is attached below."
+    : "No artifact is produced in this configuration.";
+
+  return `Mock draft — no model, tool, or network call was made. ${scope}. ${effortNote} ${artefactNote} Nothing here is confirmed project state: route any resulting decision through the approvals queue so a human records it.
+
+Prompt: "${String(prompt).slice(0, 160)}"`;
+}
+
+/**
+ * @param {{layer?: string, capability?: string, effort?: string, prompt?: string}} input
+ * @returns {string}
+ */
+function composeMockArtifact({ layer, capability, effort, prompt }) {
+  const heading = layer === "devops" ? "DevOps review" : layer === "product" ? "Product decision draft" : capability === "code" ? "Proposed interface" : "Research note";
+  return `# ${heading} (mock draft)
+
+Deterministic fixture produced by the mock adapter. Nothing was generated,
+retrieved, or executed.
+
+## Prompt
+
+> ${String(prompt).slice(0, 200)}
+
+## Scope
+
+| Field | Value |
+| --- | --- |
+| Layer | ${layer || "none"} |
+| Capability | ${capability || "none"} |
+| Effort | ${effort} |
+| Provenance | ai_suggested |
+| Model invoked | No |
+| Tool invoked | No |
+| External contacted | No |
+| Downstream executed | No |
+
+## What a human still has to do
+
+1. Confirm the inputs are real. Every value here is a fixture.
+2. Review against the open findings in the DevOps layer.
+3. Record the decision in the approvals queue if it should become authoritative.
+
+Executed: No.`;
+}
+
 export const mockApi = {
   async login({ email, password }) {
     await sleep(450);
@@ -476,5 +560,198 @@ export const mockApi = {
     approval.status = "cancelled";
     approval.executed = false;
     return { data: { ...structuredClone(approval), downstreamExecuted: false, mock: true } };
+  },
+
+  /* ── Chat & Work ────────────────────────────────────────────────
+     Deterministic assistant replies. No model, tool, network call, or
+     filesystem write happens here; every response carries the mock
+     markers the rest of the adapter uses. */
+
+  async listWorkSessions(projectId) {
+    await sleep(150);
+    return page(db.workSessions.filter((item) => item.projectId === projectId));
+  },
+  async getWorkSession(projectId, sessionId) {
+    await sleep(120);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    return { data: structuredClone(session) };
+  },
+  async createWorkSession(projectId, input, { idempotencyKey } = {}) {
+    await sleep(180);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!db.projects.some((item) => item.id === projectId)) {
+      throw new ApiError("RESOURCE_NOT_FOUND", "Project was not found.", 404);
+    }
+    const session = {
+      id: createMockId("wrk"),
+      projectId,
+      title: String(input?.title || "New work session").slice(0, 90),
+      status: "active",
+      mode: input?.mode === "work" ? "work" : "chat",
+      layer: input?.layer || "",
+      capability: input?.capability || "",
+      effort: input?.effort || "auto",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      mock: true
+    };
+    db.workSessions.unshift(session);
+    return { data: structuredClone(session) };
+  },
+  async updateWorkSession(projectId, sessionId, patch, { idempotencyKey } = {}) {
+    await sleep(160);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    for (const key of ["title", "mode", "layer", "capability", "effort"]) {
+      if (patch && key in patch) session[key] = patch[key];
+    }
+    session.updatedAt = new Date().toISOString();
+    return { data: structuredClone(session) };
+  },
+  async listWorkMessages(projectId, sessionId) {
+    await sleep(140);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    return page(db.workMessages.filter((item) => item.sessionId === sessionId));
+  },
+  async listWorkArtifacts(projectId, sessionId) {
+    await sleep(120);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    return page(db.workArtifacts.filter((item) => item.sessionId === sessionId));
+  },
+  async getWorkArtifact(projectId, artifactId) {
+    await sleep(100);
+    const artifact = db.workArtifacts.find(
+      (item) => item.id === artifactId && db.workSessions.some((session) => session.projectId === projectId && session.id === item.sessionId)
+    );
+    if (!artifact) throw new ApiError("RESOURCE_NOT_FOUND", "Artifact was not found.", 404);
+    return { data: structuredClone(artifact) };
+  },
+  async postWorkMessage(projectId, sessionId, input, { idempotencyKey } = {}) {
+    await sleep(260);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    const text = String(input?.text || "").trim();
+    if (!text) throw new ApiError("VALIDATION_ERROR", "A message is required.", 400);
+
+    const message = {
+      id: createMockId("wmsg"),
+      sessionId,
+      role: "user",
+      text: text.slice(0, 4000),
+      createdAt: new Date().toISOString(),
+      status: "accepted",
+      mock: true
+    };
+    db.workMessages.push(message);
+    if (session.title === "New work session") {
+      session.title = text.slice(0, 60);
+    }
+    session.updatedAt = message.createdAt;
+    return { data: structuredClone(message) };
+  },
+  async runWorkAssistant(projectId, sessionId, input, { idempotencyKey } = {}) {
+    await sleep(420);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const session = db.workSessions.find((item) => item.projectId === projectId && item.id === sessionId);
+    if (!session) throw new ApiError("RESOURCE_NOT_FOUND", "Work session was not found.", 404);
+    const prompt = String(input?.prompt || "").trim();
+    if (!prompt) throw new ApiError("VALIDATION_ERROR", "A prompt is required.", 400);
+
+    const layer = session.layer || "";
+    const capability = session.capability || "";
+    const effort = session.effort || "auto";
+
+    const message = {
+      id: createMockId("wmsg"),
+      sessionId,
+      role: "assistant",
+      text: composeMockReply({ layer, capability, effort, prompt }),
+      createdAt: new Date().toISOString(),
+      status: "accepted",
+      mock: true,
+      layer,
+      capability,
+      effort
+    };
+
+    let artifact = null;
+    if (capability === "code" || capability === "web_search" || layer === "product" || layer === "devops") {
+      artifact = {
+        id: createMockId("wart"),
+        sessionId,
+        messageId: message.id,
+        kind: capability === "code" ? "code" : layer === "devops" ? "report" : layer === "product" ? "report" : "doc",
+        title: `${prompt.slice(0, 60)}${prompt.length > 60 ? "…" : ""} (mock draft)`,
+        language: "markdown",
+        provenance: "ai_suggested",
+        confidence: mockConfidence(effort),
+        createdAt: message.createdAt,
+        updatedAt: message.createdAt,
+        mock: true,
+        content: composeMockArtifact({ layer, capability, effort, prompt })
+      };
+      db.workArtifacts.push(artifact);
+      message.artifactId = artifact.id;
+    }
+
+    db.workMessages.push(message);
+    session.updatedAt = message.createdAt;
+    session.effort = effort;
+    session.layer = layer;
+    session.capability = capability;
+
+    return {
+      data: {
+        message: structuredClone(message),
+        artifact: artifact ? structuredClone(artifact) : null,
+        receipt: {
+          operation: "work.assistant",
+          externalContacted: false,
+          downstreamExecuted: false,
+          modelInvoked: false,
+          toolInvoked: false,
+          mock: true
+        }
+      }
+    };
+  },
+  async connectWorkRepository(projectId, input, { idempotencyKey } = {}) {
+    await sleep(300);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const repositories = db.repositories.filter((item) => item.projectId === projectId);
+    const existing = repositories.find((item) => item.providerName === "github");
+    if (existing) {
+      return {
+        data: {
+          repository: structuredClone(existing),
+          receipt: { operation: "work.connect", externalContacted: false, importedRecords: 0, mock: true }
+        }
+      };
+    }
+    const repository = {
+      id: createMockId("repo"),
+      projectId,
+      providerName: "github",
+      fullName: String(input?.fullName || "satyam022028singh/Synase-ai"),
+      connectionStatus: "pending",
+      defaultBranch: "main",
+      syncStatus: "never",
+      lastSyncedAt: null,
+      snapshotIds: [],
+      createdAt: new Date().toISOString(),
+      mock: true
+    };
+    db.repositories.push(repository);
+    return {
+      data: {
+        repository: structuredClone(repository),
+        receipt: { operation: "work.connect", externalContacted: false, importedRecords: 0, mock: true }
+      }
+    };
   }
 };
