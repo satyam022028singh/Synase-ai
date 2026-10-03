@@ -15,7 +15,7 @@
     "Phase 11",
     "Phase 12"
   ],
-  "generatedAt": "2026-10-03T19:00:04.123Z",
+  "generatedAt": "2026-10-03T19:05:54.394Z",
   "files": {
     "index.html": {
       "bytes": 338,
@@ -94,8 +94,8 @@
       "sha256": "5fc7b539af8b55cc22a2f98f0a6dda057c0f0ccdf526231f09a9c35a8552fc0e"
     },
     "src/shared/types/types.d.ts": {
-      "bytes": 12633,
-      "sha256": "d929f3d02b17721137ea7cebdafdebbecab82248255d2ea2a1c70de2b4d5b80f"
+      "bytes": 12322,
+      "sha256": "d09d3e7facbe5415ad3afa9f80dda920b73541f24913894a4cf2be2296170126"
     },
     "src/home/landing/landing.js": {
       "bytes": 6793,
@@ -126,32 +126,32 @@
       "sha256": "4ad45e8b7fbf67ea21d658a9ca4678cdc5259cee0bf3f25120a20a1ee31f09fb"
     },
     "src/integrations/api/client.js": {
-      "bytes": 10310,
-      "sha256": "81df3fb6e3d66619ecf3281e4b3efdadea23bbb7b10cf16ff0204d05048b13ce"
+      "bytes": 10240,
+      "sha256": "b22c9624143db8291f14ab0d1ee2f003f7611ce01816f4c5b3ab43fadc8a317a"
     },
     "src/integrations/api/types.d.ts": {
-      "bytes": 2926,
-      "sha256": "37cb12ebfedf107514483047b8895c0aaed3fe72fc5a25ed2d45ad491fbe1182"
+      "bytes": 2909,
+      "sha256": "a94ebf4d9a6ae2f1ebcc7766dc969a223caf56507b65c1b121e1c6b0fba2ccfa"
     },
     "src/home/workspace/dashboard/api.js": {
-      "bytes": 9576,
-      "sha256": "cedda5dda149d81a8e9228d56db73e44b840ed5e0da8754dbc1b9aa68158fdcf"
+      "bytes": 9442,
+      "sha256": "4577835fbb3f5b69cc5d663a4df023998e1eb334deb30b132ce0ad6e73b53406"
     },
     "src/home/workspace/dashboard/types.d.ts": {
-      "bytes": 2170,
-      "sha256": "1f281e8ca57baf384c1463bd537784fe8fe6eba1875241c847a3c70a4736f75f"
+      "bytes": 2161,
+      "sha256": "ce105d8e13c18c3c58e907f1eb1e9882204ad9e4563eb08373f2c8b265e6ec4b"
     },
     "src/styles/app.css": {
       "bytes": 59377,
       "sha256": "c89062c6a86489f0d2676b36b6668c362909f08395ba1cdb70e3678fa262e922"
     },
     "src/styles/home/dashboard.css": {
-      "bytes": 3966,
-      "sha256": "2c08cada94d296d00e143319ee069ffb256cfc7ce293e32b68fc8c1e3c4136ed"
+      "bytes": 3965,
+      "sha256": "e9e82b98b3f46ce5f798901dc2ee2621dfe9da86d425315081e75c7a3580891f"
     },
     "src/styles/integrations/integrations.css": {
-      "bytes": 3374,
-      "sha256": "9f2a8df8c99ce7db24b4a8c56caafe8d6100e19e33a4166d8fa395b17f1f6134"
+      "bytes": 3373,
+      "sha256": "bee0b98ad564c49b78c3036be0e9c417f7e8d3f0e9034e81f6a7a3ca68858f44"
     },
     "src/styles/landing/landing.css": {
       "bytes": 48443,
