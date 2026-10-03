@@ -27,6 +27,7 @@ for (const [path, detail] of Object.entries(facts.files)) {
     id: path,
     kind: path.endsWith(".d.ts") ? "type-module" : path.startsWith("test/") ? "test-file" : "source-file",
     label: path.split("/").pop(),
+    layer: detail.layer,
     lines: detail.lines,
     ...(detail.exports !== undefined ? { exports: detail.exports } : {}),
     ...(detail.tests !== undefined ? { contractTests: detail.tests } : {})
@@ -74,11 +75,20 @@ for (const declaration of TYPES) link(declaration.id, "l2-service", "declares-fo
 
 const emitted = new Set();
 for (const entry of ENTITY_MAP) {
-  const scope = entry.fixture.includes("phase11") ? "p11" : entry.fixture.includes("phase12") ? "p12" : "core";
+  const scope = entry.fixture.includes("integrations/api/client.js")
+    ? "p11"
+    : entry.fixture.includes("dashboard/api.js")
+      ? "p12"
+      : "core";
   const id = `ent-${scope}-${entry.name.toLowerCase()}`;
   if (emitted.has(id)) continue;
   emitted.add(id);
-  const declaration = scope === "p11" ? "src/phase11-types.d.ts" : scope === "p12" ? "src/phase12-types.d.ts" : "src/types.d.ts";
+  const declaration =
+    scope === "p11"
+      ? "src/integrations/api/types.d.ts"
+      : scope === "p12"
+        ? "src/home/workspace/dashboard/types.d.ts"
+        : "src/shared/types/types.d.ts";
   add({
     id,
     kind: "entity",
@@ -97,7 +107,8 @@ for (const entry of ENTITY_MAP) {
 
 for (const fixture of UNTYPED_FIXTURES) {
   const id = `ent-untyped-${fixture.key}`;
-  const service = fixture.module === "src/api.js" ? "svc-mock" : "svc-p11";
+  const service =
+    fixture.module === "src/shared/api/db.js" ? "svc-mock" : "svc-p11";
   add({
     id,
     kind: "entity-untyped",
@@ -138,7 +149,7 @@ for (const group of NAV) {
   add({ id, kind: "nav-section", label: group.section, module: group.module, items: group.items.length });
   link(group.module, id, "renders-nav");
   for (const [href, label, routeId, , disabled] of group.items) {
-    link(id, routeId, "links-to", disabled ? "Rendered aria-disabled in app.js but served by phase11.js" : undefined);
+    link(id, routeId, "links-to", disabled ? `Rendered aria-disabled in ${group.module}` : undefined);
     const node = nodes.find((item) => item.id === routeId);
     node.navLabel = label;
     node.navHref = href;
@@ -208,10 +219,13 @@ for (const phase of ROADMAP) {
 }
 
 const FILE_ROLES = {
-  "index.html": { role: "Static application entry", detail: "Loads three stylesheets and three ES modules into #app" },
-  "src/styles.css": { role: "Core design system", detail: "Dark theme tokens, shell, cards, tables, forms, status pills" },
-  "src/phase11.css": { role: "Phase 11 component styles", detail: "Integration, activity, and audit layouts" },
-  "src/phase12.css": { role: "Phase 12 component styles", detail: "Dashboard metrics, attention queue, readiness, safety panel" }
+  "index.html": { role: "Static application entry", detail: "Redirects to landing.html" },
+  "app.html": { role: "Console entry", detail: "Loads app.css, dashboard.css, integrations.css and one module: src/app/main.js" },
+  "landing.html": { role: "Marketing entry", detail: "Loads landing.css and src/home/landing/landing.js" },
+  "src/styles/app.css": { role: "Core design system", detail: "Light and dark theme tokens, shell, cards, tables, forms, status pills" },
+  "src/styles/home/dashboard.css": { role: "Dashboard component styles", detail: "Dashboard metrics, attention queue, readiness, safety panel" },
+  "src/styles/integrations/integrations.css": { role: "Integrations component styles", detail: "Integration, activity, and audit layouts" },
+  "src/styles/landing/landing.css": { role: "Landing page styles", detail: "Extracted from the former inline style block" }
 };
 for (const asset of facts.buildAssets) {
   if (!nodes.some((node) => node.id === asset)) add({ id: asset, kind: "source-file", label: asset.split("/").pop(), ...(FILE_ROLES[asset] || { role: "Bundled asset" }) });
@@ -221,12 +235,29 @@ for (const asset of facts.buildAssets) {
 add({ id: "scr-build", kind: "script", label: "build.mjs", role: "Recreates dist/, copies src/, writes SHA-256 manifest", assets: facts.buildAssets.length, command: facts.scripts.build });
 add({ id: "scr-serve", kind: "script", label: "serve.mjs", role: `Static server over ${facts.serveTargets} with path-traversal guard`, command: facts.scripts.dev });
 add({ id: "scr-test", kind: "script", label: "node --test", role: "Contract suite", command: facts.scripts.test, cases: Object.values(facts.files).reduce((sum, file) => sum + (file.tests || 0), 0) });
-add({ id: "scr-brain", kind: "script", label: "brain-extract.mjs + brain.mjs", role: "Regenerates this graph from source", command: "npm run brain" });
+add({ id: "scr-brain", kind: "script", label: "brain-extract.mjs + brain.mjs", role: "Regenerates this graph from source by walking src/ and test/", command: "npm run brain" });
 for (const script of ["scr-build", "scr-serve", "scr-test", "scr-brain"]) link("synase-ai", script, "built-by");
 link("scr-test", "svc-mock", "covers");
 link("scr-test", "svc-p11", "covers");
 link("scr-test", "svc-p12", "covers");
 for (const testFile of Object.keys(facts.files).filter((path) => path.startsWith("test/"))) link("scr-test", testFile, "runs");
+
+/* architecture layers discovered on disk, so a new folder shows up immediately */
+for (const layer of facts.layers) {
+  const id = `arch-${layer}`;
+  if (nodes.some((node) => node.id === id)) continue;
+  const owned = Object.keys(facts.files).filter((path) => path.startsWith(`src/${layer}/`) || (layer === "test" && path.startsWith("test/")));
+  add({
+    id,
+    kind: "architecture-layer",
+    label: `src/${layer}`,
+    files: owned.length,
+    lines: owned.reduce((sum, path) => sum + facts.files[path].lines, 0),
+    importsNothingOutsideShared: layer === "shared"
+  });
+  link("synase-ai", id, "organised-as");
+  for (const path of owned) link(id, path, "contains");
+}
 
 const graph = {
   $schema: "brain/graph.schema.md",
@@ -237,6 +268,8 @@ const graph = {
     version: facts.product.version,
     sourceLines: Object.entries(facts.files).filter(([path]) => !path.startsWith("test/")).reduce((sum, [, detail]) => sum + detail.lines, 0),
     testLines: Object.entries(facts.files).filter(([path]) => path.startsWith("test/")).reduce((sum, [, detail]) => sum + detail.lines, 0),
+    trackedFiles: Object.keys(facts.files).length,
+    architectureLayers: facts.layers.length,
     contractTests: Object.values(facts.files).reduce((sum, file) => sum + (file.tests || 0), 0),
     typeExports: TYPES.reduce((sum, declaration) => sum + declaration.exports, 0),
     dbCollections: facts.dbKeys.length,
@@ -244,7 +277,9 @@ const graph = {
     serviceMethods: SERVICES.reduce((sum, service) => sum + service.methods.split(",").length, 0),
     invariants: INVARIANTS.length,
     gaps: GAPS.length,
-    risks: RISKS.length
+    risks: RISKS.length,
+    openRisks: RISKS.filter((risk) => risk.severity !== "resolved").length,
+    resolvedRisks: RISKS.filter((risk) => risk.severity === "resolved").length
   },
   nodes,
   edges

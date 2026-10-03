@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T11:23:40.749Z",
+  "generatedAt": "2026-10-03T18:59:29.220Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -15,61 +15,301 @@
     }
   },
   "files": {
-    "src/api.js": {
-      "lines": 852,
-      "bytes": 58026
+    "src/app/auth.js": {
+      "layer": "app",
+      "lines": 77,
+      "bytes": 6829
     },
-    "src/app.js": {
-      "lines": 1369,
-      "bytes": 110135
+    "src/app/main.js": {
+      "layer": "app",
+      "lines": 739,
+      "bytes": 33970
     },
-    "src/phase11-api.js": {
-      "lines": 71,
-      "bytes": 10310
+    "src/app/paths.js": {
+      "layer": "app",
+      "lines": 67,
+      "bytes": 1901
     },
-    "src/phase11.js": {
-      "lines": 48,
-      "bytes": 12563
+    "src/app/router.js": {
+      "layer": "app",
+      "lines": 110,
+      "bytes": 4654
     },
-    "src/phase12-api.js": {
+    "src/app/shell.js": {
+      "layer": "app",
+      "lines": 100,
+      "bytes": 4739
+    },
+    "src/context/api/index.js": {
+      "layer": "context",
+      "lines": 14,
+      "bytes": 640
+    },
+    "src/context/pages/index.js": {
+      "layer": "context",
+      "lines": 47,
+      "bytes": 5471
+    },
+    "src/devops/api/index.js": {
+      "layer": "devops",
+      "lines": 15,
+      "bytes": 705
+    },
+    "src/devops/components/index.js": {
+      "layer": "devops",
+      "lines": 8,
+      "bytes": 748
+    },
+    "src/devops/pages/index.js": {
+      "layer": "devops",
+      "lines": 43,
+      "bytes": 4481
+    },
+    "src/home/landing/landing.js": {
+      "layer": "home",
+      "lines": 156,
+      "bytes": 6793
+    },
+    "src/home/settings/pages/index.js": {
+      "layer": "home",
+      "lines": 37,
+      "bytes": 2716
+    },
+    "src/home/workspace/api/index.js": {
+      "layer": "home",
+      "lines": 73,
+      "bytes": 3374
+    },
+    "src/home/workspace/dashboard/api.js": {
+      "layer": "home",
       "lines": 135,
       "bytes": 9576
     },
-    "src/phase12.js": {
-      "lines": 63,
-      "bytes": 7760
-    },
-    "src/types.d.ts": {
-      "lines": 312,
-      "exports": 70
-    },
-    "src/phase11-types.d.ts": {
-      "lines": 18,
-      "exports": 17
-    },
-    "src/phase12-types.d.ts": {
+    "src/home/workspace/dashboard/types.d.ts": {
+      "layer": "home",
       "lines": 10,
+      "bytes": 2170,
       "exports": 9
     },
+    "src/home/workspace/dashboard/view.js": {
+      "layer": "home",
+      "lines": 65,
+      "bytes": 7154
+    },
+    "src/home/workspace/pages/analysis.js": {
+      "layer": "home",
+      "lines": 90,
+      "bytes": 9371
+    },
+    "src/home/workspace/pages/inputs.js": {
+      "layer": "home",
+      "lines": 62,
+      "bytes": 5747
+    },
+    "src/home/workspace/pages/members.js": {
+      "layer": "home",
+      "lines": 18,
+      "bytes": 1037
+    },
+    "src/home/workspace/pages/projects.js": {
+      "layer": "home",
+      "lines": 73,
+      "bytes": 5993
+    },
+    "src/home/workspace/pages/repository.js": {
+      "layer": "home",
+      "lines": 45,
+      "bytes": 4721
+    },
+    "src/home/workspace/pages/runs.js": {
+      "layer": "home",
+      "lines": 50,
+      "bytes": 4584
+    },
+    "src/integrations/api/client.js": {
+      "layer": "integrations",
+      "lines": 71,
+      "bytes": 10310
+    },
+    "src/integrations/api/types.d.ts": {
+      "layer": "integrations",
+      "lines": 18,
+      "bytes": 2926,
+      "exports": 17
+    },
+    "src/integrations/pages/index.js": {
+      "layer": "integrations",
+      "lines": 93,
+      "bytes": 10067
+    },
+    "src/mcp/api/index.js": {
+      "layer": "mcp",
+      "lines": 20,
+      "bytes": 781
+    },
+    "src/mcp/pages/index.js": {
+      "layer": "mcp",
+      "lines": 58,
+      "bytes": 6173
+    },
+    "src/outputs/api/index.js": {
+      "layer": "outputs",
+      "lines": 23,
+      "bytes": 1146
+    },
+    "src/outputs/pages/index.js": {
+      "layer": "outputs",
+      "lines": 39,
+      "bytes": 6941
+    },
+    "src/product/api/index.js": {
+      "layer": "product",
+      "lines": 18,
+      "bytes": 762
+    },
+    "src/product/pages/index.js": {
+      "layer": "product",
+      "lines": 37,
+      "bytes": 3999
+    },
+    "src/shared/api/db.js": {
+      "layer": "shared",
+      "lines": 347,
+      "bytes": 27516
+    },
+    "src/shared/api/errors.js": {
+      "layer": "shared",
+      "lines": 14,
+      "bytes": 356
+    },
+    "src/shared/api/idempotency.js": {
+      "layer": "shared",
+      "lines": 5,
+      "bytes": 221
+    },
+    "src/shared/api/index.js": {
+      "layer": "shared",
+      "lines": 20,
+      "bytes": 731
+    },
+    "src/shared/api/live.js": {
+      "layer": "shared",
+      "lines": 11,
+      "bytes": 312
+    },
+    "src/shared/api/mock.js": {
+      "layer": "shared",
+      "lines": 481,
+      "bytes": 28907
+    },
+    "src/shared/api/redaction.js": {
+      "layer": "shared",
+      "lines": 21,
+      "bytes": 800
+    },
+    "src/shared/components/ui.js": {
+      "layer": "shared",
+      "lines": 110,
+      "bytes": 4372
+    },
+    "src/shared/services/theme.js": {
+      "layer": "shared",
+      "lines": 63,
+      "bytes": 2266
+    },
+    "src/shared/state/store.js": {
+      "layer": "shared",
+      "lines": 127,
+      "bytes": 3414
+    },
+    "src/shared/types/types.d.ts": {
+      "layer": "shared",
+      "lines": 312,
+      "bytes": 12633,
+      "exports": 70
+    },
+    "src/shared/utils/format.js": {
+      "layer": "shared",
+      "lines": 49,
+      "bytes": 1086
+    },
+    "src/styles/app.css": {
+      "layer": "styles",
+      "lines": 1365,
+      "bytes": 59377
+    },
+    "src/styles/home/dashboard.css": {
+      "layer": "styles",
+      "lines": 2,
+      "bytes": 3966
+    },
+    "src/styles/integrations/integrations.css": {
+      "layer": "styles",
+      "lines": 2,
+      "bytes": 3374
+    },
+    "src/styles/landing/landing.css": {
+      "layer": "styles",
+      "lines": 904,
+      "bytes": 48443
+    },
     "test/api.test.mjs": {
+      "layer": "test",
       "lines": 293,
+      "bytes": 14548,
       "tests": 39
     },
-    "test/phase11.test.mjs": {
-      "lines": 14,
-      "tests": 9
-    },
     "test/phase11-extra.test.mjs": {
+      "layer": "test",
       "lines": 8,
+      "bytes": 1465,
       "tests": 4
     },
+    "test/phase11.test.mjs": {
+      "layer": "test",
+      "lines": 14,
+      "bytes": 4201,
+      "tests": 9
+    },
     "test/phase12.test.mjs": {
+      "layer": "test",
       "lines": 17,
+      "bytes": 4144,
       "tests": 12
     }
   },
   "typeNames": {
-    "src/types.d.ts": [
+    "src/home/workspace/dashboard/types.d.ts": [
+      "AdapterMode",
+      "ContractCheckStatus",
+      "ContractCheck",
+      "IntegrationReadiness",
+      "AttentionItem",
+      "ProjectHealthSummary",
+      "DashboardOverview",
+      "QaCheck",
+      "QaReport"
+    ],
+    "src/integrations/api/types.d.ts": [
+      "IntegrationAuthorizationStatus",
+      "IntegrationConnectionStatus",
+      "IntegrationHealthStatus",
+      "IntegrationRunStatus",
+      "AuditOutcome",
+      "SafeAuditMetadata",
+      "IntegrationCapability",
+      "IntegrationProvider",
+      "IntegrationHealth",
+      "IntegrationConnection",
+      "IntegrationRun",
+      "IntegrationSyncReceipt",
+      "ActivityActor",
+      "ActivityItem",
+      "AuditActor",
+      "AuditResourceRef",
+      "AuditEvent"
+    ],
+    "src/shared/types/types.d.ts": [
       "PlatformRole",
       "WorkspaceRole",
       "ProjectRole",
@@ -140,38 +380,9 @@
       "Approval",
       "ReportExportArtifact",
       "DomainApi"
-    ],
-    "src/phase11-types.d.ts": [
-      "IntegrationAuthorizationStatus",
-      "IntegrationConnectionStatus",
-      "IntegrationHealthStatus",
-      "IntegrationRunStatus",
-      "AuditOutcome",
-      "SafeAuditMetadata",
-      "IntegrationCapability",
-      "IntegrationProvider",
-      "IntegrationHealth",
-      "IntegrationConnection",
-      "IntegrationRun",
-      "IntegrationSyncReceipt",
-      "ActivityActor",
-      "ActivityItem",
-      "AuditActor",
-      "AuditResourceRef",
-      "AuditEvent"
-    ],
-    "src/phase12-types.d.ts": [
-      "AdapterMode",
-      "ContractCheckStatus",
-      "ContractCheck",
-      "IntegrationReadiness",
-      "AttentionItem",
-      "ProjectHealthSummary",
-      "DashboardOverview",
-      "QaCheck",
-      "QaReport"
     ]
   },
+  "dbModule": "src/shared/api/db.js",
   "dbKeys": [
     "user",
     "workspaces",
@@ -221,21 +432,270 @@
     "brain": "node scripts/brain-extract.mjs && node scripts/brain.mjs",
     "brain:query": "node scripts/brain-query.mjs"
   },
+  "dependencies": {
+    "src/app/auth.js": [
+      "./paths.js",
+      "../shared/components/ui.js",
+      "../shared/utils/format.js"
+    ],
+    "src/app/main.js": [
+      "../shared/api/index.js",
+      "../home/workspace/api/index.js",
+      "../product/api/index.js",
+      "../devops/api/index.js",
+      "../mcp/api/index.js",
+      "../context/api/index.js",
+      "../outputs/api/index.js",
+      "../integrations/api/client.js",
+      "../home/workspace/dashboard/api.js",
+      "../shared/state/store.js",
+      "../shared/utils/format.js",
+      "../home/workspace/pages/projects.js",
+      "../home/workspace/pages/inputs.js",
+      "../shared/services/theme.js",
+      "./router.js",
+      "./paths.js"
+    ],
+    "src/app/paths.js": [
+      "../shared/state/store.js"
+    ],
+    "src/app/router.js": [
+      "../shared/state/store.js",
+      "../shared/components/ui.js",
+      "./shell.js",
+      "./paths.js",
+      "./auth.js",
+      "../home/workspace/pages/projects.js",
+      "../home/workspace/pages/members.js",
+      "../home/workspace/pages/repository.js",
+      "../home/workspace/pages/inputs.js",
+      "../home/workspace/pages/analysis.js",
+      "../home/workspace/pages/runs.js",
+      "../home/workspace/dashboard/view.js",
+      "../home/settings/pages/index.js",
+      "../product/pages/index.js",
+      "../devops/pages/index.js",
+      "../mcp/pages/index.js",
+      "../context/pages/index.js",
+      "../outputs/pages/index.js",
+      "../integrations/pages/index.js"
+    ],
+    "src/app/shell.js": [
+      "../shared/state/store.js",
+      "../shared/utils/format.js",
+      "../shared/components/ui.js",
+      "../shared/services/theme.js",
+      "./paths.js"
+    ],
+    "src/context/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/context/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../app/paths.js",
+      "../../shared/components/ui.js"
+    ],
+    "src/devops/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/devops/components/index.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
+    ],
+    "src/devops/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../app/paths.js",
+      "../../shared/components/ui.js",
+      "../components/index.js"
+    ],
+    "src/home/landing/landing.js": [
+      "../../shared/services/theme.js"
+    ],
+    "src/home/settings/pages/index.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js"
+    ],
+    "src/home/workspace/api/index.js": [
+      "../../../shared/api/index.js"
+    ],
+    "src/home/workspace/dashboard/view.js": [
+      "../../../shared/state/store.js",
+      "../../../shared/utils/format.js"
+    ],
+    "src/home/workspace/pages/analysis.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js"
+    ],
+    "src/home/workspace/pages/inputs.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js",
+      "../../../shared/utils/format.js"
+    ],
+    "src/home/workspace/pages/members.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js"
+    ],
+    "src/home/workspace/pages/projects.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js"
+    ],
+    "src/home/workspace/pages/repository.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js",
+      "../../../shared/utils/format.js"
+    ],
+    "src/home/workspace/pages/runs.js": [
+      "../../../shared/state/store.js",
+      "../../../app/paths.js",
+      "../../../shared/components/ui.js"
+    ],
+    "src/integrations/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../shared/utils/format.js"
+    ],
+    "src/mcp/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/mcp/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../app/paths.js",
+      "../../shared/components/ui.js"
+    ],
+    "src/outputs/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/outputs/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../app/paths.js",
+      "../../shared/components/ui.js"
+    ],
+    "src/product/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/product/pages/index.js": [
+      "../../shared/state/store.js",
+      "../../app/paths.js",
+      "../../shared/components/ui.js"
+    ],
+    "src/shared/api/index.js": [
+      "./mock.js",
+      "./errors.js",
+      "./idempotency.js",
+      "./redaction.js",
+      "./mock.js",
+      "./live.js",
+      "./db.js"
+    ],
+    "src/shared/api/live.js": [
+      "./errors.js"
+    ],
+    "src/shared/api/mock.js": [
+      "./db.js",
+      "./errors.js"
+    ],
+    "src/shared/components/ui.js": [
+      "../utils/format.js"
+    ]
+  },
+  "layers": [
+    "app",
+    "context",
+    "devops",
+    "home",
+    "integrations",
+    "mcp",
+    "outputs",
+    "product",
+    "shared",
+    "styles",
+    "test"
+  ],
   "buildAssets": [
     "index.html",
-    "src/styles.css",
-    "src/app.js",
-    "src/api.js",
-    "src/types.d.ts",
-    "src/phase11.css",
-    "src/phase11.js",
-    "src/phase11-api.js",
-    "src/phase11-types.d.ts",
-    "src/phase12.css",
-    "src/phase12.js",
-    "src/phase12-api.js",
-    "src/phase12-types.d.ts"
+    "landing.html",
+    "app.html",
+    "src/app/main.js",
+    "src/app/router.js",
+    "src/app/shell.js",
+    "src/app/paths.js",
+    "src/app/auth.js",
+    "src/shared/api/index.js",
+    "src/shared/api/mock.js",
+    "src/shared/api/db.js",
+    "src/shared/api/errors.js",
+    "src/shared/api/live.js",
+    "src/shared/api/idempotency.js",
+    "src/shared/api/redaction.js",
+    "src/shared/components/ui.js",
+    "src/shared/state/store.js",
+    "src/shared/services/theme.js",
+    "src/shared/utils/format.js",
+    "src/shared/types/types.d.ts",
+    "src/home/landing/landing.js",
+    "src/home/workspace/api/index.js",
+    "src/product/api/index.js",
+    "src/devops/api/index.js",
+    "src/mcp/api/index.js",
+    "src/context/api/index.js",
+    "src/outputs/api/index.js",
+    "src/integrations/api/client.js",
+    "src/integrations/api/types.d.ts",
+    "src/home/workspace/dashboard/api.js",
+    "src/home/workspace/dashboard/types.d.ts",
+    "src/styles/app.css",
+    "src/styles/home/dashboard.css",
+    "src/styles/integrations/integrations.css",
+    "src/styles/landing/landing.css"
   ],
-  "indexLoads": [],
+  "entryPoints": {
+    "index": [],
+    "app": [
+      "./src/assets/favicon.svg",
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com",
+      "./src/styles/app.css",
+      "./src/styles/home/dashboard.css",
+      "./src/styles/integrations/integrations.css",
+      "#main",
+      "./src/app/main.js"
+    ],
+    "landing": [
+      "./src/assets/favicon.svg",
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com",
+      "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap",
+      "./src/styles/landing/landing.css",
+      "#",
+      "#",
+      "#product",
+      "#devops",
+      "#about",
+      "#contact",
+      "#about",
+      "#contact",
+      "#product",
+      "#devops",
+      "#features",
+      "#about",
+      "#about",
+      "#contact",
+      "#",
+      "#",
+      "#",
+      "#",
+      "#",
+      "#",
+      "?route=/auth/register",
+      "app.html#/auth/login",
+      "?route=/auth/login",
+      "./src/home/landing/landing.js"
+    ]
+  },
   "serveTargets": "src/"
 }

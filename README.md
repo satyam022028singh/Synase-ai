@@ -25,6 +25,8 @@ SYNASE AI is a decision-intelligence workspace for turning project context, repo
 - [Known contract gaps](#known-contract-gaps)
 - [Build artifacts](#build-artifacts)
 
+For folder responsibilities, application flow, dependency rules, and how to add
+a feature or an API, see **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 For detailed setup, local serving, troubleshooting, and deployment guidance, see **[STARTUP_GUIDE.md](./STARTUP_GUIDE.md)**.
 
 ## Product overview
@@ -83,17 +85,19 @@ The implementation deliberately distinguishes:
 ## Architecture
 
 ```text
-Route
-  → page composition
-  → feature components and hooks
-  → domain service interface
-  → mock or live adapter
-  → shared HTTP/SSE transport
-  → /api/v1
+app/       application shell, router, bootstrap
+  ↓
+domains    home · product · devops · mcp · context · outputs · integrations
+  ↓
+shared/    api · state · components · utils · services · types
 ```
 
 Core rules:
 
+- One router owns routing and `#main`; there is a single delegated event listener.
+- Domains never import each other; cross-domain needs go through `shared/`.
+- Views emit intent via `data-route` / `data-action` and attach no listeners.
+- UI never calls the adapter directly: `view → domain api facade → shared adapter → mock store | live fetch`.
 - Browser-facing APIs remain domain-oriented under `/api/v1`.
 - Frontend domain models do not mirror PostgreSQL tables.
 - Mock and live implementations share service boundaries.
@@ -104,7 +108,13 @@ Core rules:
 - Cross-domain production pages require backend aggregate endpoints rather than browser-side relational reconstruction.
 - Workflow SSE uses authoritative event/snapshot state; elapsed time is never presented as execution progress.
 
-The project is currently a static HTML/CSS/JavaScript frontend with JavaScript type checking annotations and `.d.ts` domain declarations. It intentionally has no runtime package dependency.
+Folder responsibilities, application flow, state scoping, API organisation,
+dependency rules and a how-to for new features and APIs are documented in
+**[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+
+The project is currently a static HTML/CSS/JavaScript frontend with JavaScript
+type checking annotations and `.d.ts` domain declarations. It intentionally has
+no runtime package dependency.
 
 ## Safety guarantees
 
@@ -192,25 +202,27 @@ A `?route=/app/...` query parameter is also recognized by the prototype and take
 
 ```text
 .
-├── .github/workflows/      # Validation and packaging workflow
-├── dist/                   # Generated production build
-├── scripts/build.mjs       # Dependency-free build and manifest generation
+├── .github/workflows/        # Validation and packaging workflow
+├── dist/                     # Generated production build
+├── ARCHITECTURE.md           # Architecture reference
+├── scripts/build.mjs         # Dependency-free build and manifest generation
 ├── src/
-│   ├── api.js              # Core deterministic domain adapter
-│   ├── app.js              # Application shell and Phases 0–10 UI
-│   ├── phase11-api.js      # Integrations/activity/audit contracts
-│   ├── phase11.js          # Phase 11 views
-│   ├── phase11.css         # Phase 11 responsive styles
-│   ├── phase11-types.d.ts  # Phase 11 declarations
-│   ├── phase12-api.js      # Dashboard and integration-readiness service
-│   ├── phase12.js          # Phase 12 dashboard overlay
-│   ├── phase12.css         # Phase 12 responsive styles
-│   ├── phase12-types.d.ts  # Phase 12 declarations
-│   ├── styles.css          # Shared shell and design system
-│   └── types.d.ts          # Core domain declarations
-├── test/                   # Node contract tests
-├── index.html              # Static application entry
-├── phase12-validation.json # Authoritative latest validation result
+│   ├── app/                  # Shell, router, paths, auth, bootstrap
+│   ├── home/                 # Landing, workspace, workspace settings
+│   ├── product/              # Product Intelligence pages + api
+│   ├── devops/               # DevOps Intelligence pages + components + api
+│   ├── mcp/                  # MCP V2 pages + api
+│   ├── context/              # Shared context + knowledge pages + api
+│   ├── outputs/              # Reports + approvals pages + api
+│   ├── integrations/         # Integrations/activity/audit pages + api
+│   ├── shared/               # api · state · components · utils · services · types
+│   ├── styles/               # app.css · home/ · integrations/ · landing/
+│   └── assets/               # Branding and images
+├── test/                     # Node contract tests
+├── index.html                # Static application entry
+├── app.html                  # Console entry
+├── landing.html              # Marketing site entry
+├── phase12-validation.json   # Authoritative latest validation result
 └── package.json
 ```
 
@@ -258,7 +270,7 @@ Representative dashboard QA covered `1440×900`, `1024×768`, and `390×844` wit
 
 The shipped composition uses the deterministic mock service.
 
-`src/phase12-api.js` also exposes `createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })` for the live integration boundary. Live mode:
+`src/home/workspace/dashboard/api.js` (formerly `src/phase12-api.js`) also exposes `createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })` for the live integration boundary. Live mode:
 
 - fails when the base URL is missing
 - requires HTTPS except for `localhost`/`127.0.0.1`

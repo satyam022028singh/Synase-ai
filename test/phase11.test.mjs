@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { phase11Api, Phase11ApiError, redactSensitiveMetadata } from "../src/phase11-api.js";
+import { phase11Api, Phase11ApiError, redactSensitiveMetadata } from "../src/integrations/api/client.js";
 const key = (value) => `test-${value}`;
 test("providers and connections are separate and project scoped", async () => { const providers = await phase11Api.listIntegrationProviders(); const platform = await phase11Api.listIntegrationConnections("prj_platform"); const runtime = await phase11Api.listIntegrationConnections("prj_mcp"); assert.ok(providers.data.every((item) => !("projectId" in item))); assert.ok(platform.data.every((item) => item.projectId === "prj_platform")); assert.ok(runtime.data.every((item) => item.projectId === "prj_mcp")); });
 test("authorization connection health and sync states stay distinct", async () => { const { data } = await phase11Api.getIntegrationConnection("prj_platform", "int_jira"); assert.equal(data.connectionStatus, "pending"); assert.equal(data.authorizationStatus, "pending"); assert.equal(data.health.status, "unknown"); assert.equal(data.syncStatus, "never"); });

@@ -1,72 +1,124 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
+/** Recursively collects files under a repo-relative directory. */
+async function walk(dir, out = []) {
+  let entries;
+  try {
+    entries = await readdir(new URL(dir, root), { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const entry of entries) {
+    if (entry.name.startsWith(".") || entry.name === "dist") continue;
+    const path = `${dir}${entry.name}`;
+    if (entry.isDirectory()) await walk(`${path}/`, out);
+    else out.push(path);
+  }
+  return out;
+}
+
+/** Top-level architecture layer a source file belongs to. */
+const layerOf = (path) => {
+  if (path.startsWith("test/")) return "test";
+  if (path.startsWith("src/")) {
+    const top = path.slice(4).split("/")[0];
+    return top;
+  }
+  return "root";
+};
+
 async function main() {
-  const [
-    app, api, p11api, p12api, p11js, p12js,
-    typesCore, typesP11, typesP12,
-    testCore, testP11, testP11x, testP12,
-    pkgText, indexHtml, buildScript, serveScript
-  ] = await Promise.all([
-    read("src/app.js"), read("src/api.js"), read("src/phase11-api.js"), read("src/phase12-api.js"),
-    read("src/phase11.js"), read("src/phase12.js"),
-    read("src/types.d.ts"), read("src/phase11-types.d.ts"), read("src/phase12-types.d.ts"),
-    read("test/api.test.mjs"), read("test/phase11.test.mjs"), read("test/phase11-extra.test.mjs"), read("test/phase12.test.mjs"),
-    read("package.json"), read("index.html"), read("scripts/build.mjs"), read("scripts/serve.mjs")
+  const sourceFiles = [
+    ...(await walk("src/")).filter((path) => /\.(js|css|d\.ts)$/.test(path)).sort(),
+    ...(await walk("test/")).filter((path) => path.endsWith(".mjs")).sort()
+  ];
+
+  const [pkgText, indexHtml, appHtml, landingHtml, buildScript, serveScript] = await Promise.all([
+    read("package.json"),
+    read("index.html"),
+    read("app.html"),
+    read("landing.html"),
+    read("scripts/build.mjs"),
+    read("scripts/serve.mjs")
   ]);
 
   const lineCount = (source) => source.split(/\r?\n/).length;
-  const typeNames = (source) => [...source.matchAll(/^export (?:interface|type) ([A-Za-z0-9_]+)/gm)].map((match) => match[1]);
+  const typeNames = (source) =>
+    [...source.matchAll(/^export (?:interface|type) ([A-Za-z0-9_]+)/gm)].map((match) => match[1]);
   const countTests = (source) => (source.match(/\btest\(/g) || []).length;
+
+  const files = {};
+  const typeNamesByFile = {};
+  for (const path of sourceFiles) {
+    const source = await read(path);
+    const isType = path.endsWith(".d.ts");
+    const isTest = path.startsWith("test/");
+    files[path] = {
+      layer: layerOf(path),
+      lines: lineCount(source),
+      bytes: Buffer.byteLength(source),
+      ...(isType ? { exports: typeNames(source).length } : {}),
+      ...(isTest ? { tests: countTests(source) } : {})
+    };
+    if (isType) typeNamesByFile[path] = typeNames(source);
+  }
+
+  /* db collection keys live in the shared fixture store */
+  const dbModule = "src/shared/api/db.js";
+  const dbSource = files[dbModule] ? await read(dbModule) : "";
+  const dbKeys = (() => {
+    const lines = dbSource.split(/\r?\n/);
+    const start = lines.findIndex((line) => line.includes("const db = {"));
+    if (start < 0) return [];
+    let end = -1;
+    for (let i = start + 1; i < lines.length; i += 1) {
+      if (/^\};?\s*$/.test(lines[i])) { end = i; break; }
+    }
+    const keys = [];
+    for (let i = start + 1; i < end; i += 1) {
+      const match = lines[i].match(/^ {2}([A-Za-z0-9_]+):/);
+      if (match) keys.push(match[1]);
+    }
+    return keys;
+  })();
+
+  /* dependency edges, so the graph can reflect the enforced direction */
+  const dependencies = {};
+  for (const path of sourceFiles.filter((p) => p.endsWith(".js"))) {
+    const source = await read(path);
+    const targets = [...source.matchAll(/from "(\.\.?\/[^"]+)"/g)].map((match) => match[1]);
+    if (targets.length) dependencies[path] = targets;
+  }
 
   const facts = {
     generatedAt: new Date().toISOString(),
     product: JSON.parse(pkgText),
-    files: {
-      "src/api.js": { lines: lineCount(api), bytes: Buffer.byteLength(api) },
-      "src/app.js": { lines: lineCount(app), bytes: Buffer.byteLength(app) },
-      "src/phase11-api.js": { lines: lineCount(p11api), bytes: Buffer.byteLength(p11api) },
-      "src/phase11.js": { lines: lineCount(p11js), bytes: Buffer.byteLength(p11js) },
-      "src/phase12-api.js": { lines: lineCount(p12api), bytes: Buffer.byteLength(p12api) },
-      "src/phase12.js": { lines: lineCount(p12js), bytes: Buffer.byteLength(p12js) },
-      "src/types.d.ts": { lines: lineCount(typesCore), exports: typeNames(typesCore).length },
-      "src/phase11-types.d.ts": { lines: lineCount(typesP11), exports: typeNames(typesP11).length },
-      "src/phase12-types.d.ts": { lines: lineCount(typesP12), exports: typeNames(typesP12).length },
-      "test/api.test.mjs": { lines: lineCount(testCore), tests: countTests(testCore) },
-      "test/phase11.test.mjs": { lines: lineCount(testP11), tests: countTests(testP11) },
-      "test/phase11-extra.test.mjs": { lines: lineCount(testP11x), tests: countTests(testP11x) },
-      "test/phase12.test.mjs": { lines: lineCount(testP12), tests: countTests(testP12) }
-    },
-    typeNames: {
-      "src/types.d.ts": typeNames(typesCore),
-      "src/phase11-types.d.ts": typeNames(typesP11),
-      "src/phase12-types.d.ts": typeNames(typesP12)
-    },
-    dbKeys: (() => {
-      const lines = api.split(/\r?\n/);
-      const start = lines.findIndex((line) => line.includes("const db = {"));
-      let end = -1;
-      for (let i = start + 1; i < lines.length; i += 1) {
-        if (/^\};?\s*$/.test(lines[i])) { end = i; break; }
-      }
-      const keys = [];
-      for (let i = start + 1; i < end; i += 1) {
-        const match = lines[i].match(/^ {2}([A-Za-z0-9_]+):/);
-        if (match) keys.push(match[1]);
-      }
-      return keys;
-    })(),
+    files,
+    typeNames: typeNamesByFile,
+    dbModule,
+    dbKeys,
     scripts: JSON.parse(pkgText).scripts,
-    buildAssets: [...buildScript.matchAll(/"(src\/[^"]+|index\.html)"/g)].map((match) => match[1]),
-    indexLoads: [...indexHtml.matchAll(/(?:src|href)="([^"]+)"/g)].map((match) => match[1]),
+    dependencies,
+    layers: [...new Set(sourceFiles.map(layerOf))].sort(),
+    buildAssets: [...buildScript.matchAll(/"(src\/[^"]+|index\.html|app\.html|landing\.html)"/g)].map((match) => match[1]),
+    entryPoints: {
+      index: [...indexHtml.matchAll(/(?:src|href)="([^"]+)"/g)].map((match) => match[1]),
+      app: [...appHtml.matchAll(/(?:src|href)="([^"]+)"/g)].map((match) => match[1]),
+      landing: [...landingHtml.matchAll(/(?:src|href)="([^"]+)"/g)].map((match) => match[1])
+    },
     serveTargets: /dist\//.test(serveScript) ? "dist/" : "src/"
   };
 
   await mkdir(new URL("brain/", root), { recursive: true });
   await writeFile(new URL("brain/facts.json", root), `${JSON.stringify(facts, null, 2)}\n`);
-  console.log(`Wrote brain/facts.json (${facts.dbKeys.length} db keys, ${Object.values(facts.files).reduce((sum, file) => sum + (file.tests || 0), 0)} tests)`);
+
+  const testCount = Object.values(files).reduce((sum, file) => sum + (file.tests || 0), 0);
+  console.log(
+    `Wrote brain/facts.json (${Object.keys(files).length} files, ${dbKeys.length} db keys, ${testCount} tests, ${facts.layers.length} layers)`
+  );
 }
 
 await main();

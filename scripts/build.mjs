@@ -15,9 +15,20 @@ try {
 
 const files = [
   "index.html", "landing.html", "app.html",
-  "src/styles.css", "src/app.js", "src/api.js", "src/types.d.ts",
-  "src/phase11.css", "src/phase11.js", "src/phase11-api.js", "src/phase11-types.d.ts",
-  "src/phase12.css", "src/phase12.js", "src/phase12-api.js", "src/phase12-types.d.ts"
+  "src/app/main.js", "src/app/router.js", "src/app/shell.js", "src/app/paths.js", "src/app/auth.js",
+  "src/shared/api/index.js", "src/shared/api/mock.js", "src/shared/api/db.js",
+  "src/shared/api/errors.js", "src/shared/api/live.js",
+  "src/shared/api/idempotency.js", "src/shared/api/redaction.js",
+  "src/shared/components/ui.js", "src/shared/state/store.js",
+  "src/shared/services/theme.js", "src/shared/utils/format.js",
+  "src/shared/types/types.d.ts",
+  "src/home/landing/landing.js", "src/home/workspace/api/index.js",
+  "src/product/api/index.js", "src/devops/api/index.js", "src/mcp/api/index.js",
+  "src/context/api/index.js", "src/outputs/api/index.js",
+  "src/integrations/api/client.js", "src/integrations/api/types.d.ts",
+  "src/home/workspace/dashboard/api.js", "src/home/workspace/dashboard/types.d.ts",
+  "src/styles/app.css", "src/styles/home/dashboard.css",
+  "src/styles/integrations/integrations.css", "src/styles/landing/landing.css"
 ];
 const manifest = {};
 for (const file of files) {

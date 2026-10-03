@@ -3,18 +3,22 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-01T11:23:40.749Z",
+    "generatedAt": "2026-10-03T18:59:29.220Z",
     "version": "0.12.0",
-    "sourceLines": 2878,
+    "sourceLines": 6244,
     "testLines": 332,
+    "trackedFiles": 51,
+    "architectureLayers": 11,
     "contractTests": 64,
     "typeExports": 96,
     "dbCollections": 39,
     "routes": 33,
     "serviceMethods": 87,
-    "invariants": 18,
+    "invariants": 20,
     "gaps": 12,
-    "risks": 10
+    "risks": 10,
+    "openRisks": 8,
+    "resolvedRisks": 2
   },
   "nodes": [
     {
@@ -27,117 +31,396 @@
       "backendConnected": false
     },
     {
-      "id": "src/api.js",
+      "id": "src/app/auth.js",
+      "kind": "source-file",
+      "label": "auth.js",
+      "layer": "app",
+      "lines": 77
+    },
+    {
+      "id": "src/app/main.js",
+      "kind": "source-file",
+      "label": "main.js",
+      "layer": "app",
+      "lines": 739
+    },
+    {
+      "id": "src/app/paths.js",
+      "kind": "source-file",
+      "label": "paths.js",
+      "layer": "app",
+      "lines": 67
+    },
+    {
+      "id": "src/app/router.js",
+      "kind": "source-file",
+      "label": "router.js",
+      "layer": "app",
+      "lines": 110
+    },
+    {
+      "id": "src/app/shell.js",
+      "kind": "source-file",
+      "label": "shell.js",
+      "layer": "app",
+      "lines": 100
+    },
+    {
+      "id": "src/context/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "context",
+      "lines": 14
+    },
+    {
+      "id": "src/context/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "context",
+      "lines": 47
+    },
+    {
+      "id": "src/devops/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "devops",
+      "lines": 15
+    },
+    {
+      "id": "src/devops/components/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "devops",
+      "lines": 8
+    },
+    {
+      "id": "src/devops/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "devops",
+      "lines": 43
+    },
+    {
+      "id": "src/home/landing/landing.js",
+      "kind": "source-file",
+      "label": "landing.js",
+      "layer": "home",
+      "lines": 156
+    },
+    {
+      "id": "src/home/settings/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "home",
+      "lines": 37
+    },
+    {
+      "id": "src/home/workspace/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "home",
+      "lines": 73
+    },
+    {
+      "id": "src/home/workspace/dashboard/api.js",
       "kind": "source-file",
       "label": "api.js",
-      "lines": 852
-    },
-    {
-      "id": "src/app.js",
-      "kind": "source-file",
-      "label": "app.js",
-      "lines": 1369
-    },
-    {
-      "id": "src/phase11-api.js",
-      "kind": "source-file",
-      "label": "phase11-api.js",
-      "lines": 71
-    },
-    {
-      "id": "src/phase11.js",
-      "kind": "source-file",
-      "label": "phase11.js",
-      "lines": 48
-    },
-    {
-      "id": "src/phase12-api.js",
-      "kind": "source-file",
-      "label": "phase12-api.js",
+      "layer": "home",
       "lines": 135
     },
     {
-      "id": "src/phase12.js",
-      "kind": "source-file",
-      "label": "phase12.js",
-      "lines": 63
-    },
-    {
-      "id": "src/types.d.ts",
+      "id": "src/home/workspace/dashboard/types.d.ts",
       "kind": "type-module",
       "label": "types.d.ts",
-      "lines": 312,
-      "exports": 70
+      "layer": "home",
+      "lines": 10,
+      "exports": 9
     },
     {
-      "id": "src/phase11-types.d.ts",
+      "id": "src/home/workspace/dashboard/view.js",
+      "kind": "source-file",
+      "label": "view.js",
+      "layer": "home",
+      "lines": 65
+    },
+    {
+      "id": "src/home/workspace/pages/analysis.js",
+      "kind": "source-file",
+      "label": "analysis.js",
+      "layer": "home",
+      "lines": 90
+    },
+    {
+      "id": "src/home/workspace/pages/inputs.js",
+      "kind": "source-file",
+      "label": "inputs.js",
+      "layer": "home",
+      "lines": 62
+    },
+    {
+      "id": "src/home/workspace/pages/members.js",
+      "kind": "source-file",
+      "label": "members.js",
+      "layer": "home",
+      "lines": 18
+    },
+    {
+      "id": "src/home/workspace/pages/projects.js",
+      "kind": "source-file",
+      "label": "projects.js",
+      "layer": "home",
+      "lines": 73
+    },
+    {
+      "id": "src/home/workspace/pages/repository.js",
+      "kind": "source-file",
+      "label": "repository.js",
+      "layer": "home",
+      "lines": 45
+    },
+    {
+      "id": "src/home/workspace/pages/runs.js",
+      "kind": "source-file",
+      "label": "runs.js",
+      "layer": "home",
+      "lines": 50
+    },
+    {
+      "id": "src/integrations/api/client.js",
+      "kind": "source-file",
+      "label": "client.js",
+      "layer": "integrations",
+      "lines": 71
+    },
+    {
+      "id": "src/integrations/api/types.d.ts",
       "kind": "type-module",
-      "label": "phase11-types.d.ts",
+      "label": "types.d.ts",
+      "layer": "integrations",
       "lines": 18,
       "exports": 17
     },
     {
-      "id": "src/phase12-types.d.ts",
+      "id": "src/integrations/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "integrations",
+      "lines": 93
+    },
+    {
+      "id": "src/mcp/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "mcp",
+      "lines": 20
+    },
+    {
+      "id": "src/mcp/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "mcp",
+      "lines": 58
+    },
+    {
+      "id": "src/outputs/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "outputs",
+      "lines": 23
+    },
+    {
+      "id": "src/outputs/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "outputs",
+      "lines": 39
+    },
+    {
+      "id": "src/product/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "product",
+      "lines": 18
+    },
+    {
+      "id": "src/product/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "product",
+      "lines": 37
+    },
+    {
+      "id": "src/shared/api/db.js",
+      "kind": "source-file",
+      "label": "db.js",
+      "layer": "shared",
+      "lines": 347
+    },
+    {
+      "id": "src/shared/api/errors.js",
+      "kind": "source-file",
+      "label": "errors.js",
+      "layer": "shared",
+      "lines": 14
+    },
+    {
+      "id": "src/shared/api/idempotency.js",
+      "kind": "source-file",
+      "label": "idempotency.js",
+      "layer": "shared",
+      "lines": 5
+    },
+    {
+      "id": "src/shared/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "shared",
+      "lines": 20
+    },
+    {
+      "id": "src/shared/api/live.js",
+      "kind": "source-file",
+      "label": "live.js",
+      "layer": "shared",
+      "lines": 11
+    },
+    {
+      "id": "src/shared/api/mock.js",
+      "kind": "source-file",
+      "label": "mock.js",
+      "layer": "shared",
+      "lines": 481
+    },
+    {
+      "id": "src/shared/api/redaction.js",
+      "kind": "source-file",
+      "label": "redaction.js",
+      "layer": "shared",
+      "lines": 21
+    },
+    {
+      "id": "src/shared/components/ui.js",
+      "kind": "source-file",
+      "label": "ui.js",
+      "layer": "shared",
+      "lines": 110
+    },
+    {
+      "id": "src/shared/services/theme.js",
+      "kind": "source-file",
+      "label": "theme.js",
+      "layer": "shared",
+      "lines": 63
+    },
+    {
+      "id": "src/shared/state/store.js",
+      "kind": "source-file",
+      "label": "store.js",
+      "layer": "shared",
+      "lines": 127
+    },
+    {
+      "id": "src/shared/types/types.d.ts",
       "kind": "type-module",
-      "label": "phase12-types.d.ts",
-      "lines": 10,
-      "exports": 9
+      "label": "types.d.ts",
+      "layer": "shared",
+      "lines": 312,
+      "exports": 70
+    },
+    {
+      "id": "src/shared/utils/format.js",
+      "kind": "source-file",
+      "label": "format.js",
+      "layer": "shared",
+      "lines": 49
+    },
+    {
+      "id": "src/styles/app.css",
+      "kind": "source-file",
+      "label": "app.css",
+      "layer": "styles",
+      "lines": 1365
+    },
+    {
+      "id": "src/styles/home/dashboard.css",
+      "kind": "source-file",
+      "label": "dashboard.css",
+      "layer": "styles",
+      "lines": 2
+    },
+    {
+      "id": "src/styles/integrations/integrations.css",
+      "kind": "source-file",
+      "label": "integrations.css",
+      "layer": "styles",
+      "lines": 2
+    },
+    {
+      "id": "src/styles/landing/landing.css",
+      "kind": "source-file",
+      "label": "landing.css",
+      "layer": "styles",
+      "lines": 904
     },
     {
       "id": "test/api.test.mjs",
       "kind": "test-file",
       "label": "api.test.mjs",
+      "layer": "test",
       "lines": 293,
       "contractTests": 39
-    },
-    {
-      "id": "test/phase11.test.mjs",
-      "kind": "test-file",
-      "label": "phase11.test.mjs",
-      "lines": 14,
-      "contractTests": 9
     },
     {
       "id": "test/phase11-extra.test.mjs",
       "kind": "test-file",
       "label": "phase11-extra.test.mjs",
+      "layer": "test",
       "lines": 8,
       "contractTests": 4
+    },
+    {
+      "id": "test/phase11.test.mjs",
+      "kind": "test-file",
+      "label": "phase11.test.mjs",
+      "layer": "test",
+      "lines": 14,
+      "contractTests": 9
     },
     {
       "id": "test/phase12.test.mjs",
       "kind": "test-file",
       "label": "phase12.test.mjs",
+      "layer": "test",
       "lines": 17,
       "contractTests": 12
     },
     {
       "id": "l0-composition",
       "kind": "layer",
-      "label": "L0 Composition root",
+      "label": "L0 Application shell",
       "ordinal": 0,
-      "responsibility": "Route resolution, adapter selection, store, event delegation."
+      "responsibility": "Route resolution, one delegated event listener, hydration, route-scoped data loading."
     },
     {
       "id": "l1-view",
       "kind": "layer",
-      "label": "L1 View templates",
+      "label": "L1 Domain view templates",
       "ordinal": 1,
-      "responsibility": "Pure HTML string builders. No transport, no persistence knowledge."
+      "responsibility": "Pure HTML string builders grouped by domain. No transport, no persistence knowledge, no listeners."
     },
     {
       "id": "l2-service",
       "kind": "layer",
-      "label": "L2 Domain service interface",
+      "label": "L2 Domain service surface",
       "ordinal": 2,
-      "responsibility": "Domain-oriented contracts under /api/v1. Returns { data, meta }."
+      "responsibility": "Per-domain named facades over the shared adapter. Returns { data, meta }."
     },
     {
       "id": "l3-adapter",
       "kind": "layer",
       "label": "L3 Adapter boundary",
       "ordinal": 3,
-      "responsibility": "mock implementation (shipped) and live implementation (fail-closed, unwired)."
+      "responsibility": "mock implementation (shipped) and live implementation (fail-closed, unwired). Owns the fixture store."
     },
     {
       "id": "l4-transport",
@@ -157,10 +440,10 @@
       "id": "svc-mock",
       "kind": "service",
       "label": "mockApi",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "phases": "0-10",
       "role": "Deterministic in-memory domain service. Owns the entire mock db fixture.",
-      "fixture": "db (src/api.js)",
+      "fixture": "db (src/shared/api/db.js)",
       "methodCount": 74,
       "methods": [
         "login",
@@ -251,7 +534,7 @@
       "kind": "service-method",
       "label": "login",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -260,7 +543,7 @@
       "kind": "service-method",
       "label": "register",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -269,7 +552,7 @@
       "kind": "service-method",
       "label": "recover",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -278,7 +561,7 @@
       "kind": "service-method",
       "label": "getMe",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -287,7 +570,7 @@
       "kind": "service-method",
       "label": "listWorkspaces",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -296,7 +579,7 @@
       "kind": "service-method",
       "label": "getWorkspace",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -305,7 +588,7 @@
       "kind": "service-method",
       "label": "listWorkspaceMembers",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -314,7 +597,7 @@
       "kind": "service-method",
       "label": "inviteWorkspaceMember",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -323,7 +606,7 @@
       "kind": "service-method",
       "label": "listProjects",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -332,7 +615,7 @@
       "kind": "service-method",
       "label": "getProject",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -341,7 +624,7 @@
       "kind": "service-method",
       "label": "createProject",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -350,7 +633,7 @@
       "kind": "service-method",
       "label": "updateProject",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -359,7 +642,7 @@
       "kind": "service-method",
       "label": "getDashboard",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -368,7 +651,7 @@
       "kind": "service-method",
       "label": "listRepositories",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -377,7 +660,7 @@
       "kind": "service-method",
       "label": "connectRepository",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -386,7 +669,7 @@
       "kind": "service-method",
       "label": "syncRepository",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -395,7 +678,7 @@
       "kind": "service-method",
       "label": "listRepositorySnapshots",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -404,7 +687,7 @@
       "kind": "service-method",
       "label": "getRepositoryTree",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -413,7 +696,7 @@
       "kind": "service-method",
       "label": "listAssets",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -422,7 +705,7 @@
       "kind": "service-method",
       "label": "initiateUpload",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -431,7 +714,7 @@
       "kind": "service-method",
       "label": "completeUpload",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -440,7 +723,7 @@
       "kind": "service-method",
       "label": "addTextInput",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -449,7 +732,7 @@
       "kind": "service-method",
       "label": "addUrlInput",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -458,7 +741,7 @@
       "kind": "service-method",
       "label": "advanceAssetDemo",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": true
     },
@@ -467,7 +750,7 @@
       "kind": "service-method",
       "label": "deleteAsset",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -476,7 +759,7 @@
       "kind": "service-method",
       "label": "listConversations",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -485,7 +768,7 @@
       "kind": "service-method",
       "label": "createConversation",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -494,7 +777,7 @@
       "kind": "service-method",
       "label": "listMessages",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -503,7 +786,7 @@
       "kind": "service-method",
       "label": "postMessage",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -512,7 +795,7 @@
       "kind": "service-method",
       "label": "listAnalysisRequests",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -521,7 +804,7 @@
       "kind": "service-method",
       "label": "createAnalysisRequest",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -530,7 +813,7 @@
       "kind": "service-method",
       "label": "cancelAnalysisRequest",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -539,7 +822,7 @@
       "kind": "service-method",
       "label": "listWorkflows",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -548,7 +831,7 @@
       "kind": "service-method",
       "label": "getWorkflow",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -557,7 +840,7 @@
       "kind": "service-method",
       "label": "listWorkflowTasks",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -566,7 +849,7 @@
       "kind": "service-method",
       "label": "listWorkflowEvents",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -575,7 +858,7 @@
       "kind": "service-method",
       "label": "controlWorkflow",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -584,7 +867,7 @@
       "kind": "service-method",
       "label": "nextMockWorkflowEvent",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": true
     },
@@ -593,7 +876,7 @@
       "kind": "service-method",
       "label": "getMcpOverview",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -602,7 +885,7 @@
       "kind": "service-method",
       "label": "listMcpRequests",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -611,7 +894,7 @@
       "kind": "service-method",
       "label": "getMcpTrace",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -620,7 +903,7 @@
       "kind": "service-method",
       "label": "listMcpModels",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -629,7 +912,7 @@
       "kind": "service-method",
       "label": "listMcpTools",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -638,7 +921,7 @@
       "kind": "service-method",
       "label": "listMcpServers",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -647,7 +930,7 @@
       "kind": "service-method",
       "label": "listMcpDirectories",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -656,7 +939,7 @@
       "kind": "service-method",
       "label": "checkMcpServerHealth",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -665,7 +948,7 @@
       "kind": "service-method",
       "label": "discoverMcpDirectory",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -674,7 +957,7 @@
       "kind": "service-method",
       "label": "listRequirements",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -683,7 +966,7 @@
       "kind": "service-method",
       "label": "listProductFeatures",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -692,7 +975,7 @@
       "kind": "service-method",
       "label": "getProductStrategy",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -701,7 +984,7 @@
       "kind": "service-method",
       "label": "listRoadmapItems",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -710,7 +993,7 @@
       "kind": "service-method",
       "label": "runProductMock",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": true
     },
@@ -719,7 +1002,7 @@
       "kind": "service-method",
       "label": "getDevOpsSummary",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -728,7 +1011,7 @@
       "kind": "service-method",
       "label": "listFindings",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -737,7 +1020,7 @@
       "kind": "service-method",
       "label": "listDevOpsRecommendations",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -746,7 +1029,7 @@
       "kind": "service-method",
       "label": "listDependencies",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -755,7 +1038,7 @@
       "kind": "service-method",
       "label": "listTestSuggestions",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -764,7 +1047,7 @@
       "kind": "service-method",
       "label": "listDeploymentPlans",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -773,7 +1056,7 @@
       "kind": "service-method",
       "label": "runDevOpsMock",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": true
     },
@@ -782,7 +1065,7 @@
       "kind": "service-method",
       "label": "listContextItems",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -791,7 +1074,7 @@
       "kind": "service-method",
       "label": "searchMemory",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -800,7 +1083,7 @@
       "kind": "service-method",
       "label": "listRetrievalHistory",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -809,7 +1092,7 @@
       "kind": "service-method",
       "label": "getKnowledgeGraph",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -818,7 +1101,7 @@
       "kind": "service-method",
       "label": "runContextMock",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": true
     },
@@ -827,7 +1110,7 @@
       "kind": "service-method",
       "label": "listReports",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -836,7 +1119,7 @@
       "kind": "service-method",
       "label": "getReport",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -845,7 +1128,7 @@
       "kind": "service-method",
       "label": "listApprovals",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -854,7 +1137,7 @@
       "kind": "service-method",
       "label": "getApproval",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -863,7 +1146,7 @@
       "kind": "service-method",
       "label": "generateReport",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -872,7 +1155,7 @@
       "kind": "service-method",
       "label": "publishReport",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -881,7 +1164,7 @@
       "kind": "service-method",
       "label": "exportReport",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -890,7 +1173,7 @@
       "kind": "service-method",
       "label": "decideApproval",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -899,7 +1182,7 @@
       "kind": "service-method",
       "label": "addApprovalComment",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -908,7 +1191,7 @@
       "kind": "service-method",
       "label": "cancelApproval",
       "service": "svc-mock",
-      "module": "src/api.js",
+      "module": "src/shared/api/mock.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -916,7 +1199,7 @@
       "id": "svc-p11",
       "kind": "service",
       "label": "phase11Api",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "phases": "11",
       "role": "Integrations, operational activity, and immutable audit projections. Project scoped.",
       "fixture": "module-private providers, connections, runs, activity, audit + receipts Map",
@@ -945,7 +1228,7 @@
       "kind": "service-method",
       "label": "listIntegrationProviders",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -954,7 +1237,7 @@
       "kind": "service-method",
       "label": "listIntegrationConnections",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -963,7 +1246,7 @@
       "kind": "service-method",
       "label": "getIntegrationConnection",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -972,7 +1255,7 @@
       "kind": "service-method",
       "label": "listIntegrationRuns",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -981,7 +1264,7 @@
       "kind": "service-method",
       "label": "connectIntegration",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -990,7 +1273,7 @@
       "kind": "service-method",
       "label": "disconnectIntegration",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -999,7 +1282,7 @@
       "kind": "service-method",
       "label": "checkIntegrationHealth",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -1008,7 +1291,7 @@
       "kind": "service-method",
       "label": "syncIntegration",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": true,
       "requiresIdempotencyKey": true
     },
@@ -1017,7 +1300,7 @@
       "kind": "service-method",
       "label": "listActivity",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -1026,7 +1309,7 @@
       "kind": "service-method",
       "label": "listAuditEvents",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -1035,7 +1318,7 @@
       "kind": "service-method",
       "label": "getAuditEvent",
       "service": "svc-p11",
-      "module": "src/phase11-api.js",
+      "module": "src/integrations/api/client.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -1043,7 +1326,7 @@
       "id": "svc-p12",
       "kind": "service",
       "label": "phase12Api",
-      "module": "src/phase12-api.js",
+      "module": "src/home/workspace/dashboard/api.js",
       "phases": "12",
       "role": "Workspace dashboard aggregate and integration readiness. Only service with a live adapter factory.",
       "fixture": "frozen dashboard fixture",
@@ -1064,7 +1347,7 @@
       "kind": "service-method",
       "label": "getDashboard",
       "service": "svc-p12",
-      "module": "src/phase12-api.js",
+      "module": "src/home/workspace/dashboard/api.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -1073,7 +1356,7 @@
       "kind": "service-method",
       "label": "getIntegrationReadiness",
       "service": "svc-p12",
-      "module": "src/phase12-api.js",
+      "module": "src/home/workspace/dashboard/api.js",
       "mutation": false,
       "requiresIdempotencyKey": false
     },
@@ -1092,7 +1375,7 @@
       "renderedBy": [
         "shell"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-workspace",
@@ -1108,7 +1391,7 @@
         "workspaceSettingsPage",
         "shell"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-workspacemember",
@@ -1123,7 +1406,7 @@
       "renderedBy": [
         "membersPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-project",
@@ -1142,7 +1425,7 @@
         "projectOverviewPage",
         "projectSettingsPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-projectmember",
@@ -1157,22 +1440,7 @@
       "renderedBy": [
         "projectOverviewPage"
       ],
-      "declaredIn": "src/types.d.ts"
-    },
-    {
-      "id": "ent-core-dashboardmetric",
-      "kind": "entity",
-      "label": "DashboardMetric",
-      "fixture": "derived",
-      "service": "svc-mock",
-      "methods": [
-        "getDashboard"
-      ],
-      "renderedBy": [
-        "metricCard",
-        "dashboardPage"
-      ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-activityitem",
@@ -1184,10 +1452,10 @@
         "getDashboard"
       ],
       "renderedBy": [
-        "dashboardPage"
+        "decisionDashboardPage"
       ],
-      "declaredIn": "src/types.d.ts",
-      "divergence": "Flat actor:string shape in types.d.ts. Two divergent siblings exist."
+      "declaredIn": "src/shared/types/types.d.ts",
+      "divergence": "Flat actor:string shape in shared/types/types.d.ts. Two divergent siblings exist."
     },
     {
       "id": "ent-core-repository",
@@ -1203,7 +1471,7 @@
       "renderedBy": [
         "repositoryPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-repositorysnapshot",
@@ -1217,7 +1485,7 @@
       "renderedBy": [
         "repositoryPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-asset",
@@ -1239,7 +1507,7 @@
         "assetTable",
         "assetState"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-uploadinitiationresponse",
@@ -1253,7 +1521,7 @@
       "renderedBy": [
         "inputComposer"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-conversationsession",
@@ -1268,7 +1536,7 @@
       "renderedBy": [
         "conversationWorkspace"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-conversationmessage",
@@ -1283,7 +1551,7 @@
       "renderedBy": [
         "messageThread"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-analysisrequest",
@@ -1300,7 +1568,7 @@
         "analysisComposer",
         "requestHistory"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-workflowrun",
@@ -1317,7 +1585,7 @@
         "runsPage",
         "workflowDetail"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-workflowtask",
@@ -1331,7 +1599,7 @@
       "renderedBy": [
         "workflowDetail"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-workflowevent",
@@ -1346,7 +1614,7 @@
       "renderedBy": [
         "workflowDetail"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-mcprequest",
@@ -1361,7 +1629,7 @@
       "renderedBy": [
         "mcpRequestTable"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-mcptracestage",
@@ -1375,7 +1643,7 @@
       "renderedBy": [
         "mcpExecutionsView"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-mcpmodel",
@@ -1389,7 +1657,7 @@
       "renderedBy": [
         "mcpCatalogView('models')"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-mcptool",
@@ -1403,7 +1671,7 @@
       "renderedBy": [
         "mcpCatalogView('tools')"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-mcpserver",
@@ -1418,7 +1686,7 @@
       "renderedBy": [
         "mcpDiscoveryView"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-requirement",
@@ -1432,7 +1700,7 @@
       "renderedBy": [
         "requirementsView"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-productfeature",
@@ -1446,7 +1714,7 @@
       "renderedBy": [
         "prioritizationView"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-roadmapitem",
@@ -1460,7 +1728,7 @@
       "renderedBy": [
         "roadmapView"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-finding",
@@ -1475,7 +1743,7 @@
         "findingsTable",
         "devopsOverview"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-devopsrecommendation",
@@ -1489,7 +1757,7 @@
       "renderedBy": [
         "devopsOverview"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-deploymentplan",
@@ -1503,7 +1771,7 @@
       "renderedBy": [
         "devopsDeployment"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-contextitem",
@@ -1517,7 +1785,7 @@
       "renderedBy": [
         "contextOverviewPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-memoryresult",
@@ -1531,7 +1799,7 @@
       "renderedBy": [
         "memoryPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-retrievalrecord",
@@ -1545,7 +1813,7 @@
       "renderedBy": [
         "retrievalHistoryPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-knowledgegraph",
@@ -1559,7 +1827,7 @@
       "renderedBy": [
         "knowledgeGraphPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-decisionreport",
@@ -1577,7 +1845,7 @@
         "reportsPage",
         "reportDetailPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-reportexportartifact",
@@ -1591,7 +1859,7 @@
       "renderedBy": [
         "reportsPage (receipt only)"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-core-approval",
@@ -1609,13 +1877,13 @@
       "renderedBy": [
         "approvalsPage"
       ],
-      "declaredIn": "src/types.d.ts"
+      "declaredIn": "src/shared/types/types.d.ts"
     },
     {
       "id": "ent-p11-integrationprovider",
       "kind": "entity",
       "label": "IntegrationProvider",
-      "fixture": "phase11-api.js providers",
+      "fixture": "integrations/api/client.js providers",
       "service": "svc-p11",
       "methods": [
         "listIntegrationProviders"
@@ -1623,13 +1891,13 @@
       "renderedBy": [
         "integrations"
       ],
-      "declaredIn": "src/phase11-types.d.ts"
+      "declaredIn": "src/integrations/api/types.d.ts"
     },
     {
       "id": "ent-p11-integrationconnection",
       "kind": "entity",
       "label": "IntegrationConnection",
-      "fixture": "phase11-api.js connections",
+      "fixture": "integrations/api/client.js connections",
       "service": "svc-p11",
       "methods": [
         "listIntegrationConnections",
@@ -1640,13 +1908,13 @@
       "renderedBy": [
         "integrations"
       ],
-      "declaredIn": "src/phase11-types.d.ts"
+      "declaredIn": "src/integrations/api/types.d.ts"
     },
     {
       "id": "ent-p11-integrationrun",
       "kind": "entity",
       "label": "IntegrationRun",
-      "fixture": "phase11-api.js runs",
+      "fixture": "integrations/api/client.js runs",
       "service": "svc-p11",
       "methods": [
         "listIntegrationRuns",
@@ -1656,13 +1924,13 @@
       "renderedBy": [
         "integrations"
       ],
-      "declaredIn": "src/phase11-types.d.ts"
+      "declaredIn": "src/integrations/api/types.d.ts"
     },
     {
       "id": "ent-p11-integrationsyncreceipt",
       "kind": "entity",
       "label": "IntegrationSyncReceipt",
-      "fixture": "phase11-api.js receipts Map",
+      "fixture": "integrations/api/client.js receipts Map",
       "service": "svc-p11",
       "methods": [
         "connectIntegration",
@@ -1673,13 +1941,13 @@
       "renderedBy": [
         "integrations"
       ],
-      "declaredIn": "src/phase11-types.d.ts"
+      "declaredIn": "src/integrations/api/types.d.ts"
     },
     {
       "id": "ent-p11-activityitem",
       "kind": "entity",
       "label": "ActivityItem",
-      "fixture": "phase11-api.js activity",
+      "fixture": "integrations/api/client.js activity",
       "service": "svc-p11",
       "methods": [
         "listActivity"
@@ -1687,14 +1955,14 @@
       "renderedBy": [
         "activity"
       ],
-      "declaredIn": "src/phase11-types.d.ts",
+      "declaredIn": "src/integrations/api/types.d.ts",
       "divergence": "Actor object + target object + domain/outcome/source. Collides by name with types.d.ts ActivityItem."
     },
     {
       "id": "ent-p11-auditevent",
       "kind": "entity",
       "label": "AuditEvent",
-      "fixture": "phase11-api.js audit (frozen)",
+      "fixture": "integrations/api/client.js audit (frozen)",
       "service": "svc-p11",
       "methods": [
         "listAuditEvents",
@@ -1703,13 +1971,13 @@
       "renderedBy": [
         "audit"
       ],
-      "declaredIn": "src/phase11-types.d.ts"
+      "declaredIn": "src/integrations/api/types.d.ts"
     },
     {
       "id": "ent-p12-dashboardoverview",
       "kind": "entity",
       "label": "DashboardOverview",
-      "fixture": "phase12-api.js dashboard",
+      "fixture": "dashboard/api.js dashboard",
       "service": "svc-p12",
       "methods": [
         "getDashboard"
@@ -1717,13 +1985,13 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts"
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts"
     },
     {
       "id": "ent-p12-attentionitem",
       "kind": "entity",
       "label": "AttentionItem",
-      "fixture": "phase12-api.js dashboard.attention",
+      "fixture": "dashboard/api.js dashboard.attention",
       "service": "svc-p12",
       "methods": [
         "getDashboard"
@@ -1731,13 +1999,13 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts"
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts"
     },
     {
       "id": "ent-p12-projecthealthsummary",
       "kind": "entity",
       "label": "ProjectHealthSummary",
-      "fixture": "phase12-api.js dashboard.projects",
+      "fixture": "dashboard/api.js dashboard.projects",
       "service": "svc-p12",
       "methods": [
         "getDashboard"
@@ -1745,13 +2013,13 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts"
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts"
     },
     {
       "id": "ent-p12-integrationreadiness",
       "kind": "entity",
       "label": "IntegrationReadiness",
-      "fixture": "phase12-api.js dashboard.readiness",
+      "fixture": "dashboard/api.js dashboard.readiness",
       "service": "svc-p12",
       "methods": [
         "getIntegrationReadiness"
@@ -1759,13 +2027,13 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts"
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts"
     },
     {
       "id": "ent-p12-contractcheck",
       "kind": "entity",
       "label": "ContractCheck",
-      "fixture": "phase12-api.js dashboard.readiness",
+      "fixture": "dashboard/api.js dashboard.readiness",
       "service": "svc-p12",
       "methods": [
         "getIntegrationReadiness"
@@ -1773,13 +2041,13 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts"
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts"
     },
     {
       "id": "ent-p12-activityitem",
       "kind": "entity",
       "label": "ActivityItem",
-      "fixture": "phase12-api.js dashboard.activity",
+      "fixture": "dashboard/api.js dashboard.activity",
       "service": "svc-p12",
       "methods": [
         "getDashboard"
@@ -1787,14 +2055,14 @@
       "renderedBy": [
         "dashboardView"
       ],
-      "declaredIn": "src/phase12-types.d.ts",
+      "declaredIn": "src/home/workspace/dashboard/types.d.ts",
       "divergence": "Third activity shape: flat actor plus audit:false flag."
     },
     {
       "id": "ent-untyped-devopsSummary",
       "kind": "entity-untyped",
       "label": "DevOpsSummary aggregate",
-      "fixture": "src/api.js db.devopsSummary",
+      "fixture": "src/shared/api/db.js db.devopsSummary",
       "service": "svc-mock",
       "methods": [
         "getDevOpsSummary"
@@ -1808,7 +2076,7 @@
       "id": "ent-untyped-productStrategy",
       "kind": "entity-untyped",
       "label": "ProductStrategy aggregate",
-      "fixture": "src/api.js db.productStrategy",
+      "fixture": "src/shared/api/db.js db.productStrategy",
       "service": "svc-mock",
       "methods": [
         "getProductStrategy"
@@ -1822,7 +2090,7 @@
       "id": "ent-untyped-dependencies",
       "kind": "entity-untyped",
       "label": "Dependency",
-      "fixture": "src/api.js db.dependencies",
+      "fixture": "src/shared/api/db.js db.dependencies",
       "service": "svc-mock",
       "methods": [
         "listDependencies"
@@ -1836,7 +2104,7 @@
       "id": "ent-untyped-testSuggestions",
       "kind": "entity-untyped",
       "label": "TestSuggestion",
-      "fixture": "src/api.js db.testSuggestions",
+      "fixture": "src/shared/api/db.js db.testSuggestions",
       "service": "svc-mock",
       "methods": [
         "listTestSuggestions"
@@ -1850,7 +2118,7 @@
       "id": "ent-untyped-mcpDirectories",
       "kind": "entity-untyped",
       "label": "McpDirectory",
-      "fixture": "src/api.js db.mcpDirectories",
+      "fixture": "src/shared/api/db.js db.mcpDirectories",
       "service": "svc-mock",
       "methods": [
         "listMcpDirectories",
@@ -1865,7 +2133,7 @@
       "id": "ent-untyped-discoveryRuns",
       "kind": "entity-untyped",
       "label": "McpDiscoveryRun",
-      "fixture": "src/api.js db.discoveryRuns",
+      "fixture": "src/shared/api/db.js db.discoveryRuns",
       "service": "svc-mock",
       "methods": [
         "discoverMcpDirectory"
@@ -1879,7 +2147,7 @@
       "id": "ent-untyped-workflowScripts",
       "kind": "entity-untyped",
       "label": "Scripted demo events",
-      "fixture": "src/api.js db.workflowScripts",
+      "fixture": "src/shared/api/db.js db.workflowScripts",
       "service": "svc-mock",
       "methods": [
         "nextMockWorkflowEvent"
@@ -1896,7 +2164,7 @@
       "path": "/auth/login",
       "match": "startsWith('/auth/') default",
       "view": "authPage('login')",
-      "module": "src/app.js",
+      "module": "src/app/auth.js",
       "phase": 2,
       "navSection": "auth",
       "shellWrapped": false,
@@ -1910,7 +2178,7 @@
       "path": "/auth/register",
       "match": "includes('register')",
       "view": "authPage('register')",
-      "module": "src/app.js",
+      "module": "src/app/auth.js",
       "phase": 2,
       "navSection": "auth",
       "shellWrapped": false,
@@ -1924,7 +2192,7 @@
       "path": "/auth/forgot",
       "match": "includes('forgot')",
       "view": "authPage('forgot')",
-      "module": "src/app.js",
+      "module": "src/app/auth.js",
       "phase": 2,
       "navSection": "auth",
       "shellWrapped": false,
@@ -1937,12 +2205,12 @@
       "label": "#/app/dashboard",
       "path": "/app/dashboard",
       "match": "=== routes.dashboard",
-      "view": "dashboardPage()",
-      "module": "src/app.js",
+      "view": "decisionDashboardPage()",
+      "module": "src/home/workspace/dashboard/view.js",
       "phase": 12,
       "navSection": "workspace",
       "shellWrapped": true,
-      "status": "overridden",
+      "status": "mock",
       "backendSupported": false,
       "navLabel": "Dashboard",
       "navHref": "#/app/dashboard"
@@ -1954,7 +2222,7 @@
       "path": "/app/projects",
       "match": "=== routes.projects",
       "view": "projectsPage()",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/projects.js",
       "phase": 2,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -1970,7 +2238,7 @@
       "path": "/app/projects/create",
       "match": "=== routes.createProject",
       "view": "createProjectPage()",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/projects.js",
       "phase": 2,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -1984,7 +2252,7 @@
       "path": "/app/projects/:projectId/overview",
       "match": "^/app/projects/([^/]+)/overview$",
       "view": "projectOverviewPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/projects.js",
       "phase": 2,
       "navSection": "project",
       "shellWrapped": true,
@@ -1998,7 +2266,7 @@
       "path": "/app/projects/:projectId/settings",
       "match": "^/app/projects/([^/]+)/settings$",
       "view": "projectSettingsPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/settings/pages/index.js",
       "phase": 2,
       "navSection": "system",
       "shellWrapped": true,
@@ -2012,7 +2280,7 @@
       "path": "/app/projects/:projectId/repository",
       "match": "^/app/projects/([^/]+)/repository$",
       "view": "repositoryPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/repository.js",
       "phase": 3,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -2028,7 +2296,7 @@
       "path": "/app/projects/:projectId/inputs",
       "match": "^/app/projects/([^/]+)/inputs$",
       "view": "inputsPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/inputs.js",
       "phase": 3,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -2044,7 +2312,7 @@
       "path": "/app/projects/:projectId/analysis",
       "match": "^/app/projects/([^/]+)/analysis$",
       "view": "analysisPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/analysis.js",
       "phase": 4,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -2060,7 +2328,7 @@
       "path": "/app/projects/:projectId/runs",
       "match": "^/app/projects/([^/]+)/runs$",
       "view": "runsPage(projectId)",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/runs.js",
       "phase": 5,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -2075,10 +2343,10 @@
       "label": "#/app/projects/:projectId/integrations",
       "path": "/app/projects/:projectId/integrations",
       "match": "^/app/projects/[^/]+/integrations$",
-      "view": "integrations()",
-      "module": "src/phase11.js",
+      "view": "integrationsPage()",
+      "module": "src/integrations/pages/index.js",
       "phase": 11,
-      "navSection": "phase11",
+      "navSection": "integrations",
       "shellWrapped": true,
       "status": "mock",
       "backendSupported": false
@@ -2090,7 +2358,7 @@
       "path": "/app/workspaces/:workspaceId/members",
       "match": "includes('/workspaces/') && endsWith('/members')",
       "view": "membersPage()",
-      "module": "src/app.js",
+      "module": "src/home/workspace/pages/members.js",
       "phase": 2,
       "navSection": "workspace",
       "shellWrapped": true,
@@ -2106,7 +2374,7 @@
       "path": "/app/workspaces/:workspaceId/settings",
       "match": "includes('/workspaces/') && endsWith('/settings')",
       "view": "workspaceSettingsPage()",
-      "module": "src/app.js",
+      "module": "src/home/settings/pages/index.js",
       "phase": 2,
       "navSection": "system",
       "shellWrapped": true,
@@ -2122,7 +2390,7 @@
       "path": "/app/intelligence/product",
       "match": "=== '/app/intelligence/product'",
       "view": "productIntelligencePage()",
-      "module": "src/app.js",
+      "module": "src/product/pages/index.js",
       "phase": 7,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2138,7 +2406,7 @@
       "path": "/app/intelligence/devops",
       "match": "=== '/app/intelligence/devops'",
       "view": "devopsIntelligencePage()",
-      "module": "src/app.js",
+      "module": "src/devops/pages/index.js",
       "phase": 8,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2154,7 +2422,7 @@
       "path": "/app/mcp",
       "match": "^/app/mcp$",
       "view": "mcpPage('overview')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2170,7 +2438,7 @@
       "path": "/app/mcp/overview",
       "match": "^/app/mcp/(overview)$",
       "view": "mcpPage('overview')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2184,7 +2452,7 @@
       "path": "/app/mcp/executions",
       "match": "^/app/mcp/(executions)$",
       "view": "mcpPage('executions')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2198,7 +2466,7 @@
       "path": "/app/mcp/tools",
       "match": "^/app/mcp/(tools)$",
       "view": "mcpPage('tools')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2212,7 +2480,7 @@
       "path": "/app/mcp/models",
       "match": "^/app/mcp/(models)$",
       "view": "mcpPage('models')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2226,7 +2494,7 @@
       "path": "/app/mcp/discovery",
       "match": "^/app/mcp/(discovery)$",
       "view": "mcpPage('discovery')",
-      "module": "src/app.js",
+      "module": "src/mcp/pages/index.js",
       "phase": 6,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2240,7 +2508,7 @@
       "path": "/app/context/overview",
       "match": "=== '/app/context/overview'",
       "view": "contextOverviewPage()",
-      "module": "src/app.js",
+      "module": "src/context/pages/index.js",
       "phase": 9,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2256,7 +2524,7 @@
       "path": "/app/context/memory",
       "match": "=== '/app/context/memory'",
       "view": "memoryPage()",
-      "module": "src/app.js",
+      "module": "src/context/pages/index.js",
       "phase": 9,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2270,7 +2538,7 @@
       "path": "/app/context/history",
       "match": "=== '/app/context/history'",
       "view": "retrievalHistoryPage()",
-      "module": "src/app.js",
+      "module": "src/context/pages/index.js",
       "phase": 9,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2284,7 +2552,7 @@
       "path": "/app/knowledge/graph",
       "match": "=== '/app/knowledge/graph'",
       "view": "knowledgeGraphPage()",
-      "module": "src/app.js",
+      "module": "src/context/pages/index.js",
       "phase": 9,
       "navSection": "intelligence",
       "shellWrapped": true,
@@ -2300,7 +2568,7 @@
       "path": "/app/reports",
       "match": "=== '/app/reports'",
       "view": "reportsPage()",
-      "module": "src/app.js",
+      "module": "src/outputs/pages/index.js",
       "phase": 10,
       "navSection": "outputs",
       "shellWrapped": true,
@@ -2316,7 +2584,7 @@
       "path": "/app/reports/:reportId",
       "match": "^/app/reports/([^/]+)$",
       "view": "reportDetailPage(reportId)",
-      "module": "src/app.js",
+      "module": "src/outputs/pages/index.js",
       "phase": 10,
       "navSection": "outputs",
       "shellWrapped": true,
@@ -2330,7 +2598,7 @@
       "path": "/app/approvals",
       "match": "=== '/app/approvals'",
       "view": "approvalsPage()",
-      "module": "src/app.js",
+      "module": "src/outputs/pages/index.js",
       "phase": 10,
       "navSection": "outputs",
       "shellWrapped": true,
@@ -2344,11 +2612,11 @@
       "kind": "route",
       "label": "#/app/integrations",
       "path": "/app/integrations",
-      "match": "=== '/app/integrations'",
-      "view": "integrations()",
-      "module": "src/phase11.js",
+      "match": "isIntegrationsRoute()",
+      "view": "integrationsPage()",
+      "module": "src/integrations/pages/index.js",
       "phase": 11,
-      "navSection": "phase11",
+      "navSection": "integrations",
       "shellWrapped": true,
       "status": "provisional",
       "backendSupported": false,
@@ -2360,15 +2628,15 @@
       "kind": "route",
       "label": "#/app/activity",
       "path": "/app/activity",
-      "match": "=== '/app/activity'",
+      "match": "isIntegrationsRoute()",
       "view": "activity()",
-      "module": "src/phase11.js",
+      "module": "src/integrations/pages/index.js",
       "phase": 11,
-      "navSection": "phase11",
+      "navSection": "integrations",
       "shellWrapped": true,
       "status": "mock",
       "backendSupported": false,
-      "navLabel": "Activity",
+      "navLabel": "Activity & Audit",
       "navHref": "#/app/activity"
     },
     {
@@ -2376,50 +2644,41 @@
       "kind": "route",
       "label": "#/app/audit",
       "path": "/app/audit",
-      "match": "=== '/app/audit'",
+      "match": "isIntegrationsRoute()",
       "view": "audit()",
-      "module": "src/phase11.js",
+      "module": "src/integrations/pages/index.js",
       "phase": 11,
-      "navSection": "phase11",
+      "navSection": "integrations",
       "shellWrapped": true,
       "status": "provisional",
-      "backendSupported": false,
-      "navLabel": "Audit",
-      "navHref": "#/app/audit"
+      "backendSupported": false
     },
     {
       "id": "nav-workspace",
       "kind": "nav-section",
       "label": "Workspace",
-      "module": "src/app.js",
+      "module": "src/app/shell.js",
       "items": 7
     },
     {
       "id": "nav-intelligence",
       "kind": "nav-section",
       "label": "Intelligence",
-      "module": "src/app.js",
+      "module": "src/app/shell.js",
       "items": 5
     },
     {
       "id": "nav-outputs",
       "kind": "nav-section",
       "label": "Outputs",
-      "module": "src/app.js",
+      "module": "src/app/shell.js",
       "items": 2
     },
     {
       "id": "nav-system",
       "kind": "nav-section",
       "label": "System",
-      "module": "src/app.js",
-      "items": 2
-    },
-    {
-      "id": "nav-phase-11",
-      "kind": "nav-section",
-      "label": "Phase 11",
-      "module": "src/phase11.js",
+      "module": "src/app/shell.js",
       "items": 3
     },
     {
@@ -2480,6 +2739,47 @@
         "repository"
       ],
       "within": "r-project-inputs"
+    },
+    {
+      "id": "t-mcp",
+      "kind": "in-page-tab",
+      "label": "route segment",
+      "state": "route segment",
+      "param": null,
+      "values": [
+        "overview",
+        "executions",
+        "tools",
+        "models",
+        "discovery"
+      ],
+      "within": "r-mcp-root"
+    },
+    {
+      "id": "t-context",
+      "kind": "in-page-tab",
+      "label": "route segment",
+      "state": "route segment",
+      "param": null,
+      "values": [
+        "overview",
+        "memory",
+        "history"
+      ],
+      "within": "r-context-overview"
+    },
+    {
+      "id": "t-integrations",
+      "kind": "in-page-tab",
+      "label": "route segment",
+      "state": "route segment",
+      "param": null,
+      "values": [
+        "integrations",
+        "activity",
+        "audit"
+      ],
+      "within": "r-integrations"
     },
     {
       "id": "inv-01",
@@ -2543,7 +2843,7 @@
       "label": "Elapsed time is not progress",
       "statement": "Workflow progress comes only from authoritative events or snapshots, never from a timer.",
       "enforcedBy": [
-        "src/app.js workflowDetail"
+        "src/home/workspace/pages/runs.js workflowDetail"
       ],
       "layer": "l1-view"
     },
@@ -2574,7 +2874,7 @@
       "label": "No automatic retry of unsafe mutations",
       "statement": "Unsafe mutations are never silently retried by the transport.",
       "enforcedBy": [
-        "src/phase12-api.js"
+        "src/home/workspace/dashboard/api.js"
       ],
       "layer": "l4-transport"
     },
@@ -2584,8 +2884,8 @@
       "label": "No optimistic success on high-impact actions",
       "statement": "Approvals, publications, and syncs wait for the authoritative response.",
       "enforcedBy": [
-        "src/app.js",
-        "src/phase11.js"
+        "src/app/main.js",
+        "src/integrations/pages/index.js"
       ],
       "layer": "l1-view"
     },
@@ -2595,7 +2895,7 @@
       "label": "Domain models are not persistence models",
       "statement": "Frontend domain contracts do not mirror PostgreSQL tables.",
       "enforcedBy": [
-        "src/types.d.ts"
+        "src/shared/types/types.d.ts"
       ],
       "layer": "l2-service"
     },
@@ -2636,7 +2936,7 @@
       "label": "Build success is not backend connectivity",
       "statement": "A green build or a passing suite never claims a live backend.",
       "enforcedBy": [
-        "phase12.js alerting",
+        "src/home/workspace/dashboard/view.js alerting",
         "README"
       ],
       "layer": "l1-view"
@@ -2665,19 +2965,39 @@
       "id": "inv-18",
       "kind": "invariant",
       "label": "UI output is escaped",
-      "statement": "Every interpolated value passes through escapeHtml/esc before entering innerHTML.",
+      "statement": "Every interpolated value passes through escapeHtml before entering innerHTML.",
       "enforcedBy": [
-        "src/app.js",
-        "src/phase11.js",
-        "src/phase12.js"
+        "src/shared/components/ui.js",
+        "src/home/landing/landing.js"
       ],
       "layer": "l1-view"
+    },
+    {
+      "id": "inv-19",
+      "kind": "invariant",
+      "label": "One router owns #main",
+      "statement": "A single module resolves every route and a single delegated listener handles every action. No view attaches its own listener.",
+      "enforcedBy": [
+        "src/app/router.js",
+        "src/app/main.js"
+      ],
+      "layer": "l0-composition"
+    },
+    {
+      "id": "inv-20",
+      "kind": "invariant",
+      "label": "Domains do not import domains",
+      "statement": "product, devops, mcp, context, outputs and integrations import only from shared/ and app/paths.js. shared/ imports nothing outside itself.",
+      "enforcedBy": [
+        "ARCHITECTURE.md section 9"
+      ],
+      "layer": "l0-composition"
     },
     {
       "id": "gap-01",
       "kind": "gap",
       "label": "Authentication and session contracts",
-      "detail": "login, registration, recovery, logout, renewal, and callback contracts are unresolved. app.js ships with state.authenticated = true.",
+      "detail": "login, registration, recovery, logout, renewal, and callback contracts are unresolved. The store ships with authenticated: true.",
       "blocks": [
         "l5-backend"
       ]
@@ -2704,7 +3024,7 @@
       "id": "gap-04",
       "kind": "gap",
       "label": "Workspace aggregate endpoints",
-      "detail": "Dashboard, search, report, approval, integration, and activity aggregates do not exist. Phase 12 ships a selected-project mock and labels it as such.",
+      "detail": "Dashboard, search, report, approval, integration, and activity aggregates do not exist. The dashboard ships a selected-project mock and labels it as such.",
       "blocks": [
         "l5-backend",
         "svc-p12"
@@ -2786,9 +3106,9 @@
       "id": "rsk-01",
       "kind": "risk",
       "label": "Two owners of /app/dashboard",
-      "severity": "high",
-      "detail": "src/app.js renders dashboardPage() and src/phase12.js overwrites #main via MutationObserver. Resolution depends on script load order, not on a declared contract.",
-      "where": "src/app.js:745,src/phase12.js:34",
+      "severity": "resolved",
+      "detail": "RESOLVED by the structural refactor. src/app/router.js declares the decision dashboard as the sole owner of /app/dashboard, and the superseded Phase 2 aggregate was removed. There is no MutationObserver.",
+      "where": "src/app/router.js",
       "anchors": "r-dashboard"
     },
     {
@@ -2796,8 +3116,8 @@
       "kind": "risk",
       "label": "ActivityItem exported from two type modules",
       "severity": "medium",
-      "detail": "src/types.d.ts and src/phase11-types.d.ts both export ActivityItem with different shapes. An unqualified import is ambiguous.",
-      "where": "src/types.d.ts,src/phase11-types.d.ts",
+      "detail": "src/shared/types/types.d.ts and src/integrations/api/types.d.ts both export ActivityItem with different shapes. An unqualified import is ambiguous.",
+      "where": "src/shared/types/types.d.ts,src/integrations/api/types.d.ts",
       "anchors": "ActivityItem"
     },
     {
@@ -2805,8 +3125,8 @@
       "kind": "risk",
       "label": "Three incompatible activity shapes",
       "severity": "medium",
-      "detail": "api.js uses actor:string; phase11-api.js uses actor/target objects; phase12-api.js uses actor:string plus audit:false. Three fixtures, one concept.",
-      "where": "src/api.js,src/phase11-api.js,src/phase12-api.js",
+      "detail": "shared/api/db.js uses actor:string; integrations/api/client.js uses actor/target objects; dashboard/api.js uses actor:string plus audit:false. Three fixtures, one concept.",
+      "where": "src/shared/api/db.js,src/integrations/api/client.js,src/home/workspace/dashboard/api.js",
       "anchors": "ActivityItem"
     },
     {
@@ -2814,17 +3134,17 @@
       "kind": "risk",
       "label": "liveApi is dead code",
       "severity": "medium",
-      "detail": "src/api.js exports liveApi whose request() always throws LIVE_API_NOT_CONFIGURED, and api is a hard alias of mockApi. Nothing can select the live adapter.",
-      "where": "src/api.js:845,851",
+      "detail": "src/shared/api/live.js exports liveApi whose request() always throws LIVE_API_NOT_CONFIGURED, and api is a hard alias of mockApi. Nothing can select the live adapter.",
+      "where": "src/shared/api/live.js,src/shared/api/index.js",
       "anchors": "svc-mock"
     },
     {
       "id": "rsk-05",
       "kind": "risk",
       "label": "Duplicated project hydrate cascade",
-      "severity": "medium",
-      "detail": "hydrate() and the project-switcher change handler repeat the same 7-stage fetch. Divergence risk on every new domain.",
-      "where": "src/app.js:788,src/app.js:1039",
+      "severity": "resolved",
+      "detail": "RESOLVED by the structural refactor. The 7-stage cascade now lives once in hydrateProject() and is called from both hydrate() and the project switcher.",
+      "where": "src/app/main.js hydrateProject",
       "anchors": "l0-composition"
     },
     {
@@ -2832,8 +3152,8 @@
       "kind": "risk",
       "label": "Asymmetric clone semantics",
       "severity": "low",
-      "detail": "api.js page() returns live references into db, while phase11/phase12 page() uses structuredClone and report/approval reads clone. List reads are mutable; single reads are snapshots.",
-      "where": "src/api.js,src/phase11-api.js,src/phase12-api.js",
+      "detail": "shared/api/db.js page() returns live references into db, while the integrations and dashboard services use structuredClone and report/approval reads clone. List reads are mutable; single reads are snapshots.",
+      "where": "src/shared/api/db.js,src/integrations/api/client.js,src/home/workspace/dashboard/api.js",
       "anchors": "svc-mock"
     },
     {
@@ -2841,7 +3161,7 @@
       "kind": "risk",
       "label": "CI workflow filename lags its purpose",
       "severity": "low",
-      "detail": ".github/workflows/phase11-validate.yml runs the Phase 12 suite and writes phase12-validation.json. The filename misleads.",
+      "detail": ".github/workflows/phase11-validate.yml runs the full suite and writes phase12-validation.json. The filename misleads.",
       "where": ".github/workflows/phase11-validate.yml",
       "anchors": "ph-12"
     },
@@ -2857,11 +3177,11 @@
     {
       "id": "rsk-09",
       "kind": "risk",
-      "label": "Disabled nav link for a live route",
+      "label": "Single large orchestration module",
       "severity": "low",
-      "detail": "app.js renders /app/activity as aria-disabled while phase11.js serves it. The nav misrepresents available functionality.",
-      "where": "src/app.js:174",
-      "anchors": "r-activity"
+      "detail": "app/main.js is 700+ lines because it owns hydration, route-scoped loading and every delegated action. It is cohesive but is the next place to split if the surface keeps growing.",
+      "where": "src/app/main.js",
+      "anchors": "l0-composition"
     },
     {
       "id": "rsk-10",
@@ -2894,7 +3214,7 @@
       "label": "Per-phase modules instead of one growing app",
       "decision": "Each phase adds api, view, css, and types modules rather than extending app.js.",
       "consequence": "Phase boundaries stay legible and deletable. Cost: phase11.js and phase12.js take over #main from outside the router.",
-      "status": "active"
+      "status": "superseded"
     },
     {
       "id": "dec-04",
@@ -2902,7 +3222,7 @@
       "label": "MutationObserver takeover for late modules",
       "decision": "phase11.js and phase12.js observe document.body and re-assert ownership of #main.",
       "consequence": "New phases integrate without editing the router. Cost: this is the mechanism behind rsk-01 and makes dashboard ownership implicit.",
-      "status": "debt"
+      "status": "reverted"
     },
     {
       "id": "dec-05",
@@ -2929,6 +3249,30 @@
       "status": "active"
     },
     {
+      "id": "dec-08",
+      "kind": "decision",
+      "label": "One router instead of three competing renderers",
+      "decision": "src/app/router.js resolves every route and src/app/main.js owns one delegated listener. Plugin-private data-p11-*/data-p12-* attributes were normalised to data-route/data-action.",
+      "consequence": "Route ownership is declared, not raced. Cost: an existing late module can no longer self-register without editing the router.",
+      "status": "active"
+    },
+    {
+      "id": "dec-09",
+      "kind": "decision",
+      "label": "Domain layers with a shared leaf",
+      "decision": "app/ -> domains -> shared/, with no domain importing another domain and shared/ importing nothing outside itself.",
+      "consequence": "Boundaries are greppable and mechanically checkable. Cost: cross-domain needs must be lifted into shared/ rather than reached sideways.",
+      "status": "active"
+    },
+    {
+      "id": "dec-10",
+      "kind": "decision",
+      "label": "One fixture store, partitioned API surface",
+      "decision": "The mock db stays in shared/api/db.js because its tables are cross-referenced; each domain exposes a narrow facade in <domain>/api/index.js instead.",
+      "consequence": "There is still exactly one implementation of every method, and the boundary is explicit without rewriting the most-executed file. Cost: the facades add one indirection.",
+      "status": "active"
+    },
+    {
       "id": "ph-0",
       "kind": "phase",
       "label": "Phase 0",
@@ -2944,7 +3288,7 @@
       "number": 1,
       "name": "Design system and application shell",
       "status": "implemented",
-      "capability": "styles.css tokens, shell, sidebar, topbar"
+      "capability": "styles/app.css tokens, shell, sidebar, topbar"
     },
     {
       "id": "ph-2",
@@ -3047,9 +3391,18 @@
     },
     {
       "id": "ph-13",
-      "kind": "phase-planned",
+      "kind": "phase",
       "label": "Phase 13",
       "number": 13,
+      "name": "Structural refactor to domain modules",
+      "status": "implemented",
+      "capability": "app/ -> domains -> shared/ layering, one router, theme tokens, dark mode"
+    },
+    {
+      "id": "ph-14",
+      "kind": "phase-planned",
+      "label": "Phase 14",
+      "number": 14,
       "name": "Contract registry and freeze",
       "status": "planned",
       "prereq": null,
@@ -3065,14 +3418,14 @@
       ]
     },
     {
-      "id": "ph-14",
+      "id": "ph-15",
       "kind": "phase-planned",
-      "label": "Phase 14",
-      "number": 14,
+      "label": "Phase 15",
+      "number": 15,
       "name": "Auth and session lifecycle",
       "status": "planned",
-      "prereq": "ph-13",
-      "rationale": "Replace state.authenticated = true with a real session contract, capability fields beyond roles, and explicit active-context encoding.",
+      "prereq": "ph-14",
+      "rationale": "Replace the hardcoded authenticated flag with a real session contract, capability fields beyond roles, and explicit active-context encoding.",
       "deliverables": [
         "SessionProvider at the composition root",
         "login/logout/renew/callback flows",
@@ -3085,18 +3438,18 @@
       ]
     },
     {
-      "id": "ph-15",
+      "id": "ph-16",
       "kind": "phase-planned",
-      "label": "Phase 15",
-      "number": 15,
+      "label": "Phase 16",
+      "number": 16,
       "name": "Backend aggregate endpoints",
       "status": "planned",
-      "prereq": "ph-13",
+      "prereq": "ph-14",
       "rationale": "Give the dashboard real workspace-scoped aggregates so cross-domain pages stop needing browser-side relational reconstruction.",
       "deliverables": [
         "GET /api/v1/dashboard implemented server-side",
         "server-side pagination on list endpoints",
-        "phase12 aggregateContractStatus resolves to resolved"
+        "aggregateContractStatus resolves to resolved"
       ],
       "resolves": [
         "gap-04",
@@ -3104,13 +3457,13 @@
       ]
     },
     {
-      "id": "ph-16",
+      "id": "ph-17",
       "kind": "phase-planned",
-      "label": "Phase 16",
-      "number": 16,
+      "label": "Phase 17",
+      "number": 17,
       "name": "Authoritative workflow streaming",
       "status": "planned",
-      "prereq": "ph-14",
+      "prereq": "ph-15",
       "rationale": "Replace db.workflowScripts with a real SSE channel that carries authoritative event and snapshot state with replay and heartbeat.",
       "deliverables": [
         "SSE envelope + X-Request-ID correlation",
@@ -3122,13 +3475,13 @@
       ]
     },
     {
-      "id": "ph-17",
+      "id": "ph-18",
       "kind": "phase-planned",
-      "label": "Phase 17",
-      "number": 17,
+      "label": "Phase 18",
+      "number": 18,
       "name": "Signed input pipeline",
       "status": "planned",
-      "prereq": "ph-15",
+      "prereq": "ph-16",
       "rationale": "Replace the mock-upload: URL with signed initiation and completion, keeping security scan and extraction as distinct states.",
       "deliverables": [
         "initiateUpload/completeUpload against storage",
@@ -3140,13 +3493,13 @@
       ]
     },
     {
-      "id": "ph-18",
+      "id": "ph-19",
       "kind": "phase-planned",
-      "label": "Phase 18",
-      "number": 18,
+      "label": "Phase 19",
+      "number": 19,
       "name": "Governed audit and notifications",
       "status": "planned",
-      "prereq": "ph-16",
+      "prereq": "ph-17",
       "rationale": "Move audit from a read-only fixture to a governed append-only store with a stated retention policy, and add a delivery channel.",
       "deliverables": [
         "append-only audit with retention statement",
@@ -3164,35 +3517,28 @@
       "kind": "source-file",
       "label": "index.html",
       "role": "Static application entry",
-      "detail": "Loads three stylesheets and three ES modules into #app"
+      "detail": "Redirects to landing.html"
     },
     {
-      "id": "src/styles.css",
+      "id": "landing.html",
       "kind": "source-file",
-      "label": "styles.css",
-      "role": "Core design system",
-      "detail": "Dark theme tokens, shell, cards, tables, forms, status pills"
+      "label": "landing.html",
+      "role": "Marketing entry",
+      "detail": "Loads landing.css and src/home/landing/landing.js"
     },
     {
-      "id": "src/phase11.css",
+      "id": "app.html",
       "kind": "source-file",
-      "label": "phase11.css",
-      "role": "Phase 11 component styles",
-      "detail": "Integration, activity, and audit layouts"
-    },
-    {
-      "id": "src/phase12.css",
-      "kind": "source-file",
-      "label": "phase12.css",
-      "role": "Phase 12 component styles",
-      "detail": "Dashboard metrics, attention queue, readiness, safety panel"
+      "label": "app.html",
+      "role": "Console entry",
+      "detail": "Loads app.css, dashboard.css, integrations.css and one module: src/app/main.js"
     },
     {
       "id": "scr-build",
       "kind": "script",
       "label": "build.mjs",
       "role": "Recreates dist/, copies src/, writes SHA-256 manifest",
-      "assets": 13,
+      "assets": 35,
       "command": "node scripts/build.mjs"
     },
     {
@@ -3214,8 +3560,96 @@
       "id": "scr-brain",
       "kind": "script",
       "label": "brain-extract.mjs + brain.mjs",
-      "role": "Regenerates this graph from source",
+      "role": "Regenerates this graph from source by walking src/ and test/",
       "command": "npm run brain"
+    },
+    {
+      "id": "arch-app",
+      "kind": "architecture-layer",
+      "label": "src/app",
+      "files": 5,
+      "lines": 1093,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-context",
+      "kind": "architecture-layer",
+      "label": "src/context",
+      "files": 2,
+      "lines": 61,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-devops",
+      "kind": "architecture-layer",
+      "label": "src/devops",
+      "files": 3,
+      "lines": 66,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-home",
+      "kind": "architecture-layer",
+      "label": "src/home",
+      "files": 12,
+      "lines": 814,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-integrations",
+      "kind": "architecture-layer",
+      "label": "src/integrations",
+      "files": 3,
+      "lines": 182,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-mcp",
+      "kind": "architecture-layer",
+      "label": "src/mcp",
+      "files": 2,
+      "lines": 78,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-outputs",
+      "kind": "architecture-layer",
+      "label": "src/outputs",
+      "files": 2,
+      "lines": 62,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-product",
+      "kind": "architecture-layer",
+      "label": "src/product",
+      "files": 2,
+      "lines": 55,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-shared",
+      "kind": "architecture-layer",
+      "label": "src/shared",
+      "files": 12,
+      "lines": 1560,
+      "importsNothingOutsideShared": true
+    },
+    {
+      "id": "arch-styles",
+      "kind": "architecture-layer",
+      "label": "src/styles",
+      "files": 4,
+      "lines": 2273,
+      "importsNothingOutsideShared": false
+    },
+    {
+      "id": "arch-test",
+      "kind": "architecture-layer",
+      "label": "src/test",
+      "files": 4,
+      "lines": 332,
+      "importsNothingOutsideShared": false
     }
   ],
   "edges": [
@@ -3226,17 +3660,22 @@
     },
     {
       "from": "l0-composition",
-      "to": "src/app.js",
+      "to": "src/app/main.js",
       "rel": "implemented-by"
     },
     {
       "from": "l0-composition",
-      "to": "src/phase11.js",
+      "to": "src/app/router.js",
       "rel": "implemented-by"
     },
     {
       "from": "l0-composition",
-      "to": "src/phase12.js",
+      "to": "src/app/shell.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l0-composition",
+      "to": "src/app/paths.js",
       "rel": "implemented-by"
     },
     {
@@ -3246,17 +3685,77 @@
     },
     {
       "from": "l1-view",
-      "to": "src/app.js",
+      "to": "src/home/workspace/pages/projects.js",
       "rel": "implemented-by"
     },
     {
       "from": "l1-view",
-      "to": "src/phase11.js",
+      "to": "src/home/workspace/pages/repository.js",
       "rel": "implemented-by"
     },
     {
       "from": "l1-view",
-      "to": "src/phase12.js",
+      "to": "src/home/workspace/pages/inputs.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/home/workspace/pages/analysis.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/home/workspace/pages/runs.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/home/workspace/pages/members.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/home/settings/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/product/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/devops/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/devops/components/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/mcp/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/context/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/outputs/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/integrations/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/home/workspace/dashboard/view.js",
       "rel": "implemented-by"
     },
     {
@@ -3271,17 +3770,32 @@
     },
     {
       "from": "l2-service",
-      "to": "src/api.js",
+      "to": "src/home/workspace/api/index.js",
       "rel": "implemented-by"
     },
     {
       "from": "l2-service",
-      "to": "src/phase11-api.js",
+      "to": "src/product/api/index.js",
       "rel": "implemented-by"
     },
     {
       "from": "l2-service",
-      "to": "src/phase12-api.js",
+      "to": "src/devops/api/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l2-service",
+      "to": "src/mcp/api/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l2-service",
+      "to": "src/context/api/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l2-service",
+      "to": "src/outputs/api/index.js",
       "rel": "implemented-by"
     },
     {
@@ -3296,12 +3810,22 @@
     },
     {
       "from": "l3-adapter",
-      "to": "src/api.js",
+      "to": "src/shared/api/mock.js",
       "rel": "implemented-by"
     },
     {
       "from": "l3-adapter",
-      "to": "src/phase12-api.js",
+      "to": "src/shared/api/db.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l3-adapter",
+      "to": "src/integrations/api/client.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l3-adapter",
+      "to": "src/home/workspace/dashboard/api.js",
       "rel": "implemented-by"
     },
     {
@@ -3316,7 +3840,12 @@
     },
     {
       "from": "l4-transport",
-      "to": "src/phase12-api.js",
+      "to": "src/shared/api/live.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l4-transport",
+      "to": "src/home/workspace/dashboard/api.js",
       "rel": "implemented-by"
     },
     {
@@ -3335,7 +3864,7 @@
       "rel": "calls-into"
     },
     {
-      "from": "src/api.js",
+      "from": "src/shared/api/mock.js",
       "to": "svc-mock",
       "rel": "exports"
     },
@@ -3710,7 +4239,7 @@
       "rel": "exposes-method"
     },
     {
-      "from": "src/phase11-api.js",
+      "from": "src/integrations/api/client.js",
       "to": "svc-p11",
       "rel": "exports"
     },
@@ -3770,7 +4299,7 @@
       "rel": "exposes-method"
     },
     {
-      "from": "src/phase12-api.js",
+      "from": "src/home/workspace/dashboard/api.js",
       "to": "svc-p12",
       "rel": "exports"
     },
@@ -3785,22 +4314,22 @@
       "rel": "exposes-method"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "l2-service",
       "rel": "declares-for"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "l2-service",
       "rel": "declares-for"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "l2-service",
       "rel": "declares-for"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-user",
       "rel": "declares"
     },
@@ -3830,7 +4359,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-workspace",
       "rel": "declares"
     },
@@ -3850,7 +4379,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-workspacemember",
       "rel": "declares"
     },
@@ -3870,7 +4399,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-project",
       "rel": "declares"
     },
@@ -3900,7 +4429,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-projectmember",
       "rel": "declares"
     },
@@ -3920,22 +4449,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
-      "to": "ent-core-dashboardmetric",
-      "rel": "declares"
-    },
-    {
-      "from": "svc-mock",
-      "to": "ent-core-dashboardmetric",
-      "rel": "exposes"
-    },
-    {
-      "from": "ent-core-dashboardmetric",
-      "to": "svc-mock.getDashboard",
-      "rel": "read-via"
-    },
-    {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-activityitem",
       "rel": "declares"
     },
@@ -3950,7 +4464,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-repository",
       "rel": "declares"
     },
@@ -3975,7 +4489,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-repositorysnapshot",
       "rel": "declares"
     },
@@ -3990,7 +4504,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-asset",
       "rel": "declares"
     },
@@ -4035,7 +4549,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-uploadinitiationresponse",
       "rel": "declares"
     },
@@ -4050,7 +4564,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-conversationsession",
       "rel": "declares"
     },
@@ -4070,7 +4584,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-conversationmessage",
       "rel": "declares"
     },
@@ -4090,7 +4604,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-analysisrequest",
       "rel": "declares"
     },
@@ -4115,7 +4629,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-workflowrun",
       "rel": "declares"
     },
@@ -4140,7 +4654,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-workflowtask",
       "rel": "declares"
     },
@@ -4155,7 +4669,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-workflowevent",
       "rel": "declares"
     },
@@ -4175,7 +4689,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-mcprequest",
       "rel": "declares"
     },
@@ -4195,7 +4709,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-mcptracestage",
       "rel": "declares"
     },
@@ -4210,7 +4724,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-mcpmodel",
       "rel": "declares"
     },
@@ -4225,7 +4739,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-mcptool",
       "rel": "declares"
     },
@@ -4240,7 +4754,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-mcpserver",
       "rel": "declares"
     },
@@ -4260,7 +4774,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-requirement",
       "rel": "declares"
     },
@@ -4275,7 +4789,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-productfeature",
       "rel": "declares"
     },
@@ -4290,7 +4804,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-roadmapitem",
       "rel": "declares"
     },
@@ -4305,7 +4819,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-finding",
       "rel": "declares"
     },
@@ -4320,7 +4834,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-devopsrecommendation",
       "rel": "declares"
     },
@@ -4335,7 +4849,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-deploymentplan",
       "rel": "declares"
     },
@@ -4350,7 +4864,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-contextitem",
       "rel": "declares"
     },
@@ -4365,7 +4879,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-memoryresult",
       "rel": "declares"
     },
@@ -4380,7 +4894,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-retrievalrecord",
       "rel": "declares"
     },
@@ -4395,7 +4909,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-knowledgegraph",
       "rel": "declares"
     },
@@ -4410,7 +4924,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-decisionreport",
       "rel": "declares"
     },
@@ -4440,7 +4954,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-reportexportartifact",
       "rel": "declares"
     },
@@ -4455,7 +4969,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/types.d.ts",
+      "from": "src/shared/types/types.d.ts",
       "to": "ent-core-approval",
       "rel": "declares"
     },
@@ -4490,7 +5004,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-integrationprovider",
       "rel": "declares"
     },
@@ -4505,7 +5019,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-integrationconnection",
       "rel": "declares"
     },
@@ -4535,7 +5049,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-integrationrun",
       "rel": "declares"
     },
@@ -4560,7 +5074,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-integrationsyncreceipt",
       "rel": "declares"
     },
@@ -4590,7 +5104,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-activityitem",
       "rel": "declares"
     },
@@ -4605,7 +5119,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase11-types.d.ts",
+      "from": "src/integrations/api/types.d.ts",
       "to": "ent-p11-auditevent",
       "rel": "declares"
     },
@@ -4625,7 +5139,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-dashboardoverview",
       "rel": "declares"
     },
@@ -4640,7 +5154,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-attentionitem",
       "rel": "declares"
     },
@@ -4655,7 +5169,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-projecthealthsummary",
       "rel": "declares"
     },
@@ -4670,7 +5184,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-integrationreadiness",
       "rel": "declares"
     },
@@ -4685,7 +5199,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-contractcheck",
       "rel": "declares"
     },
@@ -4700,7 +5214,7 @@
       "rel": "read-via"
     },
     {
-      "from": "src/phase12-types.d.ts",
+      "from": "src/home/workspace/dashboard/types.d.ts",
       "to": "ent-p12-activityitem",
       "rel": "declares"
     },
@@ -4825,7 +5339,7 @@
       "rel": "blocked-by"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/auth.js",
       "to": "r-auth-login",
       "rel": "routes-to"
     },
@@ -4835,7 +5349,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/auth.js",
       "to": "r-auth-register",
       "rel": "routes-to"
     },
@@ -4845,7 +5359,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/auth.js",
       "to": "r-auth-forgot",
       "rel": "routes-to"
     },
@@ -4855,7 +5369,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/dashboard/view.js",
       "to": "r-dashboard",
       "rel": "routes-to"
     },
@@ -4865,7 +5379,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/projects.js",
       "to": "r-projects",
       "rel": "routes-to"
     },
@@ -4875,7 +5389,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/projects.js",
       "to": "r-project-create",
       "rel": "routes-to"
     },
@@ -4885,7 +5399,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/projects.js",
       "to": "r-project-overview",
       "rel": "routes-to"
     },
@@ -4895,7 +5409,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/settings/pages/index.js",
       "to": "r-project-settings",
       "rel": "routes-to"
     },
@@ -4905,7 +5419,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/repository.js",
       "to": "r-project-repository",
       "rel": "routes-to"
     },
@@ -4915,7 +5429,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/inputs.js",
       "to": "r-project-inputs",
       "rel": "routes-to"
     },
@@ -4925,7 +5439,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/analysis.js",
       "to": "r-project-analysis",
       "rel": "routes-to"
     },
@@ -4935,7 +5449,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/runs.js",
       "to": "r-project-runs",
       "rel": "routes-to"
     },
@@ -4945,7 +5459,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/phase11.js",
+      "from": "src/integrations/pages/index.js",
       "to": "r-project-integrations",
       "rel": "routes-to"
     },
@@ -4955,7 +5469,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/members.js",
       "to": "r-workspace-members",
       "rel": "routes-to"
     },
@@ -4965,7 +5479,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/settings/pages/index.js",
       "to": "r-workspace-settings",
       "rel": "routes-to"
     },
@@ -4975,7 +5489,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/product/pages/index.js",
       "to": "r-intel-product",
       "rel": "routes-to"
     },
@@ -4985,7 +5499,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/devops/pages/index.js",
       "to": "r-intel-devops",
       "rel": "routes-to"
     },
@@ -4995,7 +5509,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-root",
       "rel": "routes-to"
     },
@@ -5005,7 +5519,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-overview",
       "rel": "routes-to"
     },
@@ -5015,7 +5529,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-executions",
       "rel": "routes-to"
     },
@@ -5025,7 +5539,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-tools",
       "rel": "routes-to"
     },
@@ -5035,7 +5549,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-models",
       "rel": "routes-to"
     },
@@ -5045,7 +5559,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/mcp/pages/index.js",
       "to": "r-mcp-discovery",
       "rel": "routes-to"
     },
@@ -5055,7 +5569,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/context/pages/index.js",
       "to": "r-context-overview",
       "rel": "routes-to"
     },
@@ -5065,7 +5579,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/context/pages/index.js",
       "to": "r-context-memory",
       "rel": "routes-to"
     },
@@ -5075,7 +5589,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/context/pages/index.js",
       "to": "r-context-history",
       "rel": "routes-to"
     },
@@ -5085,7 +5599,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/context/pages/index.js",
       "to": "r-knowledge-graph",
       "rel": "routes-to"
     },
@@ -5095,7 +5609,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/outputs/pages/index.js",
       "to": "r-reports",
       "rel": "routes-to"
     },
@@ -5105,7 +5619,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/outputs/pages/index.js",
       "to": "r-report-detail",
       "rel": "routes-to"
     },
@@ -5115,7 +5629,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/outputs/pages/index.js",
       "to": "r-approvals",
       "rel": "routes-to"
     },
@@ -5125,7 +5639,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/phase11.js",
+      "from": "src/integrations/pages/index.js",
       "to": "r-integrations",
       "rel": "routes-to"
     },
@@ -5135,7 +5649,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/phase11.js",
+      "from": "src/integrations/pages/index.js",
       "to": "r-activity",
       "rel": "routes-to"
     },
@@ -5145,7 +5659,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/phase11.js",
+      "from": "src/integrations/pages/index.js",
       "to": "r-audit",
       "rel": "routes-to"
     },
@@ -5155,7 +5669,7 @@
       "rel": "reads-from"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/shell.js",
       "to": "nav-workspace",
       "rel": "renders-nav"
     },
@@ -5195,7 +5709,7 @@
       "rel": "links-to"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/shell.js",
       "to": "nav-intelligence",
       "rel": "renders-nav"
     },
@@ -5225,7 +5739,7 @@
       "rel": "links-to"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/shell.js",
       "to": "nav-outputs",
       "rel": "renders-nav"
     },
@@ -5240,9 +5754,19 @@
       "rel": "links-to"
     },
     {
-      "from": "src/app.js",
+      "from": "src/app/shell.js",
       "to": "nav-system",
       "rel": "renders-nav"
+    },
+    {
+      "from": "nav-system",
+      "to": "r-integrations",
+      "rel": "links-to"
+    },
+    {
+      "from": "nav-system",
+      "to": "r-activity",
+      "rel": "links-to"
     },
     {
       "from": "nav-system",
@@ -5250,33 +5774,7 @@
       "rel": "links-to"
     },
     {
-      "from": "nav-system",
-      "to": "r-activity",
-      "rel": "links-to",
-      "note": "Rendered aria-disabled in app.js but served by phase11.js"
-    },
-    {
-      "from": "src/phase11.js",
-      "to": "nav-phase-11",
-      "rel": "renders-nav"
-    },
-    {
-      "from": "nav-phase-11",
-      "to": "r-integrations",
-      "rel": "links-to"
-    },
-    {
-      "from": "nav-phase-11",
-      "to": "r-activity",
-      "rel": "links-to"
-    },
-    {
-      "from": "nav-phase-11",
-      "to": "r-audit",
-      "rel": "links-to"
-    },
-    {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/analysis.js",
       "to": "t-analysis",
       "rel": "declares-tab"
     },
@@ -5286,7 +5784,7 @@
       "rel": "contains-tab"
     },
     {
-      "from": "src/app.js",
+      "from": "src/product/pages/index.js",
       "to": "t-product",
       "rel": "declares-tab"
     },
@@ -5296,7 +5794,7 @@
       "rel": "contains-tab"
     },
     {
-      "from": "src/app.js",
+      "from": "src/devops/pages/index.js",
       "to": "t-devops",
       "rel": "declares-tab"
     },
@@ -5306,13 +5804,43 @@
       "rel": "contains-tab"
     },
     {
-      "from": "src/app.js",
+      "from": "src/home/workspace/pages/inputs.js",
       "to": "t-input",
       "rel": "declares-tab"
     },
     {
       "from": "r-project-inputs",
       "to": "t-input",
+      "rel": "contains-tab"
+    },
+    {
+      "from": "src/mcp/pages/index.js",
+      "to": "t-mcp",
+      "rel": "declares-tab"
+    },
+    {
+      "from": "r-mcp-root",
+      "to": "t-mcp",
+      "rel": "contains-tab"
+    },
+    {
+      "from": "src/context/pages/index.js",
+      "to": "t-context",
+      "rel": "declares-tab"
+    },
+    {
+      "from": "r-context-overview",
+      "to": "t-context",
+      "rel": "contains-tab"
+    },
+    {
+      "from": "src/integrations/pages/index.js",
+      "to": "t-integrations",
+      "rel": "declares-tab"
+    },
+    {
+      "from": "r-integrations",
+      "to": "t-integrations",
       "rel": "contains-tab"
     },
     {
@@ -5493,6 +6021,26 @@
     {
       "from": "synase-ai",
       "to": "inv-18",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-19",
+      "to": "l0-composition",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-19",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-20",
+      "to": "l0-composition",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-20",
       "rel": "guarantees"
     },
     {
@@ -5687,7 +6235,7 @@
     },
     {
       "from": "rsk-09",
-      "to": "r-activity",
+      "to": "l0-composition",
       "rel": "observed-on"
     },
     {
@@ -5728,6 +6276,21 @@
     {
       "from": "synase-ai",
       "to": "dec-07",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
+      "to": "dec-08",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
+      "to": "dec-09",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
+      "to": "dec-10",
       "rel": "decided"
     },
     {
@@ -5961,62 +6524,47 @@
       "rel": "surfaced-route"
     },
     {
-      "from": "ph-13",
+      "from": "synase-ai",
+      "to": "ph-13",
+      "rel": "delivered-phase"
+    },
+    {
+      "from": "ph-14",
       "to": "gap-02",
       "rel": "resolves"
     },
     {
-      "from": "ph-13",
+      "from": "ph-14",
       "to": "gap-11",
       "rel": "resolves"
     },
     {
-      "from": "ph-12",
-      "to": "ph-13",
-      "rel": "precedes"
-    },
-    {
       "from": "ph-13",
-      "to": "ph-14",
-      "rel": "unblocks"
-    },
-    {
-      "from": "ph-14",
-      "to": "gap-01",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-14",
-      "to": "gap-05",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-14",
-      "to": "gap-06",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-12",
       "to": "ph-14",
       "rel": "precedes"
     },
     {
-      "from": "ph-13",
+      "from": "ph-14",
       "to": "ph-15",
       "rel": "unblocks"
     },
     {
       "from": "ph-15",
-      "to": "gap-04",
+      "to": "gap-01",
       "rel": "resolves"
     },
     {
       "from": "ph-15",
-      "to": "gap-03",
+      "to": "gap-05",
       "rel": "resolves"
     },
     {
-      "from": "ph-12",
+      "from": "ph-15",
+      "to": "gap-06",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-13",
       "to": "ph-15",
       "rel": "precedes"
     },
@@ -6027,11 +6575,16 @@
     },
     {
       "from": "ph-16",
-      "to": "gap-07",
+      "to": "gap-04",
       "rel": "resolves"
     },
     {
-      "from": "ph-12",
+      "from": "ph-16",
+      "to": "gap-03",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-13",
       "to": "ph-16",
       "rel": "precedes"
     },
@@ -6042,11 +6595,11 @@
     },
     {
       "from": "ph-17",
-      "to": "gap-08",
+      "to": "gap-07",
       "rel": "resolves"
     },
     {
-      "from": "ph-12",
+      "from": "ph-13",
       "to": "ph-17",
       "rel": "precedes"
     },
@@ -6057,22 +6610,37 @@
     },
     {
       "from": "ph-18",
+      "to": "gap-08",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-13",
+      "to": "ph-18",
+      "rel": "precedes"
+    },
+    {
+      "from": "ph-17",
+      "to": "ph-19",
+      "rel": "unblocks"
+    },
+    {
+      "from": "ph-19",
       "to": "gap-12",
       "rel": "resolves"
     },
     {
-      "from": "ph-18",
+      "from": "ph-19",
       "to": "gap-09",
       "rel": "resolves"
     },
     {
-      "from": "ph-18",
+      "from": "ph-19",
       "to": "gap-10",
       "rel": "resolves"
     },
     {
-      "from": "ph-12",
-      "to": "ph-18",
+      "from": "ph-13",
+      "to": "ph-19",
       "rel": "precedes"
     },
     {
@@ -6082,62 +6650,172 @@
     },
     {
       "from": "scr-build",
-      "to": "src/styles.css",
+      "to": "landing.html",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/app.js",
+      "to": "app.html",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/api.js",
+      "to": "src/app/main.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/types.d.ts",
+      "to": "src/app/router.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase11.css",
+      "to": "src/app/shell.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase11.js",
+      "to": "src/app/paths.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase11-api.js",
+      "to": "src/app/auth.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase11-types.d.ts",
+      "to": "src/shared/api/index.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase12.css",
+      "to": "src/shared/api/mock.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase12.js",
+      "to": "src/shared/api/db.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase12-api.js",
+      "to": "src/shared/api/errors.js",
       "rel": "bundles"
     },
     {
       "from": "scr-build",
-      "to": "src/phase12-types.d.ts",
+      "to": "src/shared/api/live.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/api/idempotency.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/api/redaction.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/components/ui.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/state/store.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/services/theme.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/utils/format.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/shared/types/types.d.ts",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/home/landing/landing.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/home/workspace/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/product/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/devops/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/mcp/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/context/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/outputs/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/integrations/api/client.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/integrations/api/types.d.ts",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/home/workspace/dashboard/api.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/home/workspace/dashboard/types.d.ts",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/app.css",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/home/dashboard.css",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/integrations/integrations.css",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/landing/landing.css",
       "rel": "bundles"
     },
     {
@@ -6182,18 +6860,328 @@
     },
     {
       "from": "scr-test",
-      "to": "test/phase11.test.mjs",
+      "to": "test/phase11-extra.test.mjs",
       "rel": "runs"
     },
     {
       "from": "scr-test",
-      "to": "test/phase11-extra.test.mjs",
+      "to": "test/phase11.test.mjs",
       "rel": "runs"
     },
     {
       "from": "scr-test",
       "to": "test/phase12.test.mjs",
       "rel": "runs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-app",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/auth.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/main.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/paths.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/router.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-app",
+      "to": "src/app/shell.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-context",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-context",
+      "to": "src/context/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-context",
+      "to": "src/context/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-devops",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-devops",
+      "to": "src/devops/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-devops",
+      "to": "src/devops/components/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-devops",
+      "to": "src/devops/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-home",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/landing/landing.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/settings/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/dashboard/api.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/dashboard/types.d.ts",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/dashboard/view.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/analysis.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/inputs.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/members.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/projects.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/repository.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-home",
+      "to": "src/home/workspace/pages/runs.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-integrations",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-integrations",
+      "to": "src/integrations/api/client.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-integrations",
+      "to": "src/integrations/api/types.d.ts",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-integrations",
+      "to": "src/integrations/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-mcp",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-mcp",
+      "to": "src/mcp/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-mcp",
+      "to": "src/mcp/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-outputs",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-outputs",
+      "to": "src/outputs/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-outputs",
+      "to": "src/outputs/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-product",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-shared",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/db.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/errors.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/idempotency.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/live.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/mock.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/redaction.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/components/ui.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/services/theme.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/state/store.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/types/types.d.ts",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/utils/format.js",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-styles",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-styles",
+      "to": "src/styles/app.css",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-styles",
+      "to": "src/styles/home/dashboard.css",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-styles",
+      "to": "src/styles/integrations/integrations.css",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-styles",
+      "to": "src/styles/landing/landing.css",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
+      "to": "arch-test",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/api.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/phase11-extra.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/phase11.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/phase12.test.mjs",
+      "rel": "contains"
     }
   ]
 }

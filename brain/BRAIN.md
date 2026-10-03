@@ -32,17 +32,18 @@ Measured shape at generation time:
 | Measure | Value |
 | --- | --- |
 | Version | `0.12.0` |
-| Source lines (src + index.html) | 2,813 |
+| Source lines (src + HTML) | 6,244 |
+| Tracked files across 11 architecture layers | 51 |
 | Test lines | 332 |
 | Contract tests | 64 |
 | Declared types across three `.d.ts` files | 96 |
 | Mock fixture collections in `db` | 39 |
 | Routes | 33 |
 | Domain service methods | 87 across 3 services |
-| Typed entities | 47, plus 7 with no interface at all |
-| Safety invariants | 18 |
+| Typed entities | 46, plus 7 with no interface at all |
+| Safety invariants | 20 |
 | Known contract gaps | 12 |
-| Structural risks | 10 |
+| Structural risks | 10, of which 2 resolved |
 
 ---
 
@@ -50,53 +51,63 @@ Measured shape at generation time:
 
 ```
 Route
-  → page composition          L0  src/app.js, src/phase11.js, src/phase12.js
-  → view templates            L1  same modules, pure string builders
-  → domain service interface  L2  src/api.js, src/phase11-api.js, src/phase12-api.js
-  → mock or live adapter      L3  mock ships; live fails closed
-  → shared HTTP/SSE transport L4  only exercised by tests today
-  → /api/v1                   L5  does not exist
+  → application shell          L0  src/app/main.js, router.js, shell.js, paths.js
+  → domain view templates      L1  src/{home,product,devops,mcp,context,outputs,integrations}
+  → domain service surface     L2  src/<domain>/api/index.js — named facades
+  → mock or live adapter       L3  shared/api/mock.js + db.js; live fails closed
+  → shared HTTP/SSE transport  L4  only exercised by tests today
+  → /api/v1                    L5  does not exist
 ```
 
-Two rules explain most of the codebase:
+Module layout is a strict stack: `app/` → domains → `shared/`. Two of the three
+rules below are mechanically checkable:
 
+- **No domain imports another domain.** Product, DevOps and MCP are siblings.
+  Cross-domain needs are lifted into `shared/`.
+- **`shared/` imports nothing outside itself.** It is a leaf layer.
 - **Frontend domain models do not mirror persistence tables.** If a view needs a
   joined shape, an aggregate endpoint should provide it, not the browser.
 - **Adapter selection belongs at the composition root.** Views never learn whether
   they are talking to a mock or a server.
 
+See [ARCHITECTURE.md](../ARCHITECTURE.md) for the full dependency rules.
+
 ### The three services
 
 | Service | File | Scope | Methods | Fixture |
 | --- | --- | --- | --- | --- |
-| `mockApi` | `src/api.js` | Phases 0–10 | 74 | `db`, 39 collections |
-| `phase11Api` | `src/phase11-api.js` | Integrations, activity, audit | 11 | module-private arrays + `receipts` Map |
-| `phase12Api` | `src/phase12-api.js` | Dashboard aggregate, readiness | 2 | frozen `dashboard` fixture |
+| `mockApi` | `src/shared/api/mock.js` | Phases 0–10 | 74 | `db`, 39 collections |
+| `phase11Api` | `src/integrations/api/client.js` | Integrations, activity, audit | 11 | module-private arrays + `receipts` Map |
+| `phase12Api` | `src/home/workspace/dashboard/api.js` | Dashboard aggregate, readiness | 2 | frozen `dashboard` fixture |
+
+Each domain additionally exposes a narrow facade (`devopsApi`, `mcpApi`,
+`outputsApi`, …) built from `mockApi`. There is still exactly one implementation
+of every method; only the surface is partitioned.
 
 `phase12Api` is the only service with a live adapter factory,
 `createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })`. Phases 0–11 have no
 live path whatsoever. Live mode is never enabled from an environment variable, and
-`src/api.js` exports a `liveApi` that always throws and has no caller.
+`src/shared/api/live.js` exports a `liveApi` that always throws and has no caller.
 
 ---
 
-## 3. Routing: one router, two late usurpers
+## 3. Routing: one router, one listener
 
-`src/app.js:737` owns `renderPage()` and resolves all 33 routes. Three auth routes
-render without the shell; everything else is wrapped in `shell()`.
+`src/app/router.js` owns `renderPage()` and resolves all 33 routes. Three auth routes
+render without the shell; everything else is wrapped in `shell()`. A single delegated
+`click` / `change` / `input` / `submit` listener in `src/app/main.js` handles every
+action, and views never attach listeners of their own.
 
 Path resolution order: `?route=` query parameter → `location.hash` → `/app/dashboard`.
 Navigation uses `history.replaceState`, so the back button does not walk your history.
 
-Then two modules take over the DOM from outside the router:
-
-- `src/phase11.js` claims `/app/integrations`, `/app/activity`, `/app/audit`
-- `src/phase12.js` claims `/app/dashboard`
-
-Both do it with a `MutationObserver` on `document.body` that re-asserts ownership of
-`#main`. This is the mechanism behind `rsk-01` below: which dashboard you get depends
-on script load order, not on a declared contract. It works, and it is the main piece
-of structural debt in the project.
+> **Resolved.** This section previously described two modules (`phase11.js`,
+> `phase12.js`) taking over `#main` from outside the router via a
+> `MutationObserver`, so which dashboard rendered depended on script load order.
+> That was tracked as `rsk-01` (high). Route ownership is now declared in
+> `src/app/router.js`, the plugin-private `data-p11-*` / `data-p12-*` attributes
+> were normalised to `data-route` / `data-action`, and the superseded Phase 2
+> aggregate dashboard was deleted. See `dec-04` (reverted) and `dec-08`.
 
 ---
 
@@ -151,9 +162,9 @@ This is worth knowing before you import it:
 
 | Declared in | Shape | Served by |
 | --- | --- | --- |
-| `src/types.d.ts` | flat `actor: string` | `mockApi.getDashboard` |
-| `src/phase11-types.d.ts` | `actor` object + `target` object + domain/outcome/source | `phase11Api.listActivity` |
-| `src/phase12-types.d.ts` | flat `actor` + `audit: false` | `phase12Api.getDashboard` |
+| `src/shared/types/types.d.ts` | flat `actor: string` | `mockApi.getDashboard` |
+| `src/integrations/api/types.d.ts` | `actor` object + `target` object + domain/outcome/source | `phase11Api.listActivity` |
+| `src/home/workspace/dashboard/types.d.ts` | flat `actor` + `audit: false` | `phase12Api.getDashboard` |
 
 One concept, three incompatible contracts, and a name collision across two type
 modules. If you build a real backend, collapse these into one envelope first.
@@ -167,7 +178,7 @@ when a real backend arrives. They are tagged `entity-untyped` in the graph.
 
 ---
 
-## 5. The 18 invariants
+## 5. The 20 invariants
 
 These are the project's actual product. Each is asserted by a test rather than
 documented and hoped for.
@@ -190,6 +201,8 @@ documented and hoped for.
 16. Live mode fails closed on missing base URL, unsafe scheme, or malformed response
 17. Audit is read-only; no mutation surface exists
 18. Every interpolated value is escaped before reaching `innerHTML`
+19. One router owns `#main`, and one delegated listener handles every action
+20. No domain imports another domain, and `shared/` imports nothing outside itself
 
 Query them all with `npm run brain:query invariant`.
 
@@ -215,80 +228,93 @@ from fixtures or UI copy.
 | `gap-11` API compatibility and deprecation policy | L5 |
 | `gap-12` Security-grade audit retention | L5 |
 
-The frontend currently ships with `state.authenticated = true` hardcoded in
-`src/app.js:6`. That is the shape of `gap-01`.
+The frontend currently ships with `authenticated: true` hardcoded in
+`src/shared/state/store.js`. That is the shape of `gap-01`.
 
 ---
 
 ## 7. The 10 risks
 
-Run `npm run brain:query risk` for full detail. The ones that will bite first:
+Run `npm run brain:query risk` for full detail. Two are now resolved; the ones
+that will bite first are:
 
-**`rsk-01` Two owners of `/app/dashboard` (high).** `src/app.js:745` renders
-`dashboardPage()`; `src/phase12.js:34` overwrites `#main` via `MutationObserver`.
-Resolution depends on script load order. Any refactor of either file can silently
-change which dashboard ships.
+**`rsk-01` Two owners of `/app/dashboard` (high) — RESOLVED.** Previously
+`src/app.js` rendered `dashboardPage()` while `src/phase12.js` overwrote `#main`
+from a `MutationObserver`, so the winner depended on script load order. Route
+ownership is now declared in `src/app/router.js` and the superseded Phase 2
+aggregate was deleted. See `dec-04` (reverted).
 
-**`rsk-05` Duplicated project hydrate cascade (medium).** `hydrate()` at
-`src/app.js:788` and the project-switcher handler at `src/app.js:1039` repeat the same
-seven-stage fetch. Every new domain means editing both.
+**`rsk-05` Duplicated project hydrate cascade (medium) — RESOLVED.** The
+seven-stage fetch previously appeared twice in `src/app.js`. It now lives once in
+`hydrateProject()` and is called from both `hydrate()` and the project switcher.
 
-**`rsk-04` `liveApi` is dead code (medium).** It throws unconditionally and nothing
-can select it. Either wire it or remove it; leaving it implies a capability that does
-not exist.
+**`rsk-04` `liveApi` is dead code (medium).** `src/shared/api/live.js` throws
+unconditionally and nothing can select it. Either wire it or remove it; leaving it
+implies a capability that does not exist.
 
-**`rsk-06` Asymmetric clone semantics (low).** `api.js` `page()` returns live
-references into `db`, while Phase 11/12 `page()` uses `structuredClone`. List reads are
-mutable, single reads are snapshots. A caller can mutate the fixture by accident.
+**`rsk-02` / `rsk-03` the `ActivityItem` collision (medium).** Three fixtures, one
+concept, and a name exported from two type modules. Collapse to a single envelope
+before building a real backend.
 
-Also: `rsk-02` duplicate `ActivityItem` export, `rsk-03` three activity shapes,
-`rsk-07` CI workflow file named `phase11-validate.yml` running Phase 12, `rsk-08`
-`npm run dev` needs `npm run build` first, `rsk-09` nav renders `/app/activity` as
-disabled while Phase 11 serves it, `rsk-10` no lint/format/typecheck script.
+**`rsk-06` Asymmetric clone semantics (low).** `shared/api/db.js` `page()` returns
+live references into `db`, while the integrations and dashboard services use
+`structuredClone`. List reads are mutable, single reads are snapshots. A caller can
+mutate the fixture by accident.
+
+**`rsk-09` One large orchestration module (low).** `src/app/main.js` is 700+ lines
+because it owns hydration, route-scoped loading, and every delegated action. It is
+cohesive, but it is the next place to split if the surface keeps growing.
+
+Also: `rsk-07` CI workflow file named `phase11-validate.yml` running the full suite,
+`rsk-08` `npm run dev` needs `npm run build` first, `rsk-10` no lint or typecheck
+script.
 
 ---
 
-## 8. Seven decisions that shaped the code
+## 8. The decisions that shaped the code
 
 | Decision | Consequence you inherit |
 | --- | --- |
 | `dec-01` Zero runtime dependencies | No framework, no bundler, string templates everywhere. Full control of shipped bytes. |
 | `dec-02` Hash routing with `?route=` override | Deployable as static files. No real browser history. |
-| `dec-03` Per-phase modules, not one growing `app.js` | Phase boundaries stay legible. Cost: late modules bypass the router. |
-| `dec-04` `MutationObserver` takeover (status: **debt**) | New phases integrate without router edits. This is the mechanism behind `rsk-01`. |
+| `dec-03` Per-phase modules, not one growing `app.js` (status: **superseded**) | Phase boundaries stayed legible, but the modules bypassed the router. |
+| `dec-04` `MutationObserver` takeover (status: **reverted**) | Was the mechanism behind `rsk-01`. Route ownership is now declared in `src/app/router.js`. |
 | `dec-05` Mock as service implementation, not fixture leak | Swapping adapters never touches views. Cost: 74 methods to keep in sync with `types.d.ts`. |
 | `dec-06` Only Phase 12 has a live factory | Live integration has exactly one reviewable seam. Phases 0–11 have none. |
 | `dec-07` Negative claims are asserted, not assumed | The safety story is regression-protected. Cost: the 64 tests are load-bearing for product claims. |
+| `dec-08` One router, one delegated listener | Route ownership is declared, not raced. Cost: a new module can no longer self-register without editing the router. |
+| `dec-09` Domain layers with a shared leaf (`app/` → domains → `shared/`) | Boundaries are greppable and mechanically checkable. Cross-domain needs must be lifted into `shared/`. |
+| `dec-10` One fixture store, partitioned API surface | Still exactly one implementation of every method, with an explicit per-domain facade. Cost: one extra indirection. |
 
 ---
 
 ## 9. Where to go next
 
-Phases 0–12 ship. Everything below is planned, ordered, and traces back to the gaps
+Phases 0–13 ship. Everything below is planned, ordered, and traces back to the gaps
 it closes.
 
-**Phase 13 — Contract registry and freeze.** Publish authoritative DTO, error,
+**Phase 14 — Contract registry and freeze.** Publish authoritative DTO, error,
 pagination, and versioning contracts before writing any adapter code. Turns 12 gaps
 into tracked documents with tests. No prerequisites. *Start here.*
 
-**Phase 14 — Auth and session lifecycle.** Requires 13. Replaces
-`state.authenticated = true` with a real session contract, adds capability fields
+**Phase 15 — Auth and session lifecycle.** Requires 14. Replaces the hardcoded
+`authenticated: true` with a real session contract, adds capability fields
 beyond roles, and defines active-context encoding. Closes `gap-01`, `gap-05`, `gap-06`.
 
-**Phase 15 — Backend aggregate endpoints.** Requires 13. Real workspace-scoped
+**Phase 16 — Backend aggregate endpoints.** Requires 14. Real workspace-scoped
 aggregates so cross-domain pages stop needing browser-side relational reconstruction;
 server-side pagination. Closes `gap-04`, `gap-03`, and flips
 `aggregateContractStatus` from `unresolved` to resolved.
 
-**Phase 16 — Authoritative workflow streaming.** Requires 14. Replaces
+**Phase 17 — Authoritative workflow streaming.** Requires 15. Replaces
 `db.workflowScripts` with a real SSE channel carrying event and snapshot state, replay,
 and heartbeat. Closes `gap-07`.
 
-**Phase 17 — Signed input pipeline.** Requires 15. Replaces the `mock-upload:` URL
+**Phase 18 — Signed input pipeline.** Requires 16. Replaces the `mock-upload:` URL
 with signed initiation and completion, keeping scan and extraction as distinct states.
 Closes `gap-08`.
 
-**Phase 18 — Governed audit and notifications.** Requires 16. Append-only audit with a
+**Phase 19 — Governed audit and notifications.** Requires 17. Append-only audit with a
 stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `gap-10`.
 
 ---
@@ -299,13 +325,16 @@ stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `ga
    receipts should say so in the UI, as the existing surfaces do.
 2. **Never claim what you cannot prove.** If a green build is the only evidence, the
    claim is "frontend builds", not "backend connected".
-3. **Keep the invariant count at 18 or make it 19.** If your change breaks one, fix the
+3. **Keep the invariant count at 20 or make it 21.** If your change breaks one, fix the
    code. If it adds a guarantee, add an invariant and a test in the same commit.
 4. **Do not infer gap behavior from fixtures.** The fixtures are examples, not specs.
-5. **Regenerate the brain** with `npm run brain` when you add a route, entity, service
+5. **Respect the dependency direction.** `app/` → domains → `shared/`. A domain must
+   not import another domain; `shared/` must not import outward.
+6. **Regenerate the brain** with `npm run brain` when you add a route, entity, service
    method, invariant, gap, or phase. The graph is a map, and a stale map is worse than
-   none.
-6. **Before editing a route, run `npm run brain:query trace <service-id> 2`** to see
+   none. The extractor walks `src/` and `test/` automatically, so new files are picked
+   up without editing `brain-extract.mjs`.
+7. **Before editing a route, run `npm run brain:query trace <service-id> 2`** to see
    what depends on it.
 
 ---
@@ -320,7 +349,7 @@ npm run brain:query route mcp/models   # route, view, matcher, service, tabs
 npm run brain:query entity approval    # fixture, methods, views, caveats
 npm run brain:query service            # service surfaces and their risks
 npm run brain:query trace svc-p12 2    # downstream impact of a change
-npm run brain:query invariant          # the 18 guarantees
+npm run brain:query invariant          # the 20 guarantees
 npm run brain:query gap                # the 12 gaps and who plans them
 npm run brain:query risk               # the 10 risks, most severe first
 npm run brain:query phase              # shipped and planned phases

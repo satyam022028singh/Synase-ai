@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents, redactMcpPayload } from "../src/api.js";
+import { api, ApiError, createIdempotencyKey, normalizeWorkflowEvents, redactMcpPayload } from "../src/shared/api/index.js";
 
 test("list response uses the documented envelope", async () => {
   const response = await api.listProjects("ws_synase");

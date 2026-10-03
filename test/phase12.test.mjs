@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createPhase12Service, phase12Api, phase12DashboardFixture, Phase12ApiError, sanitizeIntegrationMetadata } from "../src/phase12-api.js";
+import { createPhase12Service, phase12Api, phase12DashboardFixture, Phase12ApiError, sanitizeIntegrationMetadata } from "../src/home/workspace/dashboard/api.js";
 
 test("mock dashboard is explicitly scoped and aggregate contract remains unresolved", async () => { const result = await phase12Api.getDashboard(); assert.equal(result.meta.adapterMode, "mock"); assert.equal(result.meta.externalContacted, false); assert.equal(result.data.scope, "selected_project_mock"); assert.equal(result.data.aggregateContractStatus, "unresolved"); });
 test("dashboard attention preserves proposal and non-execution semantics", () => { assert.ok(phase12DashboardFixture.attention.some((item) => item.proposed)); assert.ok(phase12DashboardFixture.attention.every((item) => item.executed === false)); });

@@ -1,0 +1,346 @@
+// @ts-check
+/* In-memory fixture store backing the deterministic mock adapter.
+One shared store: the tables are cross-referenced by every domain
+(a dashboard aggregates projects, findings and reports), so splitting
+the data would invent coupling that does not exist. Domain facades in
+product/, devops/, mcp/ ... expose narrow read/write surfaces over it. */
+
+export const sleep = (ms = 220) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const db = {
+  user: {
+    id: "usr_satyam",
+    email: "satyam@example.com",
+    displayName: "Satyam Singh",
+    globalRole: "member"
+  },
+  workspaces: [
+    {
+      id: "ws_synase",
+      name: "SYNASE Core",
+      slug: "synase-core",
+      description: "Product and engineering decision intelligence.",
+      role: "owner",
+      status: "active"
+    },
+    {
+      id: "ws_research",
+      name: "Research Lab",
+      slug: "research-lab",
+      description: "Experiments and reference architecture.",
+      role: "member",
+      status: "active"
+    }
+  ],
+  projects: [
+    {
+      id: "prj_platform",
+      workspaceId: "ws_synase",
+      name: "SYNASE Platform",
+      slug: "synase-platform",
+      description: "Unified product and DevOps intelligence workspace.",
+      goal: "Turn project context into evidence-backed engineering decisions.",
+      lifecycleStatus: "active",
+      role: "owner",
+      updatedAt: "2026-09-29T08:20:00Z"
+    },
+    {
+      id: "prj_mcp",
+      workspaceId: "ws_synase",
+      name: "MCP V2 Runtime",
+      slug: "mcp-v2-runtime",
+      description: "Observable capability discovery and execution.",
+      goal: "Provide traceable orchestration across models, agents, and tools.",
+      lifecycleStatus: "active",
+      role: "developer",
+      updatedAt: "2026-09-28T15:14:00Z"
+    },
+    {
+      id: "prj_design",
+      workspaceId: "ws_synase",
+      name: "Design System",
+      slug: "design-system",
+      description: "Accessible engineering-console interface foundations.",
+      goal: "Keep the product dense, clear, and consistent.",
+      lifecycleStatus: "paused",
+      role: "product_manager",
+      updatedAt: "2026-09-26T11:02:00Z"
+    },
+    {
+      id: "prj_eval",
+      workspaceId: "ws_research",
+      name: "Model Evaluation",
+      slug: "model-evaluation",
+      description: "Confidence and validation research.",
+      goal: "Compare decision quality with repeatable evidence.",
+      lifecycleStatus: "draft",
+      role: "reviewer",
+      updatedAt: "2026-09-25T10:40:00Z"
+    }
+  ],
+  workspaceMembers: [
+    { userId: "usr_satyam", name: "Satyam Singh", email: "satyam@example.com", role: "owner", joinedAt: "2026-04-10" },
+    { userId: "usr_maya", name: "Maya Chen", email: "maya@example.com", role: "admin", joinedAt: "2026-05-14" },
+    { userId: "usr_jordan", name: "Jordan Bell", email: "jordan@example.com", role: "member", joinedAt: "2026-07-02" },
+    { userId: "usr_lee", name: "Lee Park", email: "lee@example.com", role: "viewer", joinedAt: "2026-08-21" }
+  ],
+  activity: [
+    { id: "act_1", actor: "Maya Chen", action: "updated", target: "API contract foundation", occurredAt: "18 min ago" },
+    { id: "act_2", actor: "Satyam Singh", action: "created", target: "Phase 2 implementation plan", occurredAt: "1 hr ago" },
+    { id: "act_3", actor: "Jordan Bell", action: "reviewed", target: "Design system tokens", occurredAt: "Yesterday" },
+    { id: "act_4", actor: "System", action: "completed", target: "Mock contract validation", occurredAt: "Yesterday" }
+  ],
+  repositories: [
+    {
+      id: "repo_core",
+      projectId: "prj_platform",
+      provider: "github",
+      name: "synase-platform",
+      fullName: "synase-ai/synase-platform",
+      defaultBranch: "main",
+      visibility: "private",
+      connectionStatus: "connected",
+      lastSyncedAt: "2026-09-29T07:42:00Z"
+    },
+    {
+      id: "repo_contracts",
+      projectId: "prj_platform",
+      provider: "github",
+      name: "synase-contracts",
+      fullName: "synase-ai/synase-contracts",
+      defaultBranch: "main",
+      visibility: "private",
+      connectionStatus: "pending"
+    },
+    {
+      id: "repo_runtime",
+      projectId: "prj_mcp",
+      provider: "gitlab",
+      name: "mcp-runtime",
+      fullName: "synase/mcp-runtime",
+      defaultBranch: "develop",
+      visibility: "internal",
+      connectionStatus: "connected",
+      lastSyncedAt: "2026-09-28T18:02:00Z"
+    }
+  ],
+  snapshots: [
+    { id: "snap_1", repositoryId: "repo_core", commitSha: "7e4ab91", branch: "main", fileCount: 842, totalBytes: 12820480, scanStatus: "completed", createdAt: "2026-09-29T07:42:00Z" },
+    { id: "snap_2", repositoryId: "repo_core", commitSha: "18f2d02", branch: "main", fileCount: 836, totalBytes: 12681210, scanStatus: "completed", createdAt: "2026-09-27T16:10:00Z" }
+  ],
+  assets: [
+    { id: "asset_prd", projectId: "prj_platform", name: "SYNASE Product Requirements.pdf", inputType: "pdf", sourceType: "upload", mimeType: "application/pdf", byteSize: 2483000, processingStatus: "ready", securityScanStatus: "clean", extractionStatus: "completed", createdAt: "2026-09-29T06:10:00Z" },
+    { id: "asset_arch", projectId: "prj_platform", name: "Architecture v3.png", inputType: "image", sourceType: "drag_drop", mimeType: "image/png", byteSize: 948200, processingStatus: "indexing", securityScanStatus: "clean", extractionStatus: "completed", createdAt: "2026-09-29T07:28:00Z" },
+    { id: "asset_logs", projectId: "prj_platform", name: "deployment-errors.log", inputType: "log", sourceType: "upload", mimeType: "text/plain", byteSize: 183420, processingStatus: "warning", securityScanStatus: "warning", extractionStatus: "partial", createdAt: "2026-09-28T20:02:00Z" },
+    { id: "asset_blocked", projectId: "prj_platform", name: "legacy-source.zip", inputType: "code_archive", sourceType: "upload", mimeType: "application/zip", byteSize: 18233200, processingStatus: "failed", securityScanStatus: "blocked", extractionStatus: "not_started", createdAt: "2026-09-28T11:44:00Z" }
+  ],
+  conversations: [
+    { id: "conv_arch", projectId: "prj_platform", title: "Architecture review", status: "active", updatedAt: "2026-09-29T08:42:00Z" },
+    { id: "conv_release", projectId: "prj_platform", title: "Release readiness", status: "active", updatedAt: "2026-09-28T14:18:00Z" },
+    { id: "conv_mcp", projectId: "prj_mcp", title: "Routing evaluation", status: "active", updatedAt: "2026-09-28T17:01:00Z" }
+  ],
+  messages: [
+    { id: "msg_1", conversationId: "conv_arch", role: "user", text: "Review the architecture implications of the current product requirements.", status: "completed", assetIds: ["asset_prd"], repositoryIds: ["repo_core"], createdAt: "2026-09-29T08:40:00Z" },
+    { id: "msg_2", conversationId: "conv_arch", role: "system", text: "Mock adapter receipt: context references were accepted. No AI analysis or workflow execution occurred.", status: "completed", assetIds: [], repositoryIds: [], createdAt: "2026-09-29T08:42:00Z", mock: true },
+    { id: "msg_3", conversationId: "conv_release", role: "user", text: "Identify release risks using the deployment logs.", status: "completed", assetIds: ["asset_logs"], repositoryIds: [], createdAt: "2026-09-28T14:12:00Z" }
+  ],
+  analysisRequests: [
+    { id: "req_arch", projectId: "prj_platform", conversationId: "conv_arch", requestText: "Review architecture implications and identify decisions that require approval.", requestType: "architecture_review", priority: "high", executionStrategy: "hybrid", assetIds: ["asset_prd"], repositoryIds: ["repo_core"], status: "queued", workflowId: "wf_mock_arch", traceId: "trace_mock_arch", createdAt: "2026-09-29T08:43:00Z", mock: true },
+    { id: "req_risk", projectId: "prj_platform", conversationId: "conv_release", requestText: "Assess release risks using the deployment logs.", requestType: "risk_assessment", priority: "normal", executionStrategy: "sequential", assetIds: ["asset_logs"], repositoryIds: [], status: "received", workflowId: "wf_mock_risk", traceId: "trace_mock_risk", createdAt: "2026-09-28T14:19:00Z", mock: true }
+  ],
+  workflows: [
+    { id: "wf_mock_arch", projectId: "prj_platform", requestId: "req_arch", executionStrategy: "hybrid", status: "running", progressPercent: 42, currentStage: "context_retrieval", createdAt: "2026-09-29T08:43:00Z", updatedAt: "2026-09-29T08:46:00Z", mock: true },
+    { id: "wf_mock_risk", projectId: "prj_platform", requestId: "req_risk", executionStrategy: "sequential", status: "waiting", progressPercent: 18, currentStage: "capability_mapping", createdAt: "2026-09-28T14:19:00Z", updatedAt: "2026-09-28T14:22:00Z", mock: true }
+  ],
+  workflowTasks: [
+    { id: "task_1", workflowId: "wf_mock_arch", name: "Detect intent", layer: "orchestrator", status: "completed", progressPercent: 100, sequence: 1 },
+    { id: "task_2", workflowId: "wf_mock_arch", name: "Retrieve project context", layer: "orchestrator", status: "running", progressPercent: 60, sequence: 2 },
+    { id: "task_3", workflowId: "wf_mock_arch", name: "Map capabilities", layer: "mcp", status: "ready", progressPercent: 0, sequence: 3 },
+    { id: "task_4", workflowId: "wf_mock_arch", name: "Generate decision report", layer: "reporting", status: "pending", progressPercent: 0, sequence: 4 },
+    { id: "task_5", workflowId: "wf_mock_risk", name: "Detect intent", layer: "orchestrator", status: "completed", progressPercent: 100, sequence: 1 },
+    { id: "task_6", workflowId: "wf_mock_risk", name: "Await repository context", layer: "orchestrator", status: "waiting", progressPercent: 20, sequence: 2 }
+  ],
+  workflowEvents: [
+    { eventId: "evt_1", eventType: "workflow.created", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:43:00Z", sequence: 1, schemaVersion: "1", payload: { status: "created", progressPercent: 0 } },
+    { eventId: "evt_2", eventType: "workflow.stage.started", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:44:00Z", sequence: 2, schemaVersion: "1", payload: { stage: "intent_detection", progressPercent: 10 } },
+    { eventId: "evt_3", eventType: "workflow.stage.completed", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:45:00Z", sequence: 3, schemaVersion: "1", payload: { stage: "intent_detection", progressPercent: 25 } },
+    { eventId: "evt_4", eventType: "workflow.stage.started", workflowId: "wf_mock_arch", occurredAt: "2026-09-29T08:46:00Z", sequence: 4, schemaVersion: "1", payload: { stage: "context_retrieval", progressPercent: 42 } }
+  ],
+  workflowScripts: {
+    wf_mock_arch: [
+      { eventId: "demo_evt_5", eventType: "workflow.stage.completed", workflowId: "wf_mock_arch", sequence: 5, schemaVersion: "1", payload: { stage: "context_retrieval", progressPercent: 55 } },
+      { eventId: "demo_evt_6", eventType: "task.started", workflowId: "wf_mock_arch", sequence: 6, schemaVersion: "1", payload: { taskId: "task_3", stage: "capability_mapping", progressPercent: 64 } },
+      { eventId: "demo_evt_7", eventType: "validation.completed", workflowId: "wf_mock_arch", sequence: 7, schemaVersion: "1", payload: { stage: "validation", progressPercent: 82 } },
+      { eventId: "demo_evt_8", eventType: "workflow.completed", workflowId: "wf_mock_arch", sequence: 8, schemaVersion: "1", payload: { status: "completed", progressPercent: 100 } }
+    ]
+  },
+  mcpRequests: [
+    { id: "mcp_req_arch", workflowId: "wf_mock_arch", detectedLayer: "both", status: "completed", payloadFormat: "toon", confidence: 0.87, validationStatus: "passed", createdAt: "2026-09-29T08:46:00Z", mock: true },
+    { id: "mcp_req_risk", workflowId: "wf_mock_risk", detectedLayer: "devops", status: "processing", payloadFormat: "reference", confidence: 0.62, validationStatus: "warning", createdAt: "2026-09-28T14:22:00Z", mock: true },
+    { id: "mcp_req_cache", workflowId: "wf_mock_arch", detectedLayer: "product", status: "cached", payloadFormat: "json", confidence: 0.91, validationStatus: "passed", createdAt: "2026-09-27T10:18:00Z", mock: true }
+  ],
+  mcpTrace: [
+    { id: "trace_1", requestId: "mcp_req_arch", chamber: "request_gateway", sequence: 1, status: "completed", durationMs: 18, summary: "Request accepted and correlated" },
+    { id: "trace_2", requestId: "mcp_req_arch", chamber: "context_manager", sequence: 2, status: "completed", durationMs: 142, summary: "Selected 8 project context references" },
+    { id: "trace_3", requestId: "mcp_req_arch", chamber: "task_layer_intelligence", sequence: 3, status: "completed", durationMs: 36, summary: "Detected product + DevOps scope" },
+    { id: "trace_4", requestId: "mcp_req_arch", chamber: "chamber_router", sequence: 4, status: "completed", durationMs: 24, summary: "Routed to architecture-review capability" },
+    { id: "trace_5", requestId: "mcp_req_arch", chamber: "tool_model_execution", sequence: 5, status: "completed", durationMs: 1260, summary: "Mock execution metadata only; no model or tool ran" },
+    { id: "trace_6", requestId: "mcp_req_arch", chamber: "validation", sequence: 6, status: "completed", durationMs: 84, summary: "Validation passed with warnings resolved" },
+    { id: "trace_7", requestId: "mcp_req_arch", chamber: "response_aggregation", sequence: 7, status: "completed", durationMs: 52, summary: "Structured response aggregation completed" }
+  ],
+  mcpModels: [
+    { id: "model_claude", provider: "anthropic", name: "Claude Sonnet", contextWindow: 200000, availabilityStatus: "active" },
+    { id: "model_gpt", provider: "openai", name: "GPT reasoning", contextWindow: 128000, availabilityStatus: "active" },
+    { id: "model_local", provider: "local", name: "Local evaluator", contextWindow: 32000, availabilityStatus: "disabled" }
+  ],
+  mcpTools: [
+    { id: "tool_repo", name: "Repository Inspector", type: "github", availabilityStatus: "active", capabilities: ["repository_review", "code_search"] },
+    { id: "tool_logs", name: "Log Analyzer", type: "logs", availabilityStatus: "active", capabilities: ["risk_analysis", "incident_review"] },
+    { id: "tool_deploy", name: "Deployment Planner", type: "cicd", availabilityStatus: "disabled", capabilities: ["deployment_plan"] }
+  ],
+  mcpServers: [
+    { id: "server_internal", name: "SYNASE Internal MCP", transportType: "internal", status: "active", healthStatus: "healthy", toolCount: 8 },
+    { id: "server_repo", name: "Repository MCP", transportType: "https", status: "active", healthStatus: "degraded", toolCount: 4 },
+    { id: "server_docs", name: "Documentation MCP", transportType: "sse", status: "discovered", healthStatus: "unknown", toolCount: 0 }
+  ],
+  mcpDirectories: [
+    { id: "dir_internal", name: "Internal Registry", type: "internal", status: "active", healthStatus: "healthy" },
+    { id: "dir_smithery", name: "Smithery", type: "smithery", status: "disabled", healthStatus: "unknown" }
+  ],
+  discoveryRuns: [],
+  requirements: [
+    { id: "REQ-001", projectId: "prj_platform", title: "Evidence-backed decision reports", type: "functional", priority: "critical", status: "approved", evidence: ["SYNASE Product Requirements.pdf"], rationale: "Core product outcome", architectureImpact: "Reporting and approval domains", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-014", projectId: "prj_platform", title: "Offline-safe workflow reconnect", type: "technical", priority: "high", status: "clarified", evidence: ["Workflow realtime specification"], rationale: "Preserve authoritative execution state", architectureImpact: "SSE client and workflow snapshots", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-AI-03", projectId: "prj_platform", title: "Explain confidence contributors", type: "non_functional", priority: "medium", status: "identified", evidence: ["MCP trace fixture"], rationale: "Improve reviewer trust", architectureImpact: "Confidence explanation contract", provenance: "ai_suggested", confidence: 0.78 }
+  ],
+  productFeatures: [
+    { id: "FEAT-01", projectId: "prj_platform", title: "Decision report workspace", businessValue: 9, impact: 9, effort: 6, risk: 4, priorityRank: 1, status: "prioritized", rationale: "Primary decision-delivery surface", provenance: "confirmed" },
+    { id: "FEAT-02", projectId: "prj_platform", title: "MCP trace observability", businessValue: 8, impact: 8, effort: 7, risk: 5, priorityRank: 2, status: "in_progress", rationale: "Makes AI execution reviewable", provenance: "confirmed" },
+    { id: "FEAT-AI-03", projectId: "prj_platform", title: "Confidence comparison", businessValue: 6, impact: 7, effort: 5, risk: 3, priorityRank: 3, status: "candidate", rationale: "Useful for reviewer decisions", provenance: "ai_suggested" }
+  ],
+  productStrategy: {
+    prj_platform: { objective: "Connect product intent to engineering evidence and controlled decisions.", principles: ["Evidence before recommendation", "Human approval for impact", "Observable execution"], risks: ["Contract drift", "Overstated execution state"], provenance: "confirmed" }
+  },
+  roadmapItems: [
+    { id: "ROAD-01", projectId: "prj_platform", milestone: "Frontend foundations", release: "R1", sequence: 1, status: "completed", startDate: "2026-09-01", endDate: "2026-09-15", dependencies: [] },
+    { id: "ROAD-02", projectId: "prj_platform", milestone: "Intelligence workspaces", release: "R2", sequence: 2, status: "active", startDate: "2026-09-16", endDate: "2026-10-15", dependencies: ["ROAD-01"] },
+    { id: "ROAD-03", projectId: "prj_platform", milestone: "Reports and approvals", release: "R3", sequence: 3, status: "planned", startDate: "2026-10-16", endDate: "2026-11-15", dependencies: ["ROAD-02"] }
+  ],
+  devopsSummary: {
+    prj_platform: { architectureScore: 0.78, qualityScore: 0.74, securityScore: 0.68, testCoverage: 0.71, deploymentReadiness: 0.64, repositoryCount: 2, provenance: "mock_analysis" }
+  },
+  findings: [
+    { id: "FIND-SEC-01", projectId: "prj_platform", type: "security", severity: "high", title: "Secret-scan policy is not frozen", evidence: "Auth/RBAC and ingestion specifications", affectedLocation: "Upload and integration boundary", status: "open" },
+    { id: "FIND-ARCH-02", projectId: "prj_platform", type: "architecture", severity: "medium", title: "Global routes depend on project-scoped APIs", evidence: "Page → API Matrix", affectedLocation: "Reports, approvals, integrations", status: "acknowledged" },
+    { id: "FIND-TEST-03", projectId: "prj_platform", type: "testing", severity: "low", title: "Contract coverage lacks live-backend fixtures", evidence: "Mock contract suite", affectedLocation: "Integration tests", status: "in_progress" }
+  ],
+  devopsRecommendations: [
+    { id: "REC-01", projectId: "prj_platform", type: "security", title: "Freeze signed-upload redaction policy", priority: "high", status: "proposed", approvalStatus: "pending", rationale: "Prevents credential exposure in diagnostics.", executed: false },
+    { id: "REC-02", projectId: "prj_platform", type: "testing", title: "Add backend DTO conformance suite", priority: "medium", status: "proposed", approvalStatus: "not_required", rationale: "Reduces integration drift.", executed: false }
+  ],
+  dependencies: [
+    { id: "DEP-01", projectId: "prj_platform", name: "TanStack Query", category: "frontend", currentVersion: "TBD", risk: "low", status: "unresolved_contract" },
+    { id: "DEP-02", projectId: "prj_platform", name: "Auth provider", category: "security", currentVersion: "TBD", risk: "high", status: "decision_required" }
+  ],
+  testSuggestions: [
+    { id: "TEST-01", projectId: "prj_platform", title: "SSE replay and dedupe integration test", type: "integration", priority: "high", status: "suggested" },
+    { id: "TEST-02", projectId: "prj_platform", title: "Credential-redaction regression suite", type: "security", priority: "critical", status: "planned" }
+  ],
+  deploymentPlans: [
+    { id: "PLAN-01", projectId: "prj_platform", title: "Frontend staging rollout", status: "proposed", approvalRequired: true, executed: false, steps: [
+      { sequence: 1, type: "build", title: "Build immutable frontend artifact", status: "proposed" },
+      { sequence: 2, type: "test", title: "Run contract and accessibility gates", status: "proposed" },
+      { sequence: 3, type: "deploy", title: "Deploy to staging after approval", status: "proposed" }
+    ] }
+  ],
+  contextItems: [
+    { id: "ctx_prd", projectId: "prj_platform", title: "Product requirements", type: "document", source: "asset_prd", scope: "project", sensitivity: "internal", trustLevel: "verified", status: "ready", updatedAt: "2026-09-29T06:10:00Z" },
+    { id: "ctx_repo", projectId: "prj_platform", title: "Frontend repository snapshot", type: "repository", source: "repo_core", scope: "project", sensitivity: "restricted", trustLevel: "source_controlled", status: "ready", updatedAt: "2026-09-29T07:42:00Z" },
+    { id: "ctx_logs", projectId: "prj_platform", title: "Deployment error log", type: "log", source: "asset_logs", scope: "request", sensitivity: "confidential", trustLevel: "unverified", status: "warning", updatedAt: "2026-09-28T20:02:00Z" }
+  ],
+  memoryItems: [
+    { id: "mem_1", projectId: "prj_platform", title: "Evidence before recommendation", excerpt: "Every decision must preserve evidence, confidence, and provenance.", sourceContextId: "ctx_prd", relevance: 0.96, sensitivity: "internal", trustLevel: "verified" },
+    { id: "mem_2", projectId: "prj_platform", title: "Frontend/backend boundary", excerpt: "The browser consumes domain APIs and never reads persistence stores directly.", sourceContextId: "ctx_prd", relevance: 0.91, sensitivity: "internal", trustLevel: "verified" },
+    { id: "mem_3", projectId: "prj_platform", title: "Deployment warning pattern", excerpt: "Recent logs contain retry exhaustion during artifact promotion.", sourceContextId: "ctx_logs", relevance: 0.74, sensitivity: "confidential", trustLevel: "unverified" }
+  ],
+  retrievalHistory: [
+    { id: "ret_1", projectId: "prj_platform", query: "architecture evidence and API boundaries", status: "completed", createdAt: "2026-09-29T08:44:00Z", items: [
+      { memoryId: "mem_2", rank: 1, score: 0.94, reason: "Direct API-boundary match" },
+      { memoryId: "mem_1", rank: 2, score: 0.82, reason: "Decision-evidence principle" }
+    ] },
+    { id: "ret_2", projectId: "prj_platform", query: "deployment risk", status: "completed", createdAt: "2026-09-28T14:20:00Z", items: [
+      { memoryId: "mem_3", rank: 1, score: 0.88, reason: "Relevant deployment log evidence" }
+    ] }
+  ],
+  knowledgeGraphs: {
+    prj_platform: {
+      projectId: "prj_platform",
+      status: "ready",
+      lastSyncedAt: "2026-09-29T08:10:00Z",
+      storageBoundary: "Neo4j is backend-only; this response is a safe domain projection.",
+      nodes: [
+        { id: "node_project", type: "project", label: "SYNASE Platform", sensitivity: "internal" },
+        { id: "node_prd", type: "document", label: "Product Requirements", sensitivity: "internal" },
+        { id: "node_repo", type: "repository", label: "synase-platform", sensitivity: "restricted" },
+        { id: "node_decision", type: "decision", label: "API-driven frontend", sensitivity: "internal" }
+      ],
+      edges: [
+        { id: "edge_1", sourceId: "node_project", targetId: "node_prd", type: "uses" },
+        { id: "edge_2", sourceId: "node_project", targetId: "node_repo", type: "implemented_by" },
+        { id: "edge_3", sourceId: "node_prd", targetId: "node_decision", type: "supports" }
+      ]
+    }
+  },
+  reports: [
+    {
+      id: "rpt_arch_01", projectId: "prj_platform", workflowId: "wf_mock_arch",
+      title: "Architecture Review — Frontend Boundaries", type: "architecture_review",
+      version: 3, status: "review_required", summary: "The API-driven frontend boundary is sound; route scope and publication controls still require explicit decisions.",
+      confidence: 0.87, approvalStatus: "pending", createdAt: "2026-09-29T08:50:00Z", updatedAt: "2026-09-29T09:12:00Z",
+      sections: [
+        { id: "sec_summary", title: "Executive summary", sequence: 1, content: "Keep frontend pages dependent on domain contracts and safe projections rather than persistence models." },
+        { id: "sec_findings", title: "Key findings", sequence: 2, content: "Project scope is reliable in adapters, while global report and approval routes still lack aggregate contracts." },
+        { id: "sec_actions", title: "Recommended actions", sequence: 3, content: "Freeze project/global route semantics and require authoritative receipts for publication and approval actions." }
+      ],
+      references: [
+        { id: "ref_prd", label: "Product Requirements", sourceType: "context", sourceId: "ctx_prd", trustLevel: "verified" },
+        { id: "ref_matrix", label: "Page → API Matrix", sourceType: "document", sourceId: "ctx_prd", trustLevel: "verified" }
+      ],
+      decisions: [
+        { id: "dec_api", title: "Preserve domain-oriented API boundary", status: "recommended", impact: "high", rationale: "Prevents database coupling and integration rework.", provenance: "ai_suggested", confidence: 0.9, executed: false },
+        { id: "dec_scope", title: "Use selected project context for provisional global routes", status: "requires_approval", impact: "medium", rationale: "Aggregate endpoints are not contracted.", provenance: "ai_suggested", confidence: 0.78, executed: false }
+      ]
+    },
+    {
+      id: "rpt_risk_02", projectId: "prj_platform", workflowId: "wf_mock_risk",
+      title: "Release Risk Assessment", type: "risk_assessment", version: 1, status: "draft",
+      summary: "Release evidence is incomplete; no deployment recommendation is approved.", confidence: 0.68,
+      approvalStatus: "not_requested", createdAt: "2026-09-28T14:30:00Z", updatedAt: "2026-09-28T14:42:00Z",
+      sections: [{ id: "sec_risk", title: "Risk summary", sequence: 1, content: "The available deployment log contains retry exhaustion and requires human review." }],
+      references: [{ id: "ref_logs", label: "Deployment error log", sourceType: "context", sourceId: "ctx_logs", trustLevel: "unverified" }],
+      decisions: [{ id: "dec_hold", title: "Hold deployment recommendation", status: "recommended", impact: "critical", rationale: "Evidence is incomplete.", provenance: "ai_suggested", confidence: 0.72, executed: false }]
+    }
+  ],
+  approvals: [
+    {
+      id: "apr_report_01", projectId: "prj_platform", reportId: "rpt_arch_01", type: "report_publication",
+      title: "Publish architecture review", status: "pending", requestedBy: "SYNASE mock workflow",
+      requestedAt: "2026-09-29T09:12:00Z", expiresAt: "2026-10-06T09:12:00Z",
+      rationale: "Publication makes the report available as confirmed project state.", risk: "medium",
+      allowedActions: ["approve", "reject", "comment", "cancel"], executed: false,
+      comments: [{ id: "cmt_1", author: "Maya Chen", text: "Confirm route scope before publication.", createdAt: "2026-09-29T09:20:00Z" }]
+    },
+    {
+      id: "apr_deploy_02", projectId: "prj_platform", reportId: "rpt_risk_02", type: "deployment_change",
+      title: "Approve frontend staging rollout", status: "pending", requestedBy: "SYNASE mock workflow",
+      requestedAt: "2026-09-28T15:00:00Z", expiresAt: "2026-10-05T15:00:00Z",
+      rationale: "High-impact deployment plan requires an authorized human decision.", risk: "critical",
+      allowedActions: ["approve", "reject", "comment", "cancel"], executed: false, comments: []
+    }
+  ],
+  exportArtifacts: []
+};
+
+export function page(data) {
+  return { data, meta: { page: 1, pageSize: 25, total: data.length } };
+}
