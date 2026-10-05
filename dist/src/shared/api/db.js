@@ -209,22 +209,115 @@ export const db = {
   ],
   discoveryRuns: [],
   requirements: [
-    { id: "REQ-001", projectId: "prj_platform", title: "Evidence-backed decision reports", type: "functional", priority: "critical", status: "approved", evidence: ["SYNASE Product Requirements.pdf"], rationale: "Core product outcome", architectureImpact: "Reporting and approval domains", provenance: "confirmed", confidence: 1 },
-    { id: "REQ-014", projectId: "prj_platform", title: "Offline-safe workflow reconnect", type: "technical", priority: "high", status: "clarified", evidence: ["Workflow realtime specification"], rationale: "Preserve authoritative execution state", architectureImpact: "SSE client and workflow snapshots", provenance: "confirmed", confidence: 1 },
-    { id: "REQ-AI-03", projectId: "prj_platform", title: "Explain confidence contributors", type: "non_functional", priority: "medium", status: "identified", evidence: ["MCP trace fixture"], rationale: "Improve reviewer trust", architectureImpact: "Confidence explanation contract", provenance: "ai_suggested", confidence: 0.78 }
+    { id: "REQ-001", projectId: "prj_platform", title: "Evidence-backed decision reports", type: "functional", priority: "critical", status: "approved", evidence: ["SYNASE Product Requirements.pdf", "Decision audit schema"], rationale: "Core product outcome: all conclusions must cite underlying repository or telemetry evidence.", architectureImpact: "Reporting and approval domains", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-002", projectId: "prj_platform", title: "Human-in-the-loop approval gate", type: "functional", priority: "high", status: "implemented", evidence: ["Governance policy v2", "Approval spec"], rationale: "High-impact recommendations must be explicitly signed off by human project leads before deployment.", architectureImpact: "Outputs approval engine and audit log", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-003", projectId: "prj_platform", title: "Multi-modal asset ingestion pipeline", type: "technical", priority: "high", status: "in_progress", evidence: ["Architecture review", "Upload worker specification"], rationale: "Allow code archives, PDFs, logs and spreadsheets to be normalized into searchable context chunks.", architectureImpact: "Context & ChromaDB ingestion boundary", provenance: "confirmed", confidence: 0.95 },
+    { id: "REQ-014", projectId: "prj_platform", title: "Offline-safe workflow reconnect", type: "technical", priority: "high", status: "clarified", evidence: ["Workflow realtime specification"], rationale: "Preserve authoritative execution state and recover connection seamlessly over SSE.", architectureImpact: "SSE client and workflow snapshots", provenance: "confirmed", confidence: 1 },
+    { id: "REQ-AI-03", projectId: "prj_platform", title: "Explain confidence contributors", type: "non_functional", priority: "medium", status: "identified", evidence: ["MCP trace fixture", "Reviewer UX study"], rationale: "Improve reviewer trust by showing factors (coverage, freshness, test signal) that form composite confidence.", architectureImpact: "Confidence explanation contract", provenance: "ai_suggested", confidence: 0.78 },
+    { id: "REQ-AI-04", projectId: "prj_platform", title: "Automated dependency risk alerting", type: "security", priority: "medium", status: "identified", evidence: ["CVE scanner logs", "Dependency audit"], rationale: "Flag package lifecycle anomalies and high-severity CVEs before merging pull requests.", architectureImpact: "DevOps security findings integration", provenance: "ai_suggested", confidence: 0.82 }
   ],
   productFeatures: [
-    { id: "FEAT-01", projectId: "prj_platform", title: "Decision report workspace", businessValue: 9, impact: 9, effort: 6, risk: 4, priorityRank: 1, status: "prioritized", rationale: "Primary decision-delivery surface", provenance: "confirmed" },
-    { id: "FEAT-02", projectId: "prj_platform", title: "MCP trace observability", businessValue: 8, impact: 8, effort: 7, risk: 5, priorityRank: 2, status: "in_progress", rationale: "Makes AI execution reviewable", provenance: "confirmed" },
-    { id: "FEAT-AI-03", projectId: "prj_platform", title: "Confidence comparison", businessValue: 6, impact: 7, effort: 5, risk: 3, priorityRank: 3, status: "candidate", rationale: "Useful for reviewer decisions", provenance: "ai_suggested" }
+    { id: "FEAT-01", projectId: "prj_platform", title: "Decision report workspace", businessValue: 9, impact: 9, effort: 6, risk: 4, priorityRank: 1, status: "prioritized", rationale: "Primary decision-delivery surface: synthesizes findings into review-ready documents.", provenance: "confirmed" },
+    { id: "FEAT-02", projectId: "prj_platform", title: "MCP trace observability", businessValue: 8, impact: 8, effort: 7, risk: 5, priorityRank: 2, status: "in_progress", rationale: "Makes AI execution reviewable across 7-stage chamber pipeline.", provenance: "confirmed" },
+    { id: "FEAT-03", projectId: "prj_platform", title: "Multi-criteria Prioritization Matrix", businessValue: 8, impact: 7, effort: 5, risk: 3, priorityRank: 3, status: "candidate", rationale: "Enables engineering and product leads to calibrate value vs effort on candidate features.", provenance: "confirmed" },
+    { id: "FEAT-AI-03", projectId: "prj_mcp", title: "Confidence comparison across models", businessValue: 6, impact: 7, effort: 5, risk: 3, priorityRank: 1, status: "candidate", rationale: "Useful for reviewers to evaluate model divergence on critical decisions.", provenance: "ai_suggested" },
+    { id: "FEAT-AI-05", projectId: "prj_mcp", title: "Automated Scope Risk Predictor", businessValue: 7, impact: 6, effort: 6, risk: 4, priorityRank: 2, status: "candidate", rationale: "Predicts timeline slippage when incoming requirements alter architecture contracts.", provenance: "ai_suggested" }
   ],
   productStrategy: {
-    prj_platform: { objective: "Connect product intent to engineering evidence and controlled decisions.", principles: ["Evidence before recommendation", "Human approval for impact", "Observable execution"], risks: ["Contract drift", "Overstated execution state"], provenance: "confirmed" }
+    prj_platform: {
+      id: "strat_platform_v1",
+      projectId: "prj_platform",
+      objective: "Connect product intent to engineering evidence and controlled decisions without automated hallucinated execution.",
+      principles: [
+        "Evidence before recommendation — every decision links directly to source artifacts",
+        "Human approval for impact — high-risk changes require signed intent",
+        "Observable execution — all agent capabilities remain visible in MCP trace",
+        "Idempotent mutations — prevent duplicate workflows or unrecorded side-effects"
+      ],
+      risks: [
+        "Contract drift between frontend facades and mock/live adapters",
+        "Overstated execution state when models generate mock receipts",
+        "Ambiguity between observed repository facts and AI suggestions"
+      ],
+      provenance: "confirmed",
+      updatedAt: "2026-09-30T10:00:00Z"
+    }
   },
   roadmapItems: [
-    { id: "ROAD-01", projectId: "prj_platform", milestone: "Frontend foundations", release: "R1", sequence: 1, status: "completed", startDate: "2026-09-01", endDate: "2026-09-15", dependencies: [] },
-    { id: "ROAD-02", projectId: "prj_platform", milestone: "Intelligence workspaces", release: "R2", sequence: 2, status: "active", startDate: "2026-09-16", endDate: "2026-10-15", dependencies: ["ROAD-01"] },
-    { id: "ROAD-03", projectId: "prj_platform", milestone: "Reports and approvals", release: "R3", sequence: 3, status: "planned", startDate: "2026-10-16", endDate: "2026-11-15", dependencies: ["ROAD-02"] }
+    { id: "ROAD-01", projectId: "prj_platform", milestone: "Frontend foundations & design tokens", release: "R1", sequence: 1, status: "completed", startDate: "2026-09-01", endDate: "2026-09-15", dependencies: [], featureIds: ["FEAT-01"], requirementIds: ["REQ-001"] },
+    { id: "ROAD-02", projectId: "prj_platform", milestone: "Intelligence workspaces & MCP trace", release: "R2", sequence: 2, status: "active", startDate: "2026-09-16", endDate: "2026-10-15", dependencies: ["ROAD-01"], featureIds: ["FEAT-02"], requirementIds: ["REQ-002", "REQ-014"] },
+    { id: "ROAD-03", projectId: "prj_platform", milestone: "Reports, approvals & audit projections", release: "R3", sequence: 3, status: "planned", startDate: "2026-10-16", endDate: "2026-11-15", dependencies: ["ROAD-02"], featureIds: ["FEAT-03"], requirementIds: ["REQ-003"] },
+    { id: "ROAD-04", projectId: "prj_platform", milestone: "Autonomous validation & live transport", release: "R4", sequence: 4, status: "planned", startDate: "2026-11-16", endDate: "2026-12-31", dependencies: ["ROAD-03"], featureIds: ["FEAT-AI-03", "FEAT-AI-05"], requirementIds: ["REQ-AI-03", "REQ-AI-04"] }
+  ],
+  productDecisions: [
+    {
+      id: "DEC-PRD-01",
+      projectId: "prj_platform",
+      title: "Require idempotency keys on all mutating actions",
+      type: "architecture_constraint",
+      subjectId: "REQ-001",
+      subjectType: "requirement",
+      rationale: "Prevents duplicate requests during network retries or concurrent browser tabs.",
+      status: "confirmed",
+      provenance: "confirmed",
+      confidence: 1.0,
+      evidence: ["API Convention RFC", "Idempotency test suite"],
+      decidedBy: "Tech Lead (Human)",
+      decidedAt: "2026-09-28T14:00:00Z",
+      createdAt: "2026-09-28T14:00:00Z",
+      impact: "critical"
+    },
+    {
+      id: "DEC-PRD-02",
+      projectId: "prj_platform",
+      title: "Visually isolate AI proposals with dedicated provenance badges",
+      type: "requirement_tradeoff",
+      subjectId: "REQ-AI-03",
+      subjectType: "requirement",
+      rationale: "Human review team must instantly distinguish authoritative facts from generated candidates.",
+      status: "confirmed",
+      provenance: "confirmed",
+      confidence: 1.0,
+      evidence: ["UX Trust Guidelines", "Audit requirement BR-02"],
+      decidedBy: "Product Council",
+      decidedAt: "2026-09-29T09:30:00Z",
+      createdAt: "2026-09-29T09:30:00Z",
+      impact: "high"
+    },
+    {
+      id: "DEC-PRD-03",
+      projectId: "prj_platform",
+      title: "Sequence MCP trace observability before autonomous agent actions",
+      type: "roadmap_sequence",
+      subjectId: "FEAT-02",
+      subjectType: "feature",
+      rationale: "Verification infrastructure must precede execution capabilities to prevent unlogged actions.",
+      status: "confirmed",
+      provenance: "confirmed",
+      confidence: 0.92,
+      evidence: ["MCP V2 Runtime RFC", "ROAD-02 milestone"],
+      decidedBy: "Engineering Director",
+      decidedAt: "2026-09-30T11:15:00Z",
+      createdAt: "2026-09-30T11:15:00Z",
+      impact: "high"
+    },
+    {
+      id: "DEC-PRD-04",
+      projectId: "prj_platform",
+      title: "Decline silent automatic requirement promotion",
+      type: "feature_scope",
+      subjectId: "REQ-AI-04",
+      subjectType: "requirement",
+      rationale: "AI suggested requirements remain candidates until an explicit human promotion action is recorded.",
+      status: "confirmed",
+      provenance: "confirmed",
+      confidence: 0.88,
+      evidence: ["Governance Invariant inv-22"],
+      decidedBy: "Tech Lead (Human)",
+      decidedAt: "2026-10-01T16:40:00Z",
+      createdAt: "2026-10-01T16:40:00Z",
+      impact: "medium"
+    }
   ],
   devopsSummary: {
     prj_platform: { architectureScore: 0.78, qualityScore: 0.74, securityScore: 0.68, testCoverage: 0.71, deploymentReadiness: 0.64, repositoryCount: 2, provenance: "mock_analysis" }

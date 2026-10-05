@@ -90,7 +90,14 @@ export function renderPage() {
   const mcp = path.match(/^\/app\/mcp(?:\/(overview|executions|tools|models|discovery))?$/);
   if (mcp) return shell(mcpPage(mcp[1] || "overview"));
 
-  if (path === "/app/intelligence/product") return shell(productIntelligencePage());
+  const product = path.match(/^\/app\/intelligence\/product(?:\/(overview|requirements|prioritization|strategy|roadmap|decisions))?$/);
+  if (product) {
+    if (product[1]) {
+      state.productSection = product[1];
+      state.productTab = product[1];
+    }
+    return shell(productIntelligencePage());
+  }
   if (path === "/app/intelligence/devops") return shell(devopsIntelligencePage());
 
   if (path === "/app/context/overview") return shell(contextOverviewPage());

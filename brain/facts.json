@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T22:52:04.068Z",
+  "generatedAt": "2026-10-05T19:16:11.736Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -18,7 +18,7 @@
     "src/app/actions/work.js": {
       "layer": "app",
       "lines": 292,
-      "bytes": 9395
+      "bytes": 9686
     },
     "src/app/auth.js": {
       "layer": "app",
@@ -27,8 +27,8 @@
     },
     "src/app/main.js": {
       "layer": "app",
-      "lines": 771,
-      "bytes": 35312
+      "lines": 998,
+      "bytes": 45464
     },
     "src/app/paths.js": {
       "layer": "app",
@@ -37,8 +37,8 @@
     },
     "src/app/router.js": {
       "layer": "app",
-      "lines": 117,
-      "bytes": 5139
+      "lines": 124,
+      "bytes": 5369
     },
     "src/app/shell.js": {
       "layer": "app",
@@ -169,18 +169,69 @@
     },
     "src/product/api/index.js": {
       "layer": "product",
-      "lines": 18,
-      "bytes": 779
+      "lines": 46,
+      "bytes": 2718
+    },
+    "src/product/components/intelligenceHeader.js": {
+      "layer": "product",
+      "lines": 75,
+      "bytes": 2577
+    },
+    "src/product/components/modals.js": {
+      "layer": "product",
+      "lines": 219,
+      "bytes": 9529
+    },
+    "src/product/components/provenanceBadge.js": {
+      "layer": "product",
+      "lines": 46,
+      "bytes": 1295
+    },
+    "src/product/pages/decisions.js": {
+      "layer": "product",
+      "lines": 96,
+      "bytes": 3912
     },
     "src/product/pages/index.js": {
       "layer": "product",
-      "lines": 37,
-      "bytes": 4035
+      "lines": 65,
+      "bytes": 1695
+    },
+    "src/product/pages/overview.js": {
+      "layer": "product",
+      "lines": 187,
+      "bytes": 8052
+    },
+    "src/product/pages/prioritization.js": {
+      "layer": "product",
+      "lines": 122,
+      "bytes": 4960
+    },
+    "src/product/pages/requirements.js": {
+      "layer": "product",
+      "lines": 205,
+      "bytes": 9873
+    },
+    "src/product/pages/roadmap.js": {
+      "layer": "product",
+      "lines": 141,
+      "bytes": 6298
+    },
+    "src/product/pages/strategy.js": {
+      "layer": "product",
+      "lines": 144,
+      "bytes": 5887
+    },
+    "src/product/types.d.ts": {
+      "layer": "product",
+      "lines": 28,
+      "bytes": 526,
+      "exports": 2
     },
     "src/shared/api/db.js": {
       "layer": "shared",
-      "lines": 445,
-      "bytes": 34675
+      "lines": 538,
+      "bytes": 40763
     },
     "src/shared/api/errors.js": {
       "layer": "shared",
@@ -204,8 +255,8 @@
     },
     "src/shared/api/mock.js": {
       "layer": "shared",
-      "lines": 758,
-      "bytes": 40559
+      "lines": 997,
+      "bytes": 51983
     },
     "src/shared/api/redaction.js": {
       "layer": "shared",
@@ -224,14 +275,14 @@
     },
     "src/shared/state/store.js": {
       "layer": "shared",
-      "lines": 150,
-      "bytes": 4117
+      "lines": 176,
+      "bytes": 4883
     },
     "src/shared/types/types.d.ts": {
       "layer": "shared",
-      "lines": 312,
-      "bytes": 12633,
-      "exports": 70
+      "lines": 348,
+      "bytes": 13730,
+      "exports": 73
     },
     "src/shared/utils/format.js": {
       "layer": "shared",
@@ -246,7 +297,7 @@
     "src/styles/home/dashboard.css": {
       "layer": "styles",
       "lines": 8,
-      "bytes": 4549
+      "bytes": 4556
     },
     "src/styles/integrations/integrations.css": {
       "layer": "styles",
@@ -258,30 +309,35 @@
       "lines": 904,
       "bytes": 49346
     },
+    "src/styles/product/product.css": {
+      "layer": "styles",
+      "lines": 1095,
+      "bytes": 22607
+    },
     "src/styles/work/work.css": {
       "layer": "styles",
       "lines": 749,
-      "bytes": 15995
+      "bytes": 16743
     },
     "src/work/api/index.js": {
       "layer": "work",
       "lines": 37,
-      "bytes": 1819
+      "bytes": 1855
     },
     "src/work/components/index.js": {
       "layer": "work",
       "lines": 194,
-      "bytes": 9882
+      "bytes": 10075
     },
     "src/work/constants.js": {
       "layer": "work",
       "lines": 55,
-      "bytes": 2934
+      "bytes": 2988
     },
     "src/work/pages/index.js": {
       "layer": "work",
       "lines": 103,
-      "bytes": 4475
+      "bytes": 4577
     },
     "test/api.test.mjs": {
       "layer": "test",
@@ -306,6 +362,12 @@
       "lines": 17,
       "bytes": 4144,
       "tests": 12
+    },
+    "test/product.test.mjs": {
+      "layer": "test",
+      "lines": 256,
+      "bytes": 9391,
+      "tests": 10
     }
   },
   "typeNames": {
@@ -338,6 +400,10 @@
       "AuditActor",
       "AuditResourceRef",
       "AuditEvent"
+    ],
+    "src/product/types.d.ts": [
+      "ProductSection",
+      "ProductFilterState"
     ],
     "src/shared/types/types.d.ts": [
       "PlatformRole",
@@ -386,6 +452,9 @@
       "McpServer",
       "Requirement",
       "ProductFeature",
+      "ProductStrategy",
+      "ProductDecision",
+      "ProductOverview",
       "RoadmapItem",
       "Finding",
       "DevOpsRecommendation",
@@ -440,6 +509,7 @@
     "productFeatures",
     "productStrategy",
     "roadmapItems",
+    "productDecisions",
     "devopsSummary",
     "findings",
     "devopsRecommendations",
@@ -620,10 +690,57 @@
     "src/product/api/index.js": [
       "../../shared/api/index.js"
     ],
+    "src/product/components/intelligenceHeader.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
+    ],
+    "src/product/components/modals.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
+    ],
+    "src/product/components/provenanceBadge.js": [
+      "../../shared/components/ui.js"
+    ],
+    "src/product/pages/decisions.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
+    ],
     "src/product/pages/index.js": [
       "../../shared/state/store.js",
-      "../../app/paths.js",
-      "../../shared/components/ui.js"
+      "../components/intelligenceHeader.js",
+      "../components/modals.js",
+      "./overview.js",
+      "./requirements.js",
+      "./prioritization.js",
+      "./strategy.js",
+      "./roadmap.js",
+      "./decisions.js"
+    ],
+    "src/product/pages/overview.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
+    ],
+    "src/product/pages/prioritization.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
+    ],
+    "src/product/pages/requirements.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
+    ],
+    "src/product/pages/roadmap.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
+    ],
+    "src/product/pages/strategy.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "../components/provenanceBadge.js"
     ],
     "src/shared/api/index.js": [
       "./mock.js",
@@ -715,7 +832,8 @@
     "src/styles/home/dashboard.css",
     "src/styles/integrations/integrations.css",
     "src/styles/landing/landing.css",
-    "src/styles/work/work.css"
+    "src/styles/work/work.css",
+    "src/styles/product/product.css"
   ],
   "entryPoints": {
     "index": [],
@@ -727,6 +845,7 @@
       "./src/styles/home/dashboard.css",
       "./src/styles/integrations/integrations.css",
       "./src/styles/work/work.css",
+      "./src/styles/product/product.css",
       "#main",
       "./src/app/main.js"
     ],

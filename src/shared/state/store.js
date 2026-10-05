@@ -13,6 +13,15 @@
    Keys are grouped by owning domain but share one object so the existing
    `state.x` access patterns keep working unchanged. */
 
+const getSearchParam = (param, fallback) => {
+  if (typeof location === "undefined") return fallback;
+  try {
+    return new URLSearchParams(location.search).get(param) || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 /* @type {Record<string, any>} */
 export const state = {
   // ── session + workspace selection (global) ──
@@ -35,7 +44,7 @@ export const state = {
   conversationId: "",
   messages: [],
   analysisRequests: [],
-  analysisTab: new URLSearchParams(location.search).get("tab") || "conversation",
+  analysisTab: getSearchParam("tab", "conversation"),
 
   // ── workflow execution (workspace) ──
   workflows: [],
@@ -59,7 +68,19 @@ export const state = {
   productFeatures: [],
   productStrategy: null,
   roadmapItems: [],
-  productTab: new URLSearchParams(location.search).get("productTab") || "requirements",
+  productDecisions: [],
+  productOverview: null,
+  productSection: getSearchParam("section", "overview"),
+  productTab: getSearchParam("productTab", "requirements"),
+  productSelectedRequirementId: null,
+  productSelectedFeatureId: null,
+  productSelectedRoadmapId: null,
+  productSelectedDecisionId: null,
+  productFilterStatus: "all",
+  productFilterPriority: "all",
+  productFilterProvenance: "all",
+  productSearchQuery: "",
+  productActiveModal: null,
 
   // ── devops domain ──
   devopsSummary: null,
@@ -68,7 +89,7 @@ export const state = {
   dependencies: [],
   testSuggestions: [],
   deploymentPlans: [],
-  devopsTab: new URLSearchParams(location.search).get("devopsTab") || "overview",
+  devopsTab: getSearchParam("devopsTab", "overview"),
 
   // ── context domain ──
   contextItems: [],
@@ -147,4 +168,9 @@ export function resetProjectScope() {
   state.workArtifactId = "";
   state.workArtifactsOpen = false;
   state.workRepository = null;
+  state.productSelectedRequirementId = null;
+  state.productSelectedFeatureId = null;
+  state.productSelectedRoadmapId = null;
+  state.productSelectedDecisionId = null;
+  state.productActiveModal = null;
 }

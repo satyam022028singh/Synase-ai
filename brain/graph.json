@@ -3,17 +3,17 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-03T22:52:04.068Z",
+    "generatedAt": "2026-10-05T19:16:11.736Z",
     "version": "0.12.0",
-    "sourceLines": 8129,
-    "testLines": 332,
-    "trackedFiles": 57,
+    "sourceLines": 11171,
+    "testLines": 588,
+    "trackedFiles": 69,
     "architectureLayers": 12,
-    "contractTests": 64,
+    "contractTests": 74,
     "typeExports": 96,
-    "dbCollections": 42,
+    "dbCollections": 43,
     "routes": 35,
-    "serviceMethods": 87,
+    "serviceMethods": 103,
     "invariants": 22,
     "gaps": 12,
     "risks": 10,
@@ -49,7 +49,7 @@
       "kind": "source-file",
       "label": "main.js",
       "layer": "app",
-      "lines": 771
+      "lines": 998
     },
     {
       "id": "src/app/paths.js",
@@ -63,7 +63,7 @@
       "kind": "source-file",
       "label": "router.js",
       "layer": "app",
-      "lines": 117
+      "lines": 124
     },
     {
       "id": "src/app/shell.js",
@@ -247,21 +247,92 @@
       "kind": "source-file",
       "label": "index.js",
       "layer": "product",
-      "lines": 18
+      "lines": 46
+    },
+    {
+      "id": "src/product/components/intelligenceHeader.js",
+      "kind": "source-file",
+      "label": "intelligenceHeader.js",
+      "layer": "product",
+      "lines": 75
+    },
+    {
+      "id": "src/product/components/modals.js",
+      "kind": "source-file",
+      "label": "modals.js",
+      "layer": "product",
+      "lines": 219
+    },
+    {
+      "id": "src/product/components/provenanceBadge.js",
+      "kind": "source-file",
+      "label": "provenanceBadge.js",
+      "layer": "product",
+      "lines": 46
+    },
+    {
+      "id": "src/product/pages/decisions.js",
+      "kind": "source-file",
+      "label": "decisions.js",
+      "layer": "product",
+      "lines": 96
     },
     {
       "id": "src/product/pages/index.js",
       "kind": "source-file",
       "label": "index.js",
       "layer": "product",
-      "lines": 37
+      "lines": 65
+    },
+    {
+      "id": "src/product/pages/overview.js",
+      "kind": "source-file",
+      "label": "overview.js",
+      "layer": "product",
+      "lines": 187
+    },
+    {
+      "id": "src/product/pages/prioritization.js",
+      "kind": "source-file",
+      "label": "prioritization.js",
+      "layer": "product",
+      "lines": 122
+    },
+    {
+      "id": "src/product/pages/requirements.js",
+      "kind": "source-file",
+      "label": "requirements.js",
+      "layer": "product",
+      "lines": 205
+    },
+    {
+      "id": "src/product/pages/roadmap.js",
+      "kind": "source-file",
+      "label": "roadmap.js",
+      "layer": "product",
+      "lines": 141
+    },
+    {
+      "id": "src/product/pages/strategy.js",
+      "kind": "source-file",
+      "label": "strategy.js",
+      "layer": "product",
+      "lines": 144
+    },
+    {
+      "id": "src/product/types.d.ts",
+      "kind": "type-module",
+      "label": "types.d.ts",
+      "layer": "product",
+      "lines": 28,
+      "exports": 2
     },
     {
       "id": "src/shared/api/db.js",
       "kind": "source-file",
       "label": "db.js",
       "layer": "shared",
-      "lines": 445
+      "lines": 538
     },
     {
       "id": "src/shared/api/errors.js",
@@ -296,7 +367,7 @@
       "kind": "source-file",
       "label": "mock.js",
       "layer": "shared",
-      "lines": 758
+      "lines": 997
     },
     {
       "id": "src/shared/api/redaction.js",
@@ -324,15 +395,15 @@
       "kind": "source-file",
       "label": "store.js",
       "layer": "shared",
-      "lines": 150
+      "lines": 176
     },
     {
       "id": "src/shared/types/types.d.ts",
       "kind": "type-module",
       "label": "types.d.ts",
       "layer": "shared",
-      "lines": 312,
-      "exports": 70
+      "lines": 348,
+      "exports": 73
     },
     {
       "id": "src/shared/utils/format.js",
@@ -368,6 +439,13 @@
       "label": "landing.css",
       "layer": "styles",
       "lines": 904
+    },
+    {
+      "id": "src/styles/product/product.css",
+      "kind": "source-file",
+      "label": "product.css",
+      "layer": "styles",
+      "lines": 1095
     },
     {
       "id": "src/styles/work/work.css",
@@ -437,6 +515,14 @@
       "contractTests": 12
     },
     {
+      "id": "test/product.test.mjs",
+      "kind": "test-file",
+      "label": "product.test.mjs",
+      "layer": "test",
+      "lines": 256,
+      "contractTests": 10
+    },
+    {
       "id": "l0-composition",
       "kind": "layer",
       "label": "L0 Application shell",
@@ -486,7 +572,7 @@
       "phases": "0-10",
       "role": "Deterministic in-memory domain service. Owns the entire mock db fixture.",
       "fixture": "db (src/shared/api/db.js)",
-      "methodCount": 74,
+      "methodCount": 90,
       "methods": [
         "login",
         "register",
@@ -535,11 +621,27 @@
         "listMcpDirectories",
         "checkMcpServerHealth",
         "discoverMcpDirectory",
+        "getProductOverview",
         "listRequirements",
+        "getRequirement",
+        "createRequirement",
+        "updateRequirement",
+        "deleteRequirement",
         "listProductFeatures",
+        "getFeature",
+        "createFeature",
+        "updateFeature",
+        "reprioritizeFeatures",
         "getProductStrategy",
+        "saveProductStrategy",
         "listRoadmapItems",
+        "createRoadmapItem",
+        "updateRoadmapItem",
+        "deleteRoadmapItem",
+        "listProductDecisions",
+        "getProductDecision",
         "runProductMock",
+        "runProductIntelligenceAction",
         "getDevOpsSummary",
         "listFindings",
         "listDevOpsRecommendations",
@@ -995,6 +1097,15 @@
       "requiresIdempotencyKey": true
     },
     {
+      "id": "svc-mock.getProductOverview",
+      "kind": "service-method",
+      "label": "getProductOverview",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
       "id": "svc-mock.listRequirements",
       "kind": "service-method",
       "label": "listRequirements",
@@ -1004,12 +1115,84 @@
       "requiresIdempotencyKey": false
     },
     {
+      "id": "svc-mock.getRequirement",
+      "kind": "service-method",
+      "label": "getRequirement",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.createRequirement",
+      "kind": "service-method",
+      "label": "createRequirement",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.updateRequirement",
+      "kind": "service-method",
+      "label": "updateRequirement",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.deleteRequirement",
+      "kind": "service-method",
+      "label": "deleteRequirement",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
       "id": "svc-mock.listProductFeatures",
       "kind": "service-method",
       "label": "listProductFeatures",
       "service": "svc-mock",
       "module": "src/shared/api/mock.js",
       "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.getFeature",
+      "kind": "service-method",
+      "label": "getFeature",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.createFeature",
+      "kind": "service-method",
+      "label": "createFeature",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.updateFeature",
+      "kind": "service-method",
+      "label": "updateFeature",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.reprioritizeFeatures",
+      "kind": "service-method",
+      "label": "reprioritizeFeatures",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
       "requiresIdempotencyKey": false
     },
     {
@@ -1022,9 +1205,63 @@
       "requiresIdempotencyKey": false
     },
     {
+      "id": "svc-mock.saveProductStrategy",
+      "kind": "service-method",
+      "label": "saveProductStrategy",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
       "id": "svc-mock.listRoadmapItems",
       "kind": "service-method",
       "label": "listRoadmapItems",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.createRoadmapItem",
+      "kind": "service-method",
+      "label": "createRoadmapItem",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.updateRoadmapItem",
+      "kind": "service-method",
+      "label": "updateRoadmapItem",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.deleteRoadmapItem",
+      "kind": "service-method",
+      "label": "deleteRoadmapItem",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.listProductDecisions",
+      "kind": "service-method",
+      "label": "listProductDecisions",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.getProductDecision",
+      "kind": "service-method",
+      "label": "getProductDecision",
       "service": "svc-mock",
       "module": "src/shared/api/mock.js",
       "mutation": false,
@@ -1037,6 +1274,15 @@
       "service": "svc-mock",
       "module": "src/shared/api/mock.js",
       "mutation": false,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.runProductIntelligenceAction",
+      "kind": "service-method",
+      "label": "runProductIntelligenceAction",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
       "requiresIdempotencyKey": true
     },
     {
@@ -1737,7 +1983,11 @@
       "fixture": "db.requirements",
       "service": "svc-mock",
       "methods": [
-        "listRequirements"
+        "listRequirements",
+        "getRequirement",
+        "createRequirement",
+        "updateRequirement",
+        "deleteRequirement"
       ],
       "renderedBy": [
         "requirementsView"
@@ -1751,10 +2001,29 @@
       "fixture": "db.productFeatures",
       "service": "svc-mock",
       "methods": [
-        "listProductFeatures"
+        "listProductFeatures",
+        "getFeature",
+        "createFeature",
+        "updateFeature",
+        "reprioritizeFeatures"
       ],
       "renderedBy": [
         "prioritizationView"
+      ],
+      "declaredIn": "src/shared/types/types.d.ts"
+    },
+    {
+      "id": "ent-core-productstrategy",
+      "kind": "entity",
+      "label": "ProductStrategy",
+      "fixture": "db.productStrategy",
+      "service": "svc-mock",
+      "methods": [
+        "getProductStrategy",
+        "saveProductStrategy"
+      ],
+      "renderedBy": [
+        "strategyView"
       ],
       "declaredIn": "src/shared/types/types.d.ts"
     },
@@ -1765,10 +2034,42 @@
       "fixture": "db.roadmapItems",
       "service": "svc-mock",
       "methods": [
-        "listRoadmapItems"
+        "listRoadmapItems",
+        "createRoadmapItem",
+        "updateRoadmapItem",
+        "deleteRoadmapItem"
       ],
       "renderedBy": [
         "roadmapView"
+      ],
+      "declaredIn": "src/shared/types/types.d.ts"
+    },
+    {
+      "id": "ent-core-productdecision",
+      "kind": "entity",
+      "label": "ProductDecision",
+      "fixture": "db.productDecisions",
+      "service": "svc-mock",
+      "methods": [
+        "listProductDecisions",
+        "getProductDecision"
+      ],
+      "renderedBy": [
+        "decisionsView"
+      ],
+      "declaredIn": "src/shared/types/types.d.ts"
+    },
+    {
+      "id": "ent-core-productoverview",
+      "kind": "entity",
+      "label": "ProductOverview",
+      "fixture": "derived",
+      "service": "svc-mock",
+      "methods": [
+        "getProductOverview"
+      ],
+      "renderedBy": [
+        "overviewView"
       ],
       "declaredIn": "src/shared/types/types.d.ts"
     },
@@ -2111,20 +2412,6 @@
       ],
       "renderedBy": [
         "devopsOverview"
-      ],
-      "gap": "No interface exists in any .d.ts file. Frontend and backend will drift silently."
-    },
-    {
-      "id": "ent-untyped-productStrategy",
-      "kind": "entity-untyped",
-      "label": "ProductStrategy aggregate",
-      "fixture": "src/shared/api/db.js db.productStrategy",
-      "service": "svc-mock",
-      "methods": [
-        "getProductStrategy"
-      ],
-      "renderedBy": [
-        "strategyView"
       ],
       "gap": "No interface exists in any .d.ts file. Frontend and backend will drift silently."
     },
@@ -2776,14 +3063,16 @@
     {
       "id": "t-product",
       "kind": "in-page-tab",
-      "label": "state.productTab",
-      "state": "state.productTab",
-      "param": "?productTab=",
+      "label": "state.productSection",
+      "state": "state.productSection",
+      "param": "?section=",
       "values": [
+        "overview",
         "requirements",
         "prioritization",
         "strategy",
-        "roadmap"
+        "roadmap",
+        "decisions"
       ],
       "within": "r-intel-product"
     },
@@ -3674,7 +3963,7 @@
       "kind": "script",
       "label": "build.mjs",
       "role": "Recreates dist/, copies src/, writes SHA-256 manifest",
-      "assets": 41,
+      "assets": 42,
       "command": "node scripts/build.mjs"
     },
     {
@@ -3690,7 +3979,7 @@
       "label": "node --test",
       "role": "Contract suite",
       "command": "node --test test/*.test.mjs",
-      "cases": 64
+      "cases": 74
     },
     {
       "id": "scr-brain",
@@ -3704,7 +3993,7 @@
       "kind": "architecture-layer",
       "label": "src/app",
       "files": 6,
-      "lines": 1430,
+      "lines": 1664,
       "importsNothingOutsideShared": false
     },
     {
@@ -3759,8 +4048,8 @@
       "id": "arch-product",
       "kind": "architecture-layer",
       "label": "src/product",
-      "files": 2,
-      "lines": 55,
+      "files": 12,
+      "lines": 1374,
       "importsNothingOutsideShared": false
     },
     {
@@ -3768,23 +4057,23 @@
       "kind": "architecture-layer",
       "label": "src/shared",
       "files": 12,
-      "lines": 1958,
+      "lines": 2352,
       "importsNothingOutsideShared": true
     },
     {
       "id": "arch-styles",
       "kind": "architecture-layer",
       "label": "src/styles",
-      "files": 5,
-      "lines": 3028,
+      "files": 6,
+      "lines": 4123,
       "importsNothingOutsideShared": false
     },
     {
       "id": "arch-test",
       "kind": "architecture-layer",
       "label": "src/test",
-      "files": 4,
-      "lines": 332,
+      "files": 5,
+      "lines": 588,
       "importsNothingOutsideShared": false
     },
     {
@@ -4269,7 +4558,32 @@
     },
     {
       "from": "svc-mock",
+      "to": "svc-mock.getProductOverview",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
       "to": "svc-mock.listRequirements",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.getRequirement",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.createRequirement",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateRequirement",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.deleteRequirement",
       "rel": "exposes-method"
     },
     {
@@ -4279,7 +4593,32 @@
     },
     {
       "from": "svc-mock",
+      "to": "svc-mock.getFeature",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.createFeature",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateFeature",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.reprioritizeFeatures",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
       "to": "svc-mock.getProductStrategy",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.saveProductStrategy",
       "rel": "exposes-method"
     },
     {
@@ -4289,7 +4628,37 @@
     },
     {
       "from": "svc-mock",
+      "to": "svc-mock.createRoadmapItem",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateRoadmapItem",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.deleteRoadmapItem",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.listProductDecisions",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.getProductDecision",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
       "to": "svc-mock.runProductMock",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.runProductIntelligenceAction",
       "rel": "exposes-method"
     },
     {
@@ -4953,6 +5322,26 @@
       "rel": "read-via"
     },
     {
+      "from": "ent-core-requirement",
+      "to": "svc-mock.getRequirement",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-requirement",
+      "to": "svc-mock.createRequirement",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-requirement",
+      "to": "svc-mock.updateRequirement",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-requirement",
+      "to": "svc-mock.deleteRequirement",
+      "rel": "read-via"
+    },
+    {
       "from": "src/shared/types/types.d.ts",
       "to": "ent-core-productfeature",
       "rel": "declares"
@@ -4968,6 +5357,46 @@
       "rel": "read-via"
     },
     {
+      "from": "ent-core-productfeature",
+      "to": "svc-mock.getFeature",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-productfeature",
+      "to": "svc-mock.createFeature",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-productfeature",
+      "to": "svc-mock.updateFeature",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-productfeature",
+      "to": "svc-mock.reprioritizeFeatures",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/shared/types/types.d.ts",
+      "to": "ent-core-productstrategy",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-mock",
+      "to": "ent-core-productstrategy",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-core-productstrategy",
+      "to": "svc-mock.getProductStrategy",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-productstrategy",
+      "to": "svc-mock.saveProductStrategy",
+      "rel": "read-via"
+    },
+    {
       "from": "src/shared/types/types.d.ts",
       "to": "ent-core-roadmapitem",
       "rel": "declares"
@@ -4980,6 +5409,56 @@
     {
       "from": "ent-core-roadmapitem",
       "to": "svc-mock.listRoadmapItems",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-roadmapitem",
+      "to": "svc-mock.createRoadmapItem",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-roadmapitem",
+      "to": "svc-mock.updateRoadmapItem",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-roadmapitem",
+      "to": "svc-mock.deleteRoadmapItem",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/shared/types/types.d.ts",
+      "to": "ent-core-productdecision",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-mock",
+      "to": "ent-core-productdecision",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-core-productdecision",
+      "to": "svc-mock.listProductDecisions",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-core-productdecision",
+      "to": "svc-mock.getProductDecision",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/shared/types/types.d.ts",
+      "to": "ent-core-productoverview",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-mock",
+      "to": "ent-core-productoverview",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-core-productoverview",
+      "to": "svc-mock.getProductOverview",
       "rel": "read-via"
     },
     {
@@ -5404,21 +5883,6 @@
     },
     {
       "from": "ent-untyped-devopsSummary",
-      "to": "gap-02",
-      "rel": "blocked-by"
-    },
-    {
-      "from": "svc-mock",
-      "to": "ent-untyped-productStrategy",
-      "rel": "exposes"
-    },
-    {
-      "from": "ent-untyped-productStrategy",
-      "to": "svc-mock.getProductStrategy",
-      "rel": "read-via"
-    },
-    {
-      "from": "ent-untyped-productStrategy",
       "to": "gap-02",
       "rel": "blocked-by"
     },
@@ -7098,6 +7562,11 @@
       "rel": "bundles"
     },
     {
+      "from": "scr-build",
+      "to": "src/styles/product/product.css",
+      "rel": "bundles"
+    },
+    {
       "from": "synase-ai",
       "to": "scr-build",
       "rel": "built-by"
@@ -7150,6 +7619,11 @@
     {
       "from": "scr-test",
       "to": "test/phase12.test.mjs",
+      "rel": "runs"
+    },
+    {
+      "from": "scr-test",
+      "to": "test/product.test.mjs",
       "rel": "runs"
     },
     {
@@ -7349,7 +7823,57 @@
     },
     {
       "from": "arch-product",
+      "to": "src/product/components/intelligenceHeader.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/components/modals.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/components/provenanceBadge.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/decisions.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
       "to": "src/product/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/overview.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/prioritization.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/requirements.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/roadmap.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/pages/strategy.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-product",
+      "to": "src/product/types.d.ts",
       "rel": "contains"
     },
     {
@@ -7444,6 +7968,11 @@
     },
     {
       "from": "arch-styles",
+      "to": "src/styles/product/product.css",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-styles",
       "to": "src/styles/work/work.css",
       "rel": "contains"
     },
@@ -7470,6 +7999,11 @@
     {
       "from": "arch-test",
       "to": "test/phase12.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/product.test.mjs",
       "rel": "contains"
     },
     {

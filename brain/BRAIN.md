@@ -143,8 +143,7 @@ demo events that advance only when the user explicitly asks.
 metadata: Claude Sonnet (200k, active), GPT reasoning (128k, active), Local evaluator
 (32k, disabled). None is ever called.
 
-**Product intelligence** — `Requirement`, `ProductFeature`, roadmap items, and an
-untyped strategy aggregate. Provenance distinguishes `confirmed` from `ai_suggested`.
+**Product intelligence** — `Requirement`, `ProductFeature` (multi-criteria scoring & ranking), `ProductStrategy` (typed aggregate with tenets & risks), `RoadmapItem` (sequenced timeline with dependencies), `ProductDecision` (audited decisions linking evidence & subjects), and `ProductOverview` (metrics & bento projection). Sub-pages: Overview, Requirements (search/filters/inspector), Prioritization (score calibration matrix), Strategy, Roadmap, Decisions & Trace. Provenance distinguishes `confirmed` from `ai_suggested` (with confidence meter).
 
 **DevOps intelligence** — `Finding`, `DevOpsRecommendation`, `DeploymentPlan`, plus
 untyped dependencies, test suggestions, and a summary aggregate.

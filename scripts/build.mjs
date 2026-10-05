@@ -32,7 +32,7 @@ const files = [
   "src/home/workspace/dashboard/api.js", "src/home/workspace/dashboard/types.d.ts",
   "src/styles/app.css", "src/styles/home/dashboard.css",
   "src/styles/integrations/integrations.css", "src/styles/landing/landing.css",
-  "src/styles/work/work.css"
+  "src/styles/work/work.css", "src/styles/product/product.css"
 ];
 const manifest = {};
 for (const file of files) {

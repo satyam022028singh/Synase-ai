@@ -228,10 +228,46 @@ export interface ProductFeature {
   effort: number; risk: number; priorityRank: number; status: string; rationale: string;
   provenance: "confirmed" | "ai_suggested";
 }
+export interface ProductStrategy {
+  id?: string;
+  projectId: string;
+  objective: string;
+  principles: string[];
+  risks: string[];
+  provenance: "confirmed" | "ai_suggested";
+  updatedAt?: string;
+}
+export interface ProductDecision {
+  id: string;
+  projectId: string;
+  title: string;
+  type: "requirement_scope" | "prioritization" | "architecture_gate" | "release_sequencing" | "tradeoff";
+  subjectId: string;
+  subjectType: "requirement" | "feature" | "strategy" | "roadmap_item";
+  rationale: string;
+  status: "proposed" | "confirmed" | "deferred" | "rejected";
+  provenance: "confirmed" | "ai_suggested";
+  confidence?: number;
+  evidence: string[];
+  createdAt: string;
+  impact: "critical" | "high" | "medium" | "low";
+}
+export interface ProductOverview {
+  totalRequirements: number;
+  approvedRequirements: number;
+  suggestedRequirements: number;
+  prioritizedFeatures: number;
+  activeMilestone: string;
+  roadmapProgress: number;
+  requirementsCoverage: number;
+  topRisksCount: number;
+}
 export interface RoadmapItem {
   id: string; projectId: string; milestone: string; release: string; sequence: number;
   status: "planned" | "active" | "completed" | "delayed" | "cancelled";
   startDate?: string; endDate?: string; dependencies: string[];
+  featureIds?: string[];
+  requirementIds?: string[];
 }
 export interface Finding {
   id: string; projectId: string; type: string;

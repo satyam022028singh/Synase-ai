@@ -75,7 +75,7 @@ const NAV = [
 
 const TABS = [
   { id: "t-analysis", module: "src/home/workspace/pages/analysis.js", state: "state.analysisTab", param: "?tab=", values: ["conversation", "compose", "history"], route: "r-project-analysis" },
-  { id: "t-product", module: "src/product/pages/index.js", state: "state.productTab", param: "?productTab=", values: ["requirements", "prioritization", "strategy", "roadmap"], route: "r-intel-product" },
+  { id: "t-product", module: "src/product/pages/index.js", state: "state.productSection", param: "?section=", values: ["overview", "requirements", "prioritization", "strategy", "roadmap", "decisions"], route: "r-intel-product" },
   { id: "t-devops", module: "src/devops/pages/index.js", state: "state.devopsTab", param: "?devopsTab=", values: ["overview", "architecture", "quality", "security", "dependencies", "testing", "risk", "deployment"], route: "r-intel-devops" },
   { id: "t-input", module: "src/home/workspace/pages/inputs.js", state: "state.inputTab", param: null, values: ["file", "text", "url", "repository"], route: "r-project-inputs" },
   { id: "t-mcp", module: "src/mcp/pages/index.js", state: "route segment", param: null, values: ["overview", "executions", "tools", "models", "discovery"], route: "r-mcp-root" },
@@ -104,7 +104,7 @@ const SERVICES = [
     id: "svc-mock", label: "mockApi", module: "src/shared/api/mock.js", phases: "0-10", export: "mockApi",
     role: "Deterministic in-memory domain service. Owns the entire mock db fixture.",
     fixture: "db (src/shared/api/db.js)",
-    methods: "login,register,recover,getMe,listWorkspaces,getWorkspace,listWorkspaceMembers,inviteWorkspaceMember,listProjects,getProject,createProject,updateProject,getDashboard,listRepositories,connectRepository,syncRepository,listRepositorySnapshots,getRepositoryTree,listAssets,initiateUpload,completeUpload,addTextInput,addUrlInput,advanceAssetDemo,deleteAsset,listConversations,createConversation,listMessages,postMessage,listAnalysisRequests,createAnalysisRequest,cancelAnalysisRequest,listWorkflows,getWorkflow,listWorkflowTasks,listWorkflowEvents,controlWorkflow,nextMockWorkflowEvent,getMcpOverview,listMcpRequests,getMcpTrace,listMcpModels,listMcpTools,listMcpServers,listMcpDirectories,checkMcpServerHealth,discoverMcpDirectory,listRequirements,listProductFeatures,getProductStrategy,listRoadmapItems,runProductMock,getDevOpsSummary,listFindings,listDevOpsRecommendations,listDependencies,listTestSuggestions,listDeploymentPlans,runDevOpsMock,listContextItems,searchMemory,listRetrievalHistory,getKnowledgeGraph,runContextMock,listReports,getReport,listApprovals,getApproval,generateReport,publishReport,exportReport,decideApproval,addApprovalComment,cancelApproval",
+    methods: "login,register,recover,getMe,listWorkspaces,getWorkspace,listWorkspaceMembers,inviteWorkspaceMember,listProjects,getProject,createProject,updateProject,getDashboard,listRepositories,connectRepository,syncRepository,listRepositorySnapshots,getRepositoryTree,listAssets,initiateUpload,completeUpload,addTextInput,addUrlInput,advanceAssetDemo,deleteAsset,listConversations,createConversation,listMessages,postMessage,listAnalysisRequests,createAnalysisRequest,cancelAnalysisRequest,listWorkflows,getWorkflow,listWorkflowTasks,listWorkflowEvents,controlWorkflow,nextMockWorkflowEvent,getMcpOverview,listMcpRequests,getMcpTrace,listMcpModels,listMcpTools,listMcpServers,listMcpDirectories,checkMcpServerHealth,discoverMcpDirectory,getProductOverview,listRequirements,getRequirement,createRequirement,updateRequirement,deleteRequirement,listProductFeatures,getFeature,createFeature,updateFeature,reprioritizeFeatures,getProductStrategy,saveProductStrategy,listRoadmapItems,createRoadmapItem,updateRoadmapItem,deleteRoadmapItem,listProductDecisions,getProductDecision,runProductMock,runProductIntelligenceAction,getDevOpsSummary,listFindings,listDevOpsRecommendations,listDependencies,listTestSuggestions,listDeploymentPlans,runDevOpsMock,listContextItems,searchMemory,listRetrievalHistory,getKnowledgeGraph,runContextMock,listReports,getReport,listApprovals,getApproval,generateReport,publishReport,exportReport,decideApproval,addApprovalComment,cancelApproval",
     helpers: "ApiError, redactMcpPayload, normalizeWorkflowEvents, createIdempotencyKey, liveApi"
   },
   {
@@ -145,9 +145,12 @@ const ENTITY_MAP = [
   { name: "McpModel", fixture: "db.mcpModels", service: "svc-mock", methods: "listMcpModels", views: "mcpCatalogView('models')" },
   { name: "McpTool", fixture: "db.mcpTools", service: "svc-mock", methods: "listMcpTools", views: "mcpCatalogView('tools')" },
   { name: "McpServer", fixture: "db.mcpServers", service: "svc-mock", methods: "listMcpServers,checkMcpServerHealth", views: "mcpDiscoveryView" },
-  { name: "Requirement", fixture: "db.requirements", service: "svc-mock", methods: "listRequirements", views: "requirementsView" },
-  { name: "ProductFeature", fixture: "db.productFeatures", service: "svc-mock", methods: "listProductFeatures", views: "prioritizationView" },
-  { name: "RoadmapItem", fixture: "db.roadmapItems", service: "svc-mock", methods: "listRoadmapItems", views: "roadmapView" },
+  { name: "Requirement", fixture: "db.requirements", service: "svc-mock", methods: "listRequirements,getRequirement,createRequirement,updateRequirement,deleteRequirement", views: "requirementsView" },
+  { name: "ProductFeature", fixture: "db.productFeatures", service: "svc-mock", methods: "listProductFeatures,getFeature,createFeature,updateFeature,reprioritizeFeatures", views: "prioritizationView" },
+  { name: "ProductStrategy", fixture: "db.productStrategy", service: "svc-mock", methods: "getProductStrategy,saveProductStrategy", views: "strategyView" },
+  { name: "RoadmapItem", fixture: "db.roadmapItems", service: "svc-mock", methods: "listRoadmapItems,createRoadmapItem,updateRoadmapItem,deleteRoadmapItem", views: "roadmapView" },
+  { name: "ProductDecision", fixture: "db.productDecisions", service: "svc-mock", methods: "listProductDecisions,getProductDecision", views: "decisionsView" },
+  { name: "ProductOverview", fixture: "derived", service: "svc-mock", methods: "getProductOverview", views: "overviewView" },
   { name: "Finding", fixture: "db.findings", service: "svc-mock", methods: "listFindings", views: "findingsTable,devopsOverview" },
   { name: "DevOpsRecommendation", fixture: "db.devopsRecommendations", service: "svc-mock", methods: "listDevOpsRecommendations", views: "devopsOverview" },
   { name: "DeploymentPlan", fixture: "db.deploymentPlans", service: "svc-mock", methods: "listDeploymentPlans", views: "devopsDeployment" },
@@ -174,7 +177,6 @@ const ENTITY_MAP = [
 
 const UNTYPED_FIXTURES = [
   { key: "devopsSummary", entity: "DevOpsSummary aggregate", methods: "getDevOpsSummary", views: "devopsOverview", module: "src/shared/api/db.js" },
-  { key: "productStrategy", entity: "ProductStrategy aggregate", methods: "getProductStrategy", views: "strategyView", module: "src/shared/api/db.js" },
   { key: "dependencies", entity: "Dependency", methods: "listDependencies", views: "devopsDependencies", module: "src/shared/api/db.js" },
   { key: "testSuggestions", entity: "TestSuggestion", methods: "listTestSuggestions", views: "devopsTesting", module: "src/shared/api/db.js" },
   { key: "mcpDirectories", entity: "McpDirectory", methods: "listMcpDirectories,discoverMcpDirectory", views: "mcpDiscoveryView", module: "src/shared/api/db.js" },

@@ -186,16 +186,20 @@ async function hydrateProject(projectId) {
     state.workflowEvents = [];
   }
 
-  const [requirements, features, strategy, roadmap] = await Promise.all([
+  const [requirements, features, strategy, roadmap, decisions, overview] = await Promise.all([
     productApi.listRequirements(projectId),
     productApi.listProductFeatures(projectId),
     productApi.getProductStrategy(projectId),
-    productApi.listRoadmapItems(projectId)
+    productApi.listRoadmapItems(projectId),
+    productApi.listProductDecisions(projectId),
+    productApi.getProductOverview(projectId)
   ]);
   state.requirements = requirements.data;
   state.productFeatures = features.data;
   state.productStrategy = strategy.data;
   state.roadmapItems = roadmap.data;
+  state.productDecisions = decisions.data;
+  state.productOverview = overview.data;
 
   const [devopsSummary, findings, recommendations, dependencies, tests, deployments] =
     await Promise.all([
@@ -376,10 +380,98 @@ document.addEventListener("click", (event) => {
   }
 
   /* product */
-  if (action === "product-tab") { state.productTab = target.getAttribute("data-tab") || "requirements"; render(); }
+  if (action === "product-tab" || action === "product-section") {
+    const sec = target.getAttribute("data-section") || target.getAttribute("data-tab") || "overview";
+    state.productSection = sec;
+    state.productTab = sec;
+    render();
+  }
+  if (action === "product-select-requirement") {
+    state.productSelectedRequirementId = target.getAttribute("data-req-id") || "";
+    render();
+  }
+  if (action === "product-close-requirement-drawer") {
+    state.productSelectedRequirementId = "";
+    render();
+  }
+  if (action === "product-update-req-status") {
+    const reqId = target.getAttribute("data-req-id");
+    const newStatus = target.getAttribute("data-status");
+    if (reqId && newStatus) {
+      productApi.updateRequirement(state.projectId, reqId, { status: newStatus }, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+        state.requirements = (await productApi.listRequirements(state.projectId)).data;
+        toast(`Requirement ${reqId} updated to ${newStatus}.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Update failed."));
+    }
+  }
+  if (action === "product-delete-req") {
+    const reqId = target.getAttribute("data-req-id");
+    if (reqId) {
+      productApi.deleteRequirement(state.projectId, reqId, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+        state.requirements = (await productApi.listRequirements(state.projectId)).data;
+        if (state.productSelectedRequirementId === reqId) state.productSelectedRequirementId = "";
+        toast(`Requirement ${reqId} deleted.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Deletion failed."));
+    }
+  }
+  if (action === "product-move-rank") {
+    const featId = target.getAttribute("data-feat-id");
+    const dir = target.getAttribute("data-dir");
+    const feats = [...state.productFeatures].sort((a, b) => a.priorityRank - b.priorityRank);
+    const idx = feats.findIndex((f) => f.id === featId);
+    if (idx !== -1 && ((dir === "up" && idx > 0) || (dir === "down" && idx < feats.length - 1))) {
+      const targetIdx = dir === "up" ? idx - 1 : idx + 1;
+      const temp = feats[idx];
+      feats[idx] = feats[targetIdx];
+      feats[targetIdx] = temp;
+      const orderedIds = feats.map((f) => f.id);
+      productApi.reprioritizeFeatures(state.projectId, orderedIds, { idempotencyKey: createIdempotencyKey() }).then(async (result) => {
+        state.productFeatures = result.data;
+        toast(`Feature #${featId} moved ${dir}.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Re-ranking failed."));
+    }
+  }
+  if (action === "product-reprioritize-auto") {
+    const sorted = [...state.productFeatures].sort((a, b) => {
+      const ratioA = a.businessValue / Math.max(a.effort, 1);
+      const ratioB = b.businessValue / Math.max(b.effort, 1);
+      return ratioB - ratioA;
+    });
+    const orderedIds = sorted.map((f) => f.id);
+    productApi.reprioritizeFeatures(state.projectId, orderedIds, { idempotencyKey: createIdempotencyKey() }).then(async (result) => {
+      state.productFeatures = result.data;
+      toast("Features automatically ranked by Business Value / Effort ratio.");
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Auto-ranking failed."));
+  }
+  if (action === "product-modal") {
+    state.productActiveModal = target.getAttribute("data-modal") || "";
+    render();
+  }
+  if (action === "close-modal") {
+    state.productActiveModal = "";
+    render();
+  }
+  if (action === "product-delete-roadmap") {
+    const roadId = target.getAttribute("data-roadmap-id");
+    if (roadId) {
+      productApi.deleteRoadmapItem(state.projectId, roadId, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+        state.roadmapItems = (await productApi.listRoadmapItems(state.projectId)).data;
+        toast(`Milestone ${roadId} removed.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Milestone deletion failed."));
+    }
+  }
   if (action === "product-mock") {
-    productApi.runProductMock(state.projectId, target.getAttribute("data-product-action"), { idempotencyKey: createIdempotencyKey() }).then((result) => {
-      toast(`Mock ${result.data.action} completed with no confirmed-state changes.`);
+    const act = target.getAttribute("data-product-action") || "overview";
+    productApi.runProductIntelligenceAction(state.projectId, act, { idempotencyKey: createIdempotencyKey() }).then(async (result) => {
+      toast(`[Receipt ${result.data.receiptId}] ${result.data.details}. Status: ${result.data.status}`);
+      render();
+    }).catch((err) => {
+      toast(err instanceof Error ? err.message : "Analysis run failed.");
     });
   }
 
@@ -509,6 +601,29 @@ document.addEventListener("change", async (event) => {
     render();
   }
   if (target.id === "project-search" || target.id === "project-status") filterProjects();
+  if (target.id === "product-status-filter") {
+    state.productFilterStatus = target.value;
+    render();
+  }
+  if (target.id === "product-priority-filter") {
+    state.productFilterPriority = target.value;
+    render();
+  }
+  if (target.id === "product-provenance-filter") {
+    state.productFilterProvenance = target.value;
+    render();
+  }
+  if (target.getAttribute("data-action") === "product-update-roadmap-status") {
+    const roadId = target.getAttribute("data-roadmap-id");
+    const newStatus = target.value;
+    if (roadId && newStatus) {
+      productApi.updateRoadmapItem(state.projectId, roadId, { status: newStatus }, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+        state.roadmapItems = (await productApi.listRoadmapItems(state.projectId)).data;
+        toast(`Milestone ${roadId} updated to ${newStatus}.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Update failed."));
+    }
+  }
   if (target.id === "asset-status-filter") {
     const filtered = state.assets.filter((asset) => !target.value || asset.processingStatus === target.value);
     const results = document.querySelector("#asset-results");
@@ -519,6 +634,10 @@ document.addEventListener("change", async (event) => {
 document.addEventListener("input", (event) => {
   const target = event.target;
   if (target instanceof HTMLInputElement && target.id === "project-search") filterProjects();
+  if (target instanceof HTMLInputElement && target.id === "product-search-input") {
+    state.productSearchQuery = target.value;
+    render();
+  }
   /* the composer is uncontrolled between renders, so mirror it into state
      without re-rendering on every keystroke */
   if (target instanceof HTMLInputElement && target.id === "work-input") {
@@ -557,6 +676,114 @@ document.addEventListener("submit", async (event) => {
   }
 
   event.preventDefault();
+
+  /* Product Intelligence forms */
+  if (form.id === "product-create-requirement-form") {
+    const raw = Object.fromEntries(new FormData(form));
+    try {
+      await productApi.createRequirement(
+        state.projectId,
+        {
+          title: String(raw.title || ""),
+          type: /** @type {any} */ (raw.type || "functional"),
+          priority: /** @type {any} */ (raw.priority || "high"),
+          rationale: String(raw.rationale || ""),
+          evidence: raw.evidence ? [String(raw.evidence)] : [],
+          architectureImpact: String(raw.architectureImpact || "")
+        },
+        { idempotencyKey: createIdempotencyKey() }
+      );
+      state.requirements = (await productApi.listRequirements(state.projectId)).data;
+      state.productActiveModal = "";
+      toast("Requirement created successfully.");
+      render();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to create requirement.");
+    }
+    return;
+  }
+  if (form.id === "product-create-feature-form") {
+    const raw = Object.fromEntries(new FormData(form));
+    try {
+      await productApi.createFeature(
+        state.projectId,
+        {
+          title: String(raw.title || ""),
+          businessValue: Number(raw.businessValue || 5),
+          impact: Number(raw.impact || 5),
+          effort: Number(raw.effort || 5),
+          risk: Number(raw.risk || 5),
+          rationale: String(raw.rationale || "")
+        },
+        { idempotencyKey: createIdempotencyKey() }
+      );
+      state.productFeatures = (await productApi.listProductFeatures(state.projectId)).data;
+      state.productActiveModal = "";
+      toast("Candidate feature added.");
+      render();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to create feature.");
+    }
+    return;
+  }
+  if (form.id === "product-create-roadmap-form") {
+    const raw = Object.fromEntries(new FormData(form));
+    try {
+      const deps = String(raw.dependencies || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      await productApi.createRoadmapItem(
+        state.projectId,
+        {
+          milestone: String(raw.milestone || ""),
+          release: String(raw.release || "R-Next"),
+          status: /** @type {any} */ (raw.status || "planned"),
+          startDate: String(raw.startDate || ""),
+          endDate: String(raw.endDate || ""),
+          dependencies: deps
+        },
+        { idempotencyKey: createIdempotencyKey() }
+      );
+      state.roadmapItems = (await productApi.listRoadmapItems(state.projectId)).data;
+      state.productActiveModal = "";
+      toast("Milestone scheduled on roadmap.");
+      render();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to create milestone.");
+    }
+    return;
+  }
+  if (form.id === "product-update-strategy-form") {
+    const raw = Object.fromEntries(new FormData(form));
+    try {
+      const principles = String(raw.principles || "")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const risks = String(raw.risks || "")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const result = await productApi.saveProductStrategy(
+        state.projectId,
+        {
+          objective: String(raw.objective || ""),
+          principles,
+          risks
+        },
+        { idempotencyKey: createIdempotencyKey() }
+      );
+      state.productStrategy = result.data;
+      state.productActiveModal = "";
+      toast("Product strategy updated.");
+      render();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to update strategy.");
+    }
+    return;
+  }
+
   if (form.id === "approval-decision-form") {
     const values = new FormData(form);
     const decision = event.submitter instanceof HTMLButtonElement ? event.submitter.value : "";
