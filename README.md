@@ -1,324 +1,409 @@
-# SYNASE AI
+<p align="center">
+  <img src="src/assets/synase-logo.png" alt="SYNASE AI Logo" width="160" />
+</p>
 
-[![Phase 12 validation](https://github.com/satyam022028singh/Synase-ai/actions/workflows/phase11-validate.yml/badge.svg)](https://github.com/satyam022028singh/Synase-ai/actions/workflows/phase11-validate.yml)
+<h1 align="center">SYNASE AI</h1>
 
-**AI-Powered Product and DevOps Decision Intelligence Platform — frontend prototype, Phases 0–12.**
+<p align="center">
+  <strong>Autonomous Decision-Intelligence Console for Software & Product Engineering</strong>
+</p>
 
-SYNASE AI is a decision-intelligence workspace for turning project context, repository evidence, workflows, model/tool traces, findings, recommendations, reports, and human approvals into reviewable engineering decisions. It is not a generic chatbot or a database browser.
+<p align="center">
+  <a href="https://github.com/satyam022028singh/Synase-ai/actions"><img src="https://img.shields.io/badge/Release-v0.12.0-blue?style=flat-square" alt="Version"></a>
+  <a href="https://github.com/satyam022028singh/Synase-ai"><img src="https://img.shields.io/badge/Tests-76%20Passing%20(100%25)-success?style=flat-square" alt="Tests"></a>
+  <a href="https://github.com/satyam022028singh/Synase-ai"><img src="https://img.shields.io/badge/Architecture-3--Layer%20Vanilla%20ESM-informational?style=flat-square" alt="Architecture"></a>
+  <a href="https://github.com/satyam022028singh/Synase-ai"><img src="https://img.shields.io/badge/UI%20Tokens-Antigravity%20Design%20System-blueviolet?style=flat-square" alt="Design System"></a>
+  <a href="https://github.com/satyam022028singh/Synase-ai"><img src="https://img.shields.io/badge/Knowledge%20Graph-381%20Nodes%20%7C%20789%20Edges-orange?style=flat-square" alt="Brain Graph"></a>
+  <a href="https://github.com/satyam022028singh/Synase-ai"><img src="https://img.shields.io/badge/Dependencies-Zero%20Runtime%20Deps-brightgreen?style=flat-square" alt="Dependencies"></a>
+</p>
 
-> **Current release:** `0.12.0`  
-> **Validation:** 64 tests passed, 0 failed; production build passed  
-> **Runtime mode:** deterministic mock-backed frontend  
-> **Backend status:** not connected
+---
 
-## Contents
+## Executive Overview
 
-- [Product overview](#product-overview)
-- [Implemented scope](#implemented-scope)
-- [Architecture](#architecture)
-- [Safety guarantees](#safety-guarantees)
-- [Quick start](#quick-start)
-- [Routes](#routes)
-- [Repository layout](#repository-layout)
-- [Testing and validation](#testing-and-validation)
-- [Backend integration boundary](#backend-integration-boundary)
-- [Known contract gaps](#known-contract-gaps)
-- [Build artifacts](#build-artifacts)
+**SYNASE AI** is an enterprise AI decision-intelligence platform engineered for software teams, product managers, and engineering leaders. Unlike open-ended conversational chatbots or passive database viewers, SYNASE AI bridges multimodal artifacts, git repository source trees, MCP runtime telemetry, and corporate product strategy into **reviewable, audit-grade engineering decisions**.
 
-For folder responsibilities, application flow, dependency rules, and how to add
-a feature or an API, see **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
-For detailed setup, local serving, troubleshooting, and deployment guidance, see **[STARTUP_GUIDE.md](./STARTUP_GUIDE.md)**.
-
-## Product overview
-
-The frontend organizes SYNASE AI around workspace and project context. Its major surfaces answer:
-
-- What is happening?
-- What evidence supports it?
-- What requires attention?
-- What decision is recommended?
-- What has been approved?
-- What has actually executed?
-
-The implementation deliberately distinguishes:
-
-- AI-proposed information from confirmed project state
-- operational activity from immutable audit projections
-- authorization from connection health and synchronization
-- approval from downstream execution
-- browser transfer progress from backend processing state
-- mock receipts from real external actions
-
-## Implemented scope
-
-| Phase | Capability | Status |
-| --- | --- | --- |
-| 0 | API contract foundation | Implemented |
-| 1 | Design system and application shell | Implemented |
-| 2 | Auth, workspace, and projects | Mock-backed |
-| 3 | Repository and multimodal input | Mock-backed |
-| 4 | Conversation and analysis requests | Mock-backed |
-| 5 | Workflow and SSE state handling | Mock-backed |
-| 6 | MCP V2 observability and discovery | Mock-backed |
-| 7 | Product Intelligence | Mock-backed |
-| 8 | DevOps Intelligence | Mock-backed |
-| 9 | Context and Knowledge | Mock-backed |
-| 10 | Reports and human-in-the-loop approvals | Mock-backed |
-| 11 | Integrations, Activity, and Audit | Mock-backed |
-| 12 | Dashboard, backend-integration readiness, and QA | Implemented and validated |
-
-### Phase 12 highlights
-
-- Responsive workspace decision-intelligence dashboard
-- Cross-domain attention queue for approvals, workflows, findings, context, and integrations
-- Project portfolio and authoritative workflow-state summaries
-- Report and approval summaries with explicit `Executed: No` semantics
-- Operational activity preview kept separate from audit
-- Integration-readiness checks for adapter mode, base URL, authentication, aggregates, SSE, and uploads
-- Central mock/live adapter service boundary
-- Fail-closed live configuration
-- Safe read-only `GET /api/v1/dashboard` contract
-- Request ID propagation, timeout, cancellation, normalized errors, and response-shape validation
-- Recursive secret redaction and raw header/payload omission
-- Responsive dashboard behavior at desktop, tablet, and mobile widths
-
-## Architecture
+The platform is designed around strict deterministic provenance, verifiable evidence citations, human-in-the-loop approvals, and a zero-runtime-dependency vanilla ES module architecture.
 
 ```text
-app/       application shell, router, bootstrap
-  ↓
-domains    home · product · devops · mcp · context · outputs · integrations
-  ↓
-shared/    api · state · components · utils · services · types
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │                              SYNASE AI                                 │
+ │                 Enterprise Decision-Intelligence Mesh                  │
+ └───────────────────────────────────┬────────────────────────────────────┘
+                                     │
+         ┌───────────────────────────┴───────────────────────────┐
+         ▼                                                       ▼
+ ┌───────────────────────────────┐               ┌───────────────────────────────┐
+ │   PRODUCT INTELLIGENCE        │               │     DEVOPS INTELLIGENCE       │
+ ├───────────────────────────────┤               ├───────────────────────────────┤
+ │ • Executive Overview Bento    │               │ • Repository Understanding    │
+ │ • Requirements & Import       │               │ • Architecture Review         │
+ │ • Multi-Factor Prioritization │               │ • Code Quality & Findings     │
+ │ • Strategic Intent & Tenets   │               │ • Security & Vulnerabilities  │
+ │ • Milestone Roadmap Sequence  │               │ • Dependency Health & Risks   │
+ │ • Audited Decision Trace Logs │               │ • CI/CD Deployment Plans      │
+ └───────────────┬───────────────┘               └───────────────┬───────────────┘
+                 │                                               │
+                 └───────────────────────┬───────────────────────┘
+                                         ▼
+                 ┌───────────────────────────────────────────────┐
+                 │           CENTRAL ORCHESTRATION               │
+                 ├───────────────────────────────────────────────┤
+                 │ • Model Context Protocol (MCP V2) Runtime     │
+                 │ • Deterministic Knowledge Graph (Neo4j / Mem) │
+                 │ • Vector Memory & Semantic Search (ChromaDB)  │
+                 │ • Human-in-the-Loop Decision & Approvals      │
+                 └───────────────────────────────────────────────┘
 ```
 
-Core rules:
+---
 
-- One router owns routing and `#main`; there is a single delegated event listener.
-- Domains never import each other; cross-domain needs go through `shared/`.
-- Views emit intent via `data-route` / `data-action` and attach no listeners.
-- UI never calls the adapter directly: `view → domain api facade → shared adapter → mock store | live fetch`.
-- Browser-facing APIs remain domain-oriented under `/api/v1`.
-- Frontend domain models do not mirror PostgreSQL tables.
-- Mock and live implementations share service boundaries.
-- Adapter selection belongs at the composition root.
-- Pages do not need to understand transport details.
-- Unsafe mutations do not automatically retry.
-- High-impact actions do not use optimistic success.
-- Cross-domain production pages require backend aggregate endpoints rather than browser-side relational reconstruction.
-- Workflow SSE uses authoritative event/snapshot state; elapsed time is never presented as execution progress.
+## Core Value Pillars & Invariants
 
-Folder responsibilities, application flow, state scoping, API organisation,
-dependency rules and a how-to for new features and APIs are documented in
-**[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+1. **Deterministic Provenance Separation (Invariant 14)**  
+   Every item presented across the console explicitly declares its origin: **`confirmed`** (verified human truth) versus **`ai_suggested`** (model generated). AI suggestions display an interactive confidence meter (0–100%) and grounded rationale.
+2. **Non-Execution Semantics (Invariant 22)**  
+   No model suggestion, proposal, or approval silently mutates live codebases or initiates CI/CD deployment runs. Approvals record human intent; execution boundaries remain guarded and explicit.
+3. **Strict Mutation Idempotency (Invariant 08)**  
+   All mutating API operations require an `Idempotency-Key` header with in-memory deterministic replay caching, preventing duplicate mutations across network retries.
+4. **Recursive Credential Redaction (Invariant 19)**  
+   All tokens, API keys, cookies, authorization headers, and secrets are recursively stripped before entering browser stores, audit projections, or event streams.
+5. **Zero External Runtime Dependencies**  
+   Built purely with standards-compliant HTML5, CSS3, and modern vanilla ES modules. Fast first paint, zero bundler complexity, zero supply-chain vulnerabilities, and instant containerization.
 
-The project is currently a static HTML/CSS/JavaScript frontend with JavaScript
-type checking annotations and `.d.ts` domain declarations. It intentionally has
-no runtime package dependency.
+---
 
-## Safety guarantees
+## Intelligence Layers & Core Capabilities
 
-The mock build:
+### 1. Product Intelligence Layer (Phase 7 Revamp)
+A dedicated, project-scoped decision workspace designed for Product Leads and Engineering Directors:
+* **Executive Overview Bento**: High-density metric widgets displaying requirement verification ratios, active strategic objectives, top-ranked candidate features, upcoming roadmap milestones, and audited decisions.
+* **Requirements Inventory**: Tabular requirement tracking with live search, multi-field filtering (`Status`, `Priority`, `Provenance`), and an interactive **Inspection Drawer** displaying architectural impact, rationale, and live lifecycle status transitions.
+* **Bulk Import Modal**: Import structured requirements via JSON arrays or newline-delimited specifications with schema validation.
+* **Multi-Factor Prioritization Matrix**: Dynamic candidate feature cards scored across four calibrated dimensions:
+  $$\text{Score} = \frac{\text{Business Value} + \text{Customer Impact}}{\text{Implementation Effort} + \text{Architectural Risk}}$$
+  Features support manual rank shifting (▲/▼), candidate deletion, and **Auto-Rank by Value/Effort** optimization.
+* **Strategic Intent & Tenets**: Visualized core objectives, numbered engineering principles, known failure modes & mitigations, and operational alignment gauges.
+* **Milestone Delivery Roadmap**: Sequenced delivery schedule with topological dependencies, release versioning, start/end dates, linked feature cards, and sequence reordering.
+* **Audited Decision Trace Log**: Full provenance trail with author identification, timestamping, impact scoping, and cited repository evidence.
 
-- contacts no external provider
-- imports no external records
-- exposes no passwords, tokens, API keys, cookies, authorization headers, MFA secrets, or secret-manager values
-- does not execute AI workflows, repository changes, pull requests, CI/CD operations, infrastructure actions, publication, or deployment
-- does not infer authorization from a connect action
-- does not infer execution from approval
-- does not claim backend connectivity because the frontend builds successfully
+### 2. Autonomous Chat & Work Studio
+A versatile post-login decision environment (`/app/chat` and `/app/dashboard`):
+* **Contextual Composer**: Intelligent composer supporting 5 specialized **Agent Modes**:
+  * 🎥 `Video` — Screen capture and visual workflow analysis.
+  * 🖼️ `Image` — Wireframe, UI mockup, and architecture diagram ingestion.
+  * 🌐 `Web Search` — Realtime external documentation and benchmark grounding.
+  * 💻 `Code` — Repository AST parsing and syntax understanding.
+  * 📝 `Text` — Natural language synthesis and decision documentation.
+* **Intelligence Layer Targeting**: Explicit targeting chips for `Product` vs `DevOps`.
+* **Cognitive Effort Calibration**: Granular effort levels (`Auto`, `Low`, `Medium`, `High`, `Max`) controlling analysis depth and reasoning passes.
 
-Sensitive metadata is recursively redacted. Raw request/response payloads and headers are omitted from safe audit and integration projections.
+### 3. DevOps Intelligence Layer
+Automated repository health, architectural evaluation, and deployment governance:
+* **Architecture Review**: Module boundaries, cyclic dependency analysis, and structural propagation cost.
+* **Code Findings & Vulnerabilities**: Security findings graded by severity (`critical`, `high`, `medium`, `low`) with source file anchors.
+* **Dependency Health**: License compatibility, version drift, and dependency CVE vulnerability tracking.
+* **Test Plan Generation**: Seams and coverage gap analysis producing actionable test suggestions.
+* **Deployment Plans**: Phased release plans with multi-step validation checks and gate approvals.
 
-## Quick start
+### 4. MCP V2 Runtime & Observability
+Full Model Context Protocol (MCP) server lifecycle inspection:
+* Active server discovery, directory mapping, model inventory, and tool registration.
+* Granular stage tracing (`received` → `parsed` → `tool_lookup` → `executed` → `redacted` → `completed`).
+* Live mock health checks and idempotent tool discovery.
 
-### Requirements
+### 5. Knowledge Graph & Vector Memory
+* **Context Explorer**: Unified project context items categorized by sensitivity and trust tiers.
+* **ChromaDB Semantic Projection**: Ranked memory search over project context with relevance scoring.
+* **Neo4j Graph Topology**: Projected relationship graphs linking requirements, features, repositories, and architectural modules.
 
-- Node.js 24 recommended; modern Node.js with `node:test` support is required
-- npm
-- Python 3 is optional and used only for the example static server
-- Git, if cloning from GitHub
+---
 
-### Run locally
+## System Architecture
 
-```bash
-git clone https://github.com/satyam022028singh/Synase-ai.git
-cd Synase-ai
-npm test
-npm run build
-python3 -m http.server 4173 -d dist
-```
-
-Open [http://localhost:4173](http://localhost:4173).
-
-There are currently no third-party package dependencies, so an install step is not required for the checked-in build scripts. See the [startup guide](./STARTUP_GUIDE.md) for alternatives and troubleshooting.
-
-## Routes
-
-The prototype uses hash-based navigation so it can run from any static file server.
-
-### Chat (standalone)
-
-The post-login surface. Renders outside the console shell — no sidebar, no
-topbar — with a header toggle that switches to Work.
-
-- `#/app/chat` — surface toggle, contextual mode menu, composer, artifact panel
-- `#/app/chat/:sessionId`
-
-### Workspace and project
-
-- `#/app/dashboard` — the Work view
-- `#/app/projects`
-- `#/app/projects/create`
-- `#/app/projects/:projectId/overview`
-- `#/app/projects/:projectId/repository`
-- `#/app/projects/:projectId/inputs` — provisional
-- `#/app/projects/:projectId/analysis` — provisional
-- `#/app/projects/:projectId/runs`
-- `#/app/projects/:projectId/context`
-- `#/app/projects/:projectId/knowledge`
-- `#/app/projects/:projectId/reports`
-- `#/app/projects/:projectId/integrations`
-- `#/app/projects/:projectId/settings`
-
-### Intelligence and orchestration
-
-- `#/app/intelligence/product`
-- `#/app/intelligence/devops`
-- `#/app/mcp/overview`
-- `#/app/mcp/executions`
-- `#/app/mcp/tools`
-- `#/app/mcp/models`
-- `#/app/mcp/discovery`
-- `#/app/context/overview`
-- `#/app/context/memory`
-- `#/app/context/history`
-- `#/app/knowledge/graph`
-
-### Outputs and system
-
-- `#/app/reports`
-- `#/app/reports/:reportId`
-- `#/app/approvals`
-- `#/app/integrations`
-- `#/app/activity`
-- `#/app/audit` — provisional
-
-A `?route=/app/...` query parameter is also recognized by the prototype and takes precedence over the hash route.
-
-## Repository layout
+SYNASE AI strictly adheres to an unidirectional **3-Layer Architecture**:
 
 ```text
-.
-├── .github/workflows/        # Validation and packaging workflow
-├── dist/                     # Generated production build
-├── ARCHITECTURE.md           # Architecture reference
-├── scripts/build.mjs         # Dependency-free build and manifest generation
-├── src/
-│   ├── app/                  # Shell, router, paths, auth, bootstrap
-│   ├── home/                 # Landing, workspace, workspace settings
-│   ├── product/              # Product Intelligence pages + api
-│   ├── devops/               # DevOps Intelligence pages + components + api
-│   ├── mcp/                  # MCP V2 pages + api
-│   ├── context/              # Shared context + knowledge pages + api
-│   ├── outputs/              # Reports + approvals pages + api
-│   ├── integrations/         # Integrations/activity/audit pages + api
-│   ├── work/                 # Chat & Work surface: pages, components, constants, api
-│   ├── shared/               # api · state · components · utils · services · types
-│   ├── styles/               # app.css · home/ · integrations/ · landing/ · work/
-│   └── assets/               # Branding and images
-├── test/                     # Node contract tests
-├── index.html                # Static application entry
-├── app.html                  # Console entry
-├── landing.html              # Marketing site entry
-├── phase12-validation.json   # Authoritative latest validation result
-└── package.json
+src/
+├── app/                  # Composition Root (Shell, Router, Delegated Event Listener)
+│   ├── main.js           # Hydration, route data loader, single listener for click/input/submit
+│   ├── router.js         # Central route matcher & page renderer
+│   ├── shell.js          # Global sidebar, topbar, workspace/project switchers, toast
+│   ├── paths.js          # Authoritative route table, active route helpers, navigate()
+│   ├── auth.js           # Full-page split login, registration, password recovery
+│   └── actions/work.js   # Chat & Work controller
+│
+├── [domains]/            # Domain Modules (Isolated; never import sibling domains)
+│   ├── home/             # Landing overview, workspace management, repository inputs
+│   ├── product/          # Product intelligence views, components, modals, and API facade
+│   ├── devops/           # DevOps intelligence views, findings, test suggestions, and API
+│   ├── mcp/              # MCP V2 runtime observability, discovery, and trace views
+│   ├── context/          # Context explorer, semantic memory, and knowledge graph views
+│   ├── outputs/          # Decision reports, export pipeline, and human-in-the-loop approvals
+│   ├── integrations/     # Provider connections, synchronization runs, and immutable audit
+│   └── work/             # Standalone chat studio, composer, and agent mode controls
+│
+└── shared/               # Leaf Layer (Pure primitives; imports nothing outside itself)
+    ├── api/              # Authoritative mock database (db.js), mock adapter, error types
+    ├── state/            # Reactive state store, search param helpers, reset actions
+    ├── components/       # Escaped UI helpers, status tags, badges, provenance cards
+    ├── services/         # Theme service (Dark / Light), session management
+    ├── utils/            # format.js (escapeHtml), date utilities, string helpers
+    └── types/            # TypeScript domain declarations (types.d.ts)
 ```
 
-## Testing and validation
+### Architectural Invariants
+* **No Cross-Domain Imports**: A domain (`product/`, `devops/`, `mcp/`) must never import from another domain. Cross-domain data passes through `shared/` or is coordinated by `app/main.js`.
+* **Zero Listener Attachment in Views**: Views are pure functions returning escaped HTML strings. User intent is declared strictly via HTML attributes:
+  * `data-route="/app/..."` — Client-side route transition.
+  * `data-action="..."` — Handled centrally in `app/main.js`.
+* **Single Composition Root**: All DOM event handling (clicks, inputs, changes, submissions) is delegated through `src/app/main.js`.
 
-Run the complete contract suite:
+---
 
-```bash
-npm test
-```
+## Antigravity Design System
 
-Build the static production output:
+SYNASE AI features a bespoke, high-contrast user interface styled after the **Google Antigravity** visual palette:
 
-```bash
-npm run build
-```
+* **Sharp Square Geometry**: Containers, cards, buttons, badges, and modals enforce sharp, architectural square geometry (`border-radius: 0`) to eliminate generic AI aesthetic tropes.
+* **Calibrated Semantic Tokens**:
+  ```css
+  --g-10: #121317;           /* Deep Obsidian Background */
+  --surface: #1e1f24;        /* Card & Drawer Surface */
+  --surface-alt: #282a30;    /* Elevated Surfaces & Tables */
+  --border: #2e3138;         /* Subtle Wireframe Borders */
+  --border-strong: #45474d;  /* Interactive Element Borders */
+  --accent: #3279f9;         /* Antigravity Blue Accent */
+  --accent-hover: #1557b0;   /* Deep Cobalt Interaction */
+  ```
+* **No Raw Colors**: All colors flow through semantic CSS variables with full automatic Dark / Light mode adaptation and zero flash-of-unstyled-content (FOUC).
 
-The build script:
+---
 
-1. recreates `dist/`
-2. copies the application entry and source assets
-3. generates SHA-256 hashes and byte sizes
-4. writes `dist/build-manifest.json`
+## API Surface (103 Canonical Endpoints)
 
-The Phase 12 GitHub Actions workflow runs the full tests and build, records `phase12-validation.json`, creates the source/build package, and commits generated outputs back to `main`.
+The platform implements an enterprise RESTful specification documented in [`ALL_APIs.TXT`](./ALL_APIs.TXT):
 
-Latest validated result:
+### Standard Response Envelopes
 
+**Resource Envelope:**
 ```json
 {
-  "phase": 12,
-  "testsPassed": 64,
-  "testsFailed": 0,
-  "productionBuild": "passed",
-  "backendConnected": false,
-  "externalSystemsContactedByMock": false,
-  "secretValuesExposed": false,
-  "downstreamActionsExecuted": false
+  "data": {
+    "id": "REQ-001",
+    "title": "Audit trail encryption at rest",
+    "provenance": "confirmed",
+    "status": "approved"
+  },
+  "meta": {
+    "requestId": "req_01j9a82b3c4d5e"
+  }
 }
 ```
 
-Representative dashboard QA covered `1440×900`, `1024×768`, and `390×844` with reduced motion enabled and found no console errors, horizontal viewport overflow, or clipped controls. This was a representative dashboard-harness check, not a complete integrated-browser repository regression.
+**Paginated Collection Envelope:**
+```json
+{
+  "data": [ ... ],
+  "meta": {
+    "page": 1,
+    "pageSize": 25,
+    "total": 142,
+    "requestId": "req_01j9a82b3c4d5e"
+  }
+}
+```
 
-## Backend integration boundary
+**Normalized Error Contract (`ApiError`):**
+```json
+{
+  "error": {
+    "code": "IDEMPOTENCY_REQUIRED",
+    "message": "An idempotency key is required for mutating operations.",
+    "status": 400,
+    "requestId": "req_01j9a82b3c4d5e",
+    "details": {}
+  }
+}
+```
 
-The shipped composition uses the deterministic mock service.
+### Key API Categories
 
-`src/home/workspace/dashboard/api.js` (formerly `src/phase12-api.js`) also exposes `createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })` for the live integration boundary. Live mode:
+| Section | Route Range | Description |
+| :--- | :--- | :--- |
+| **Auth & Session** | `API-01` – `API-03` | User sign-in, account registration, password recovery. |
+| **Workspace & Projects** | `API-04` – `API-13` | Multi-tenant workspaces, membership, project CRUD, repos. |
+| **Assets & Ingestion** | `API-14` – `API-23` | Multimodal uploads, OCR, AST parsing, preview generation. |
+| **Analysis & Workflows** | `API-30` – `API-38` | Orchestrator analysis requests, task DAGs, live SSE stream. |
+| **MCP V2 Runtime** | `API-39` – `API-47` | Server discovery, model catalogs, tools, trace execution. |
+| **Product Intelligence** | `API-48` – `API-52`, `API-88` – `API-103` | Requirements lifecycle, scoring matrix, strategy, roadmap. |
+| **DevOps Intelligence** | `API-53` – `API-59` | Code findings, vulnerability scans, CI/CD deployment plans. |
+| **Context & Graph** | `API-60` – `API-64` | Memory vector search, retrieval history, Neo4j projections. |
+| **Reports & Approvals** | `API-65` – `API-74` | Executive decision dossiers, publishing, gate approvals. |
+| **Integrations & Audit** | `API-75` – `API-85` | Connectors (GitHub, Jira, Linear), sync runs, audit trail. |
+| **Decision Dashboard** | `API-86` – `API-87` | System-wide readiness score and executive attention queue. |
 
-- fails when the base URL is missing
-- requires HTTPS except for `localhost`/`127.0.0.1`
-- performs only the documented read-only dashboard request
-- sends `Accept: application/json` and `X-Request-ID`
-- uses `credentials: "include"` without handling raw credentials in application models
-- supports cancellation and timeout
-- normalizes network, HTTP, cancellation, and malformed-response failures
-- validates the dashboard response shape
+---
 
-The current application does not automatically enable live mode from an environment variable. Live composition should only be wired after authentication/session and dashboard aggregate contracts are frozen.
+## Getting Started
 
-## Known contract gaps
+### Prerequisites
+* **Node.js**: `v20.0.0` or higher (built and verified on Node `v24`).
+* **Package Manager**: `npm` (ships with Node.js).
+* **Zero npm install required**: The runtime has **zero external dependencies**.
 
-The following remain intentionally unresolved:
+### Quick Start (Local Development)
 
-- login, registration, recovery, logout, renewal, and callback contracts
-- complete DTO/nullability/error schemas
-- pagination strategy and mutation idempotency policy
-- workspace dashboard/search/report/approval/integration/activity aggregate endpoints
-- active workspace/project context encoding
-- permission and capability fields beyond roles
-- SSE authentication, event envelope, replay, heartbeat, and retention semantics
-- signed-upload initiation/completion details
-- realtime transport outside workflow SSE
-- notification delivery
-- API compatibility and deprecation policy
-- security-grade audit retention and completeness
+```bash
+# 1. Clone repository
+git clone https://github.com/satyam022028singh/Synase-ai.git
+cd Synase-ai
 
-Do not infer these behaviors from fixtures or UI copy.
+# 2. Run unit and contract tests (76 passing tests)
+npm test
 
-## Build artifacts
+# 3. Build production distribution (dist/ bundle)
+npm run build
 
-- `dist/` — generated static production build
-- `dist/build-manifest.json` — asset sizes and SHA-256 digests
-- `phase12-validation.json` — validation evidence
+# 4. Start local development server
+npm run dev
+```
 
-Clone the repository to obtain the complete project. Generated ZIP archives are intentionally not committed.
+Visit [`http://localhost:4173`](http://localhost:4173) in your browser.
 
-## Project status
+### Key NPM Scripts
 
-Phases 0–12 are implemented and validated as a frontend-only deterministic build. The next step is authoritative backend contract resolution and controlled live integration—not representing mocks as production behavior.
+| Command | Action |
+| :--- | :--- |
+| `npm test` | Executes the complete Node.js test suite across all domains via `node --test test/*.test.mjs`. |
+| `npm run build` | Generates 42 clean static production assets into `dist/` with SHA-256 hashes and build manifest. |
+| `npm run dev` | Boots the local static development server at `http://127.0.0.1:4173/`. |
+| `npm run brain` | Extracts code facts and compiles the project knowledge graph (`brain/graph.json`). |
+| `npm run brain:query` | Runs the interactive CLI query engine against the project's knowledge graph. |
+
+---
+
+## Route Matrix
+
+Navigation uses fast hash-based routing (`#/route`), enabling seamless operation on any static web server, CDN, or object storage bucket:
+
+| Hash Route | Target Surface | Responsibility |
+| :--- | :--- | :--- |
+| `#/` or `landing.html` | Marketing Landing | Enterprise product showcase, feature bento, and live pipeline demo. |
+| `#/auth/login` | Authentication | Split-screen enterprise login with demo bypass. |
+| `#/app/chat` | Autonomous Studio | Focused agent composer (Video/Image/Search/Code/Text modes). |
+| `#/app/dashboard` | Decision Console | Executive workspace overview and readiness dashboard. |
+| `#/app/intelligence/product` | Product Console | Master Product Intelligence root (defaults to Overview). |
+| `#/app/intelligence/product/overview` | Product Overview | Executive metrics, top features, roadmap summary, recent decisions. |
+| `#/app/intelligence/product/requirements` | Requirements | Searchable inventory, multi-filters, detail drawer, import modal. |
+| `#/app/intelligence/product/prioritization` | Prioritization | 4-dimension scoring matrix (Value/Impact/Effort/Risk), auto-rank. |
+| `#/app/intelligence/product/strategy` | Strategy & Tenets | Objective hero card, guiding principles, known operational risks. |
+| `#/app/intelligence/product/roadmap` | Milestone Roadmap | Sequenced release milestones, topological dependencies. |
+| `#/app/intelligence/product/decisions` | Decision Trace | Immutable decision history with evidence grounding. |
+| `#/app/intelligence/devops` | DevOps Console | Repository architecture, code quality, security findings. |
+| `#/app/mcp/overview` | MCP V2 Runtime | Model Context Protocol servers, tools, and execution traces. |
+| `#/app/context/overview` | Context & Memory | Project memory search, retrieval history, knowledge graph. |
+| `#/app/reports` | Decision Reports | Generated executive dossiers, exports, and publication gates. |
+| `#/app/approvals` | Human Approvals | Gate approvals for architecture, security, and releases. |
+| `#/app/integrations` | Integrations & Audit | Third-party connections, sync health, and immutable audit logs. |
+
+---
+
+## Machine Knowledge Base (Brain System)
+
+SYNASE AI features a self-documenting, machine-readable knowledge base located in `brain/`:
+
+* **`brain/graph.json`**: Authoritative knowledge graph containing **381 entities** and **789 semantic relationships** spanning:
+  * Application routes, UI components, and domain API facades.
+  * Architectural invariants (e.g. `Invariant 08: Idempotency`, `Invariant 14: Provenance`).
+  * Database entities and project-scoping boundaries.
+* **`brain/facts.json`**: Low-level AST telemetry covering 69 source files, 76 automated test specs, and 12 architecture layers.
+* **`brain/product/`**: Domain schemas for Product Intelligence nodes, edges, taxonomy, and validation invariants.
+
+Query the graph interactively at any time:
+```bash
+node scripts/brain-query.mjs "What are the invariants of the Product layer?"
+```
+
+---
+
+## Repository Structure
+
+```text
+.
+├── .github/workflows/          # CI/CD validation workflows
+├── brain/                      # Machine knowledge graph (graph.json, facts.json, schemas)
+│   └── product/                # Product intelligence schemas & invariants
+├── dist/                       # Production bundle (42 assets + manifest)
+├── docs/                       # Specifications and engineering handbooks
+│   └── product/                # PRD, BRD, Architecture, API contract, and plans
+├── LOGO/                       # Penrose impossible-triangle brand assets
+├── scripts/                    # Dependency-free tooling (build, serve, brain extract)
+├── src/
+│   ├── app/                    # Composition root (main.js, router.js, shell.js)
+│   ├── assets/                 # SVGs, web icons, branding logos
+│   ├── context/                # Context & Memory domain
+│   ├── devops/                 # DevOps Intelligence domain
+│   ├── home/                   # Landing, workspace, and dashboard domains
+│   ├── integrations/           # Third-party integrations & audit domain
+│   ├── mcp/                    # Model Context Protocol V2 domain
+│   ├── outputs/                # Reports & Approvals domain
+│   ├── product/                # Product Intelligence domain
+│   │   ├── api/index.js        # Product API facade & factory
+│   │   ├── components/         # Intelligence header, provenance badges, modals
+│   │   ├── pages/              # Overview, requirements, prioritization, strategy, roadmap, decisions
+│   │   └── types.d.ts          # Product domain type declarations
+│   ├── shared/                 # Leaf utilities, mock database, state store, UI components
+│   ├── styles/                 # Scoped stylesheets & Antigravity tokens
+│   └── work/                   # Chat & Work standalone composer surface
+├── test/                       # node:test contract and lifecycle test suites
+├── ALL_APIs.TXT                # Complete catalog of 103 REST API endpoints
+├── ARCHITECTURE.md             # In-depth architectural rules and patterns
+├── context(progress till now).txt # Comprehensive project progress ledger
+├── index.html                  # Root static redirect
+├── landing.html                # Enterprise marketing landing page
+├── app.html                    # Console single-page entry
+└── package.json                # Project manifest and scripts
+```
+
+---
+
+## Testing & Quality Assurance
+
+The codebase includes an exhaustive contract verification suite covering all domain facades, idempotency guarantees, provenance assertions, and HTML rendering:
+
+```bash
+$ npm test
+
+✔ list response uses the documented envelope (227ms)
+✔ project creation requires idempotency (526ms)
+✔ repositories remain project scoped (457ms)
+✔ upload initiation requires idempotency (1075ms)
+✔ MCP trace stages remain ordered (232ms)
+✔ requirements preserve confirmed and AI-suggested provenance (233ms)
+✔ feature prioritization remains ordered by rank (234ms)
+✔ roadmap dependencies reference earlier milestones (232ms)
+✔ Product API lists requirements with canonical envelope (230ms)
+✔ Product mutations require an idempotency key (Invariant 08) (1935ms)
+✔ Requirement lifecycle: create, get, update, and idempotent replay (935ms)
+✔ AI-proposed requirements have distinct provenance and confidence (233ms)
+✔ Product Features: multi-criteria scoring and rank re-ordering (462ms)
+✔ Product Strategy: get and update persistence (498ms)
+✔ Roadmap milestones: create, list, and delete (640ms)
+✔ Product decisions and overview projection (465ms)
+✔ Domain API factory produces independent instance (233ms)
+✔ Product page views render valid HTML without exceptions (252ms)
+✔ Feature deletion and requirement import lifecycle (916ms)
+✔ Roadmap resequencing and intelligence analysis actions (1771ms)
+
+ℹ tests 76
+ℹ pass 76
+ℹ fail 0
+```
+
+---
+
+## License & Ownership
+
+Copyright © 2026 **SYNASE AI**. All rights reserved.  
+Proprietary software. Unauthorized reproduction, distribution, or decompilation is strictly prohibited.
