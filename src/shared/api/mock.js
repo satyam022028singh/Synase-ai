@@ -535,6 +535,31 @@ export const mockApi = {
     const removed = db.requirements.splice(idx, 1)[0];
     return { data: { id: removed.id, deleted: true, success: true } };
   },
+  async importRequirements(projectId, items, { idempotencyKey } = {}) {
+    await sleep(250);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!Array.isArray(items) || !items.length) throw new ApiError("VALIDATION_ERROR", "A non-empty list of requirements is required.", 422);
+    const imported = [];
+    for (const input of items) {
+      const id = input.id || `REQ-IMP-${Math.floor(100 + Math.random() * 900)}`;
+      const req = {
+        id,
+        projectId,
+        title: input.title?.trim() || "Untitled Requirement",
+        type: input.type || "functional",
+        priority: input.priority || "medium",
+        status: input.status || "proposed",
+        rationale: input.rationale || "Imported requirement item.",
+        evidence: Array.isArray(input.evidence) ? input.evidence : (input.evidence ? [input.evidence] : ["External Import"]),
+        architectureImpact: input.architectureImpact || "Under assessment",
+        provenance: input.provenance || "confirmed",
+        confidence: input.provenance === "ai_suggested" ? (input.confidence || 0.8) : 1
+      };
+      db.requirements.unshift(req);
+      imported.push(req);
+    }
+    return { data: structuredClone(imported), meta: { importedCount: imported.length } };
+  },
 
   async listProductFeatures(projectId) {
     await sleep();
@@ -600,6 +625,14 @@ export const mockApi = {
     }
     const updated = db.productFeatures.filter((f) => f.projectId === projectId).sort((a, b) => a.priorityRank - b.priorityRank);
     return { data: structuredClone(updated) };
+  },
+  async deleteFeature(projectId, featureId, { idempotencyKey } = {}) {
+    await sleep(180);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const idx = db.productFeatures.findIndex((f) => f.projectId === projectId && f.id === featureId);
+    if (idx === -1) throw new ApiError("RESOURCE_NOT_FOUND", `Feature ${featureId} not found.`, 404);
+    const removed = db.productFeatures.splice(idx, 1)[0];
+    return { data: { id: removed.id, deleted: true, success: true } };
   },
 
   async getProductStrategy(projectId) {
@@ -669,6 +702,18 @@ export const mockApi = {
     const removed = db.roadmapItems.splice(idx, 1)[0];
     return { data: { id: removed.id, deleted: true, success: true } };
   },
+  async resequenceRoadmap(projectId, sequenceList, { idempotencyKey } = {}) {
+    await sleep(220);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!Array.isArray(sequenceList)) throw new ApiError("VALIDATION_ERROR", "Sequence list array is required.", 422);
+    sequenceList.forEach((entry, idx) => {
+      const id = typeof entry === "string" ? entry : entry.id;
+      const item = db.roadmapItems.find((r) => r.projectId === projectId && r.id === id);
+      if (item) item.sequence = typeof entry === "object" && typeof entry.sequence === "number" ? entry.sequence : idx + 1;
+    });
+    const updated = db.roadmapItems.filter((r) => r.projectId === projectId).sort((a, b) => a.sequence - b.sequence);
+    return { data: structuredClone(updated) };
+  },
 
   async listProductDecisions(projectId) {
     await sleep();
@@ -692,6 +737,39 @@ export const mockApi = {
   },
   async runProductIntelligenceAction(projectId, action, { idempotencyKey } = {}) {
     return this.runProductMock(projectId, action, { idempotencyKey });
+  },
+  async analyzeProductRequirements(projectId, { idempotencyKey } = {}) {
+    await sleep(350);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const count = (db.requirements || []).filter((r) => r.projectId === projectId).length;
+    return { data: { projectId, analyzedCount: count, generatedSuggestions: 2, status: "mock_completed", completedAt: new Date().toISOString() } };
+  },
+  async getProductRequirementsSummary(projectId) {
+    await sleep();
+    const reqs = (db.requirements || []).filter((r) => r.projectId === projectId);
+    return {
+      data: {
+        projectId,
+        total: reqs.length,
+        confirmed: reqs.filter((r) => r.provenance === "confirmed").length,
+        aiSuggested: reqs.filter((r) => r.provenance === "ai_suggested").length,
+        byPriority: {
+          high: reqs.filter((r) => r.priority === "high" || r.priority === "critical").length,
+          medium: reqs.filter((r) => r.priority === "medium").length,
+          low: reqs.filter((r) => r.priority === "low").length
+        }
+      }
+    };
+  },
+  async analyzeProductStrategy(projectId, { idempotencyKey } = {}) {
+    await sleep(350);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    return { data: { projectId, alignmentScore: 94, status: "mock_completed", completedAt: new Date().toISOString() } };
+  },
+  async generateProductRoadmap(projectId, { idempotencyKey } = {}) {
+    await sleep(350);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    return { data: { projectId, sequenceOptimized: true, status: "mock_completed", completedAt: new Date().toISOString() } };
   },
 
   async getDevOpsSummary(projectId) { await sleep(); return { data: db.devopsSummary[projectId] || null }; },

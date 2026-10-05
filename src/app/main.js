@@ -455,6 +455,16 @@ document.addEventListener("click", (event) => {
     state.productActiveModal = "";
     render();
   }
+  if (action === "product-feature-delete") {
+    const featId = target.getAttribute("data-feat-id");
+    if (featId) {
+      productApi.deleteFeature(state.projectId, featId, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+        state.productFeatures = (await productApi.listProductFeatures(state.projectId)).data;
+        toast(`Feature ${featId} removed.`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Feature deletion failed."));
+    }
+  }
   if (action === "product-delete-roadmap") {
     const roadId = target.getAttribute("data-roadmap-id");
     if (roadId) {
@@ -699,6 +709,32 @@ document.addEventListener("submit", async (event) => {
       render();
     } catch (error) {
       toast(error instanceof Error ? error.message : "Failed to create requirement.");
+    }
+    return;
+  }
+  if (form.id === "product-import-requirements-form") {
+    const raw = Object.fromEntries(new FormData(form));
+    try {
+      const content = String(raw.content || "").trim();
+      let items = [];
+      if (content.startsWith("[") || content.startsWith("{")) {
+        const parsed = JSON.parse(content);
+        items = Array.isArray(parsed) ? parsed : [parsed];
+      } else {
+        items = content.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => ({
+          title: line,
+          type: "functional",
+          priority: "medium",
+          provenance: "confirmed"
+        }));
+      }
+      const res = await productApi.importRequirements(state.projectId, items, { idempotencyKey: createIdempotencyKey() });
+      state.requirements = (await productApi.listRequirements(state.projectId)).data;
+      state.productActiveModal = "";
+      toast(`Successfully imported ${res.meta?.importedCount || items.length} requirements.`);
+      render();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to import requirements.");
     }
     return;
   }

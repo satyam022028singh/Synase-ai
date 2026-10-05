@@ -3,13 +3,13 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-05T19:16:11.736Z",
+    "generatedAt": "2026-10-05T19:29:42.005Z",
     "version": "0.12.0",
-    "sourceLines": 11171,
-    "testLines": 588,
+    "sourceLines": 11329,
+    "testLines": 654,
     "trackedFiles": 69,
     "architectureLayers": 12,
-    "contractTests": 74,
+    "contractTests": 76,
     "typeExports": 96,
     "dbCollections": 43,
     "routes": 35,
@@ -49,7 +49,7 @@
       "kind": "source-file",
       "label": "main.js",
       "layer": "app",
-      "lines": 998
+      "lines": 1034
     },
     {
       "id": "src/app/paths.js",
@@ -247,7 +247,7 @@
       "kind": "source-file",
       "label": "index.js",
       "layer": "product",
-      "lines": 46
+      "lines": 53
     },
     {
       "id": "src/product/components/intelligenceHeader.js",
@@ -261,7 +261,7 @@
       "kind": "source-file",
       "label": "modals.js",
       "layer": "product",
-      "lines": 219
+      "lines": 246
     },
     {
       "id": "src/product/components/provenanceBadge.js",
@@ -296,14 +296,14 @@
       "kind": "source-file",
       "label": "prioritization.js",
       "layer": "product",
-      "lines": 122
+      "lines": 129
     },
     {
       "id": "src/product/pages/requirements.js",
       "kind": "source-file",
       "label": "requirements.js",
       "layer": "product",
-      "lines": 205
+      "lines": 208
     },
     {
       "id": "src/product/pages/roadmap.js",
@@ -367,7 +367,7 @@
       "kind": "source-file",
       "label": "mock.js",
       "layer": "shared",
-      "lines": 997
+      "lines": 1075
     },
     {
       "id": "src/shared/api/redaction.js",
@@ -519,8 +519,8 @@
       "kind": "test-file",
       "label": "product.test.mjs",
       "layer": "test",
-      "lines": 256,
-      "contractTests": 10
+      "lines": 322,
+      "contractTests": 12
     },
     {
       "id": "l0-composition",
@@ -3979,7 +3979,7 @@
       "label": "node --test",
       "role": "Contract suite",
       "command": "node --test test/*.test.mjs",
-      "cases": 74
+      "cases": 76
     },
     {
       "id": "scr-brain",
@@ -3993,7 +3993,7 @@
       "kind": "architecture-layer",
       "label": "src/app",
       "files": 6,
-      "lines": 1664,
+      "lines": 1700,
       "importsNothingOutsideShared": false
     },
     {
@@ -4049,7 +4049,7 @@
       "kind": "architecture-layer",
       "label": "src/product",
       "files": 12,
-      "lines": 1374,
+      "lines": 1418,
       "importsNothingOutsideShared": false
     },
     {
@@ -4057,7 +4057,7 @@
       "kind": "architecture-layer",
       "label": "src/shared",
       "files": 12,
-      "lines": 2352,
+      "lines": 2430,
       "importsNothingOutsideShared": true
     },
     {
@@ -4073,7 +4073,7 @@
       "kind": "architecture-layer",
       "label": "src/test",
       "files": 5,
-      "lines": 588,
+      "lines": 654,
       "importsNothingOutsideShared": false
     },
     {

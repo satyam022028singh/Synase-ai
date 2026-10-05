@@ -253,3 +253,69 @@ test("Product page views render valid HTML without exceptions", async () => {
   // Clean reset
   resetProjectScope();
 });
+
+test("Feature deletion and requirement import lifecycle", async () => {
+  // Test importRequirements
+  const imported = await productApi.importRequirements(
+    TEST_PROJECT_ID,
+    [
+      { title: "Imported requirement A", type: "security", priority: "critical" },
+      { title: "Imported requirement B", type: "functional", priority: "medium" }
+    ],
+    { idempotencyKey: createIdempotencyKey() }
+  );
+  assert.equal(imported.data.length, 2);
+  assert.equal(imported.meta.importedCount, 2);
+
+  // Test create & delete feature
+  const newFeat = await productApi.createFeature(
+    TEST_PROJECT_ID,
+    { title: "Temporary feature for deletion test", businessValue: 6, effort: 4 },
+    { idempotencyKey: createIdempotencyKey() }
+  );
+  assert.ok(newFeat.data.id.startsWith("FEAT-"));
+
+  const delRes = await productApi.deleteFeature(TEST_PROJECT_ID, newFeat.data.id, {
+    idempotencyKey: createIdempotencyKey()
+  });
+  assert.equal(delRes.data.deleted, true);
+
+  await assert.rejects(
+    () => productApi.getFeature(TEST_PROJECT_ID, newFeat.data.id),
+    (err) => err instanceof ApiError && err.code === "RESOURCE_NOT_FOUND"
+  );
+});
+
+test("Roadmap resequencing and intelligence analysis actions", async () => {
+  const road = await productApi.listRoadmapItems(TEST_PROJECT_ID);
+  assert.ok(road.data.length >= 2);
+
+  // Resequence roadmap
+  const resequenced = await productApi.resequenceRoadmap(
+    TEST_PROJECT_ID,
+    [road.data[1].id, road.data[0].id],
+    { idempotencyKey: createIdempotencyKey() }
+  );
+  assert.ok(Array.isArray(resequenced.data));
+
+  // Intelligence action calls
+  const reqAnalysis = await productApi.analyzeProductRequirements(TEST_PROJECT_ID, {
+    idempotencyKey: createIdempotencyKey()
+  });
+  assert.equal(reqAnalysis.data.status, "mock_completed");
+
+  const summary = await productApi.getProductRequirementsSummary(TEST_PROJECT_ID);
+  assert.ok(summary.data.total >= 2);
+  assert.ok(summary.data.byPriority);
+
+  const stratAnalysis = await productApi.analyzeProductStrategy(TEST_PROJECT_ID, {
+    idempotencyKey: createIdempotencyKey()
+  });
+  assert.equal(stratAnalysis.data.status, "mock_completed");
+
+  const roadGen = await productApi.generateProductRoadmap(TEST_PROJECT_ID, {
+    idempotencyKey: createIdempotencyKey()
+  });
+  assert.equal(roadGen.data.status, "mock_completed");
+});
+

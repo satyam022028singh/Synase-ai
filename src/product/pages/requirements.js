@@ -73,6 +73,9 @@ export function requirementsView() {
 
         <div class="product-toolbar-right">
           <span class="small subtle">${filtered.length} of ${reqs.length} requirements</span>
+          <button class="button" data-action="product-modal" data-modal="import_requirements">
+            <span>📥</span> Import
+          </button>
           <button class="button primary" data-action="product-modal" data-modal="new_requirement">
             <span>＋</span> Add Requirement
           </button>

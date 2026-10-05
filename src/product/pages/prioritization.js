@@ -59,6 +59,13 @@ export function prioritizationView() {
                     data-dir="down"
                     ${idx === feats.length - 1 ? "disabled" : ""}
                   >▼</button>
+                  <button
+                    class="icon-btn small"
+                    title="Delete Candidate Feature"
+                    data-action="product-feature-delete"
+                    data-feat-id="${escapeHtml(feature.id)}"
+                    style="color: var(--danger, #ef4444); margin-left: 4px;"
+                  >✕</button>
                 </div>
               </div>
 

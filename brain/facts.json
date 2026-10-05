@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-05T19:16:11.736Z",
+  "generatedAt": "2026-10-05T19:29:42.005Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -27,8 +27,8 @@
     },
     "src/app/main.js": {
       "layer": "app",
-      "lines": 998,
-      "bytes": 45464
+      "lines": 1034,
+      "bytes": 47107
     },
     "src/app/paths.js": {
       "layer": "app",
@@ -169,63 +169,63 @@
     },
     "src/product/api/index.js": {
       "layer": "product",
-      "lines": 46,
-      "bytes": 2718
+      "lines": 53,
+      "bytes": 3530
     },
     "src/product/components/intelligenceHeader.js": {
       "layer": "product",
       "lines": 75,
-      "bytes": 2577
+      "bytes": 2651
     },
     "src/product/components/modals.js": {
       "layer": "product",
-      "lines": 219,
-      "bytes": 9529
+      "lines": 246,
+      "bytes": 11014
     },
     "src/product/components/provenanceBadge.js": {
       "layer": "product",
       "lines": 46,
-      "bytes": 1295
+      "bytes": 1340
     },
     "src/product/pages/decisions.js": {
       "layer": "product",
       "lines": 96,
-      "bytes": 3912
+      "bytes": 4007
     },
     "src/product/pages/index.js": {
       "layer": "product",
       "lines": 65,
-      "bytes": 1695
+      "bytes": 1759
     },
     "src/product/pages/overview.js": {
       "layer": "product",
       "lines": 187,
-      "bytes": 8052
+      "bytes": 8238
     },
     "src/product/pages/prioritization.js": {
       "layer": "product",
-      "lines": 122,
-      "bytes": 4960
+      "lines": 129,
+      "bytes": 5437
     },
     "src/product/pages/requirements.js": {
       "layer": "product",
-      "lines": 205,
-      "bytes": 9873
+      "lines": 208,
+      "bytes": 10232
     },
     "src/product/pages/roadmap.js": {
       "layer": "product",
       "lines": 141,
-      "bytes": 6298
+      "bytes": 6438
     },
     "src/product/pages/strategy.js": {
       "layer": "product",
       "lines": 144,
-      "bytes": 5887
+      "bytes": 6030
     },
     "src/product/types.d.ts": {
       "layer": "product",
       "lines": 28,
-      "bytes": 526,
+      "bytes": 553,
       "exports": 2
     },
     "src/shared/api/db.js": {
@@ -255,8 +255,8 @@
     },
     "src/shared/api/mock.js": {
       "layer": "shared",
-      "lines": 997,
-      "bytes": 51983
+      "lines": 1075,
+      "bytes": 56508
     },
     "src/shared/api/redaction.js": {
       "layer": "shared",
@@ -312,7 +312,7 @@
     "src/styles/product/product.css": {
       "layer": "styles",
       "lines": 1095,
-      "bytes": 22607
+      "bytes": 23701
     },
     "src/styles/work/work.css": {
       "layer": "styles",
@@ -365,9 +365,9 @@
     },
     "test/product.test.mjs": {
       "layer": "test",
-      "lines": 256,
-      "bytes": 9391,
-      "tests": 10
+      "lines": 322,
+      "bytes": 12042,
+      "tests": 12
     }
   },
   "typeNames": {

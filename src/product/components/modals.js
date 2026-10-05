@@ -214,5 +214,32 @@ export function productModal() {
     `;
   }
 
+  if (modalType === "import_requirements") {
+    return `
+      <div class="product-modal-backdrop" data-action="close-modal">
+        <div class="product-modal-box" onclick="event.stopPropagation()">
+          <div class="product-modal-head">
+            <h3>Import Requirements</h3>
+            <button class="icon-btn" data-action="close-modal" aria-label="Close modal">✕</button>
+          </div>
+          <form id="product-import-requirements-form" class="product-modal-body">
+            <div class="field full">
+              <label for="import-req-content">Requirements (JSON array or line items) *</label>
+              <textarea id="import-req-content" name="content" rows="6" required placeholder='[
+  { "title": "Real-time streaming event bus", "type": "technical", "priority": "high" },
+  { "title": "Zero-trust session validation", "type": "security", "priority": "critical" }
+]'></textarea>
+            </div>
+
+            <div class="product-modal-footer">
+              <button type="button" class="button ghost" data-action="close-modal">Cancel</button>
+              <button type="submit" class="button primary">Import Requirements</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
   return "";
 }
