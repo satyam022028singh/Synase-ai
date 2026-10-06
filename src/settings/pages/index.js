@@ -13,6 +13,7 @@ import {
   settingsSidebar,
   settingsHeader,
   renderSectionContent,
+  settingsInspectorRail,
   settingsModalContainer
 } from "../components/index.js";
 
@@ -59,8 +60,11 @@ export function settingsControlPlanePage(sectionId) {
         ${settingsSidebar(activeSection)}
         <main class="settings-main" id="settings-main" aria-label="Settings content">
           ${settingsHeader(activeSection)}
-          <div class="settings-content-body">
-            ${renderSectionContent(activeSection)}
+          <div class="settings-content-layout">
+            <div class="settings-content-body">
+              ${renderSectionContent(activeSection)}
+            </div>
+            ${settingsInspectorRail(activeSection)}
           </div>
         </main>
       </div>

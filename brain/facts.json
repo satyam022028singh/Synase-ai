@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-06T07:27:36.733Z",
+  "generatedAt": "2026-10-06T07:37:58.063Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -235,8 +235,8 @@
     },
     "src/settings/components/index.js": {
       "layer": "settings",
-      "lines": 749,
-      "bytes": 24143
+      "lines": 843,
+      "bytes": 28642
     },
     "src/settings/components/modals.js": {
       "layer": "settings",
@@ -252,6 +252,11 @@
       "layer": "settings",
       "lines": 53,
       "bytes": 1653
+    },
+    "src/settings/components/settingsInspector.js": {
+      "layer": "settings",
+      "lines": 243,
+      "bytes": 9725
     },
     "src/settings/components/settingsSidebar.js": {
       "layer": "settings",
@@ -270,8 +275,8 @@
     },
     "src/settings/pages/index.js": {
       "layer": "settings",
-      "lines": 71,
-      "bytes": 2532
+      "lines": 75,
+      "bytes": 2684
     },
     "src/settings/types.d.ts": {
       "layer": "settings",
@@ -372,8 +377,8 @@
     },
     "src/styles/settings/settings.css": {
       "layer": "styles",
-      "lines": 1005,
-      "bytes": 21029
+      "lines": 1389,
+      "bytes": 29266
     },
     "src/styles/work/work.css": {
       "layer": "styles",
@@ -849,6 +854,7 @@
       "./settingsHeader.js",
       "./settingRow.js",
       "./modals.js",
+      "./settingsInspector.js",
       "../engine/registry.js"
     ],
     "src/settings/components/modals.js": [
@@ -862,6 +868,10 @@
       "../../shared/components/ui.js",
       "../../shared/state/store.js",
       "./settingsSidebar.js"
+    ],
+    "src/settings/components/settingsInspector.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
     ],
     "src/settings/components/settingsSidebar.js": [
       "../../shared/components/ui.js",
@@ -971,6 +981,7 @@
     "src/settings/components/settingsSidebar.js",
     "src/settings/components/settingsHeader.js",
     "src/settings/components/settingRow.js",
+    "src/settings/components/settingsInspector.js",
     "src/settings/components/modals.js",
     "src/settings/pages/index.js",
     "src/integrations/api/client.js",

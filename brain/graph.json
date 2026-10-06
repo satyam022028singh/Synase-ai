@@ -3,11 +3,11 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-06T07:27:36.733Z",
+    "generatedAt": "2026-10-06T07:37:58.063Z",
     "version": "0.12.0",
-    "sourceLines": 14991,
+    "sourceLines": 15716,
     "testLines": 805,
-    "trackedFiles": 82,
+    "trackedFiles": 83,
     "architectureLayers": 13,
     "contractTests": 82,
     "typeExports": 106,
@@ -339,7 +339,7 @@
       "kind": "source-file",
       "label": "index.js",
       "layer": "settings",
-      "lines": 749
+      "lines": 843
     },
     {
       "id": "src/settings/components/modals.js",
@@ -361,6 +361,13 @@
       "label": "settingsHeader.js",
       "layer": "settings",
       "lines": 53
+    },
+    {
+      "id": "src/settings/components/settingsInspector.js",
+      "kind": "source-file",
+      "label": "settingsInspector.js",
+      "layer": "settings",
+      "lines": 243
     },
     {
       "id": "src/settings/components/settingsSidebar.js",
@@ -388,7 +395,7 @@
       "kind": "source-file",
       "label": "index.js",
       "layer": "settings",
-      "lines": 71
+      "lines": 75
     },
     {
       "id": "src/settings/types.d.ts",
@@ -530,7 +537,7 @@
       "kind": "source-file",
       "label": "settings.css",
       "layer": "styles",
-      "lines": 1005
+      "lines": 1389
     },
     {
       "id": "src/styles/work/work.css",
@@ -4623,7 +4630,7 @@
       "kind": "script",
       "label": "build.mjs",
       "role": "Recreates dist/, copies src/, writes SHA-256 manifest",
-      "assets": 52,
+      "assets": 53,
       "command": "node scripts/build.mjs"
     },
     {
@@ -4716,8 +4723,8 @@
       "id": "arch-settings",
       "kind": "architecture-layer",
       "label": "src/settings",
-      "files": 10,
-      "lines": 1450,
+      "files": 11,
+      "lines": 1791,
       "importsNothingOutsideShared": false
     },
     {
@@ -4733,7 +4740,7 @@
       "kind": "architecture-layer",
       "label": "src/styles",
       "files": 7,
-      "lines": 5128,
+      "lines": 5512,
       "importsNothingOutsideShared": false
     },
     {
@@ -8666,6 +8673,11 @@
     },
     {
       "from": "scr-build",
+      "to": "src/settings/components/settingsInspector.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
       "to": "src/settings/components/modals.js",
       "rel": "bundles"
     },
@@ -9077,6 +9089,11 @@
     {
       "from": "arch-settings",
       "to": "src/settings/components/settingsHeader.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/settingsInspector.js",
       "rel": "contains"
     },
     {

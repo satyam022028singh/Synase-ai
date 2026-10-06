@@ -10,9 +10,10 @@ import { settingsSidebar, getSectionMeta, SETTINGS_CATEGORIES } from "./settings
 import { settingsHeader } from "./settingsHeader.js";
 import { settingRow } from "./settingRow.js";
 import { settingsModalContainer } from "./modals.js";
+import { settingsInspectorRail } from "./settingsInspector.js";
 import { getDefinitionsForSection } from "../engine/registry.js";
 
-export { settingsSidebar, settingsHeader, settingRow, settingsModalContainer, getSectionMeta, SETTINGS_CATEGORIES };
+export { settingsSidebar, settingsHeader, settingRow, settingsModalContainer, settingsInspectorRail, getSectionMeta, SETTINGS_CATEGORIES };
 
 /**
  * Renders the generic setting rows for a given section.
@@ -60,26 +61,119 @@ export function renderSettingRows(sectionId) {
 export function generalSectionView() {
   const user = state.user || { displayName: "Alex Turner", email: "alex.turner@synase.internal", role: "admin" };
   return `
-    <div class="settings-card">
-      <div class="settings-card-head">
-        <div>
-          <h2 class="settings-card-title">User Profile & Identity</h2>
-          <p class="settings-card-desc">Personal attributes used on generated decision briefs and sign-offs</p>
+    <div class="settings-cards-stack">
+      <!-- Card 1: User Profile & Identity -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h2 class="settings-card-title">User Profile & Identity</h2>
+            <p class="settings-card-desc">Personal attributes used on generated decision briefs and sign-offs</p>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label-wrap">
+                <span class="setting-label">Signed-in Account</span>
+                <span class="scope-badge">AUTHENTICATED</span>
+              </div>
+              <p class="setting-description">${escapeHtml(user.email)} · Role: <code>${escapeHtml(user.role || "admin")}</code></p>
+            </div>
+            <div class="setting-control">
+              <span class="settings-status-pill is-active">Active Session</span>
+            </div>
+          </div>
+          ${renderSettingRows("general")}
         </div>
       </div>
-      <div class="settings-card-body">
-        <div class="setting-row">
-          <div class="setting-info">
-            <div class="setting-label-wrap">
-              <span class="setting-label">Signed-in Account</span>
-            </div>
-            <p class="setting-description">${escapeHtml(user.email)} · Role: <code>${escapeHtml(user.role || "admin")}</code></p>
-          </div>
-          <div class="setting-control">
-            <span class="scope-badge">AUTHENTICATED</span>
+
+      <!-- Card 2: Workspace Environment Defaults -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h2 class="settings-card-title">Workspace Environment Defaults</h2>
+            <p class="settings-card-desc">Control session timeout, primary landing surface, and developer navigation</p>
           </div>
         </div>
-        ${renderSettingRows("general")}
+        <div class="settings-card-body">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label-wrap">
+                <span class="setting-label">Default Landing Surface</span>
+                <span class="scope-badge">WORKSPACE</span>
+              </div>
+              <p class="setting-description">Initial destination when opening or signing in to the platform.</p>
+            </div>
+            <div class="setting-control">
+              <select class="settings-select" data-action="settings-default-surface-change">
+                <option value="/app/chat">Autonomous Chat Canvas (Default)</option>
+                <option value="/app/dashboard">Decision Dashboard (Console Chrome)</option>
+                <option value="/app/intelligence/product">Product Intelligence</option>
+              </select>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label-wrap">
+                <span class="setting-label">Session Inactivity Lock</span>
+                <span class="scope-badge">WORKSPACE</span>
+              </div>
+              <p class="setting-description">Automatically lock browser credentials and prompt re-auth after inactivity.</p>
+            </div>
+            <div class="setting-control">
+              <select class="settings-select" data-action="settings-session-timeout-change">
+                <option value="15">15 Minutes</option>
+                <option value="30" selected>30 Minutes (Recommended)</option>
+                <option value="60">1 Hour</option>
+                <option value="240">4 Hours</option>
+              </select>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label-wrap">
+                <span class="setting-label">Global Command Palette</span>
+                <span class="scope-badge">SYSTEM</span>
+              </div>
+              <p class="setting-description">Enable <code>⌘ K</code> or <code>Ctrl K</code> modal switcher across all views.</p>
+            </div>
+            <div class="setting-control">
+              <label class="toggle-switch">
+                <input type="checkbox" checked disabled />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: System Runtime Posture & Integrity -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h2 class="settings-card-title">System Runtime Posture & Integrity</h2>
+            <p class="settings-card-desc">Safety guarantees, architecture layers, and deterministic boundary verification</p>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="settings-stat-grid">
+            <div class="settings-stat-box">
+              <span class="settings-stat-label">Architecture Layers</span>
+              <span class="settings-stat-val">13 Layers</span>
+              <span class="settings-stat-hint">Clean separation</span>
+            </div>
+            <div class="settings-stat-box">
+              <span class="settings-stat-label">Safety Invariants</span>
+              <span class="settings-stat-val">24 Active</span>
+              <span class="settings-stat-hint">Asserted by suite</span>
+            </div>
+            <div class="settings-stat-box">
+              <span class="settings-stat-label">Execution Mode</span>
+              <span class="settings-stat-val">Mock In-Memory</span>
+              <span class="settings-stat-hint">Zero external egress</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   `;

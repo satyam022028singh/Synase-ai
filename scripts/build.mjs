@@ -31,6 +31,7 @@ const files = [
   "src/settings/api/index.js", "src/settings/engine/registry.js", "src/settings/engine/scopeResolver.js",
   "src/settings/components/index.js", "src/settings/components/settingsSidebar.js",
   "src/settings/components/settingsHeader.js", "src/settings/components/settingRow.js",
+  "src/settings/components/settingsInspector.js",
   "src/settings/components/modals.js", "src/settings/pages/index.js",
   "src/integrations/api/client.js", "src/integrations/api/types.d.ts",
   "src/home/workspace/dashboard/api.js", "src/home/workspace/dashboard/types.d.ts",
