@@ -15,6 +15,7 @@ import { contextApi } from "../context/api/index.js";
 import { outputsApi } from "../outputs/api/index.js";
 import { phase11Api, createPhase11IdempotencyKey } from "../integrations/api/client.js";
 import { phase12Api } from "../home/workspace/dashboard/api.js";
+import { settingsApi } from "../settings/api/index.js";
 import { createWorkController } from "./actions/work.js";
 
 import { state, resetProjectScope } from "../shared/state/store.js";
@@ -71,6 +72,29 @@ async function loadDashboard() {
       error instanceof Error ? error.message : "Dashboard contract failed.";
   }
   render();
+}
+
+async function loadSettings(workspaceId = state.workspaceId, projectId = state.projectId) {
+  try {
+    const [effectiveRes, keysRes, connRes, autoRes, policyRes] = await Promise.all([
+      settingsApi.getEffectiveSettings({ workspaceId, projectId }),
+      settingsApi.listApiKeys({ workspaceId }),
+      settingsApi.listConnectors({ workspaceId }),
+      settingsApi.listAutomations({ workspaceId }),
+      settingsApi.getAgentPolicy({ workspaceId })
+    ]);
+    const map = {};
+    for (const item of (effectiveRes.data || [])) {
+      map[item.id] = item;
+    }
+    state.effectiveSettings = map;
+    state.apiKeys = keysRes.data || [];
+    state.settingsConnectors = connRes.data || [];
+    state.settingsAutomations = autoRes.data || [];
+    state.agentPolicy = policyRes.data || null;
+  } catch (error) {
+    console.warn("Settings hydration fallback:", error);
+  }
 }
 
 async function loadIntegrations(filters = {}) {
@@ -247,6 +271,8 @@ async function hydrateProject(projectId) {
   state.messages = state.conversationId
     ? (await workspaceApi.listMessages(projectId, state.conversationId)).data
     : [];
+
+  await loadSettings(state.workspaceId, projectId);
 }
 
 /* ── delegated events ─────────────────────────────────────────────── */
@@ -572,6 +598,177 @@ document.addEventListener("click", (event) => {
   }
   if (action === "audit-close") { state.auditDetail = null; render(); }
 
+  /* settings control plane */
+  if (action === "settings-navigate") {
+    const sec = target.getAttribute("data-section");
+    if (sec) {
+      state.settingsSection = sec;
+      navigate(`/app/settings/${sec}`);
+      render();
+    }
+  }
+  if (action === "settings-search-clear") {
+    state.settingsSearchQuery = "";
+    render();
+  }
+  if (action === "settings-toggle-change") {
+    const id = target.getAttribute("data-setting-id");
+    const current = state.effectiveSettings?.[id];
+    const nextVal = !current?.value;
+    if (id) {
+      settingsApi.updateSetting({
+        id,
+        scope: "workspace",
+        scopeId: state.workspaceId,
+        value: nextVal,
+        idempotencyKey: createIdempotencyKey()
+      }).then(async () => {
+        await loadSettings();
+        toast(`Updated ${id} to ${nextVal}`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Setting update failed"));
+    }
+  }
+  if (action === "settings-open-create-key-modal") {
+    state.settingsActiveModal = { type: "create-api-key" };
+    render();
+  }
+  if (action === "settings-create-key-submit") {
+    const nameInput = /** @type {HTMLInputElement|null} */ (document.querySelector("#new-key-name"));
+    const expiryInput = /** @type {HTMLSelectElement|null} */ (document.querySelector("#new-key-expiry"));
+    const scopes = Array.from(document.querySelectorAll("#settings-create-key-form input[name='scope']:checked"))
+      .map((el) => /** @type {HTMLInputElement} */ (el).value);
+    const name = nameInput?.value.trim() || "API Key";
+    const expiresInDays = Number(expiryInput?.value || 90);
+    settingsApi.createApiKey({
+      workspaceId: state.workspaceId,
+      name,
+      scopes: scopes.length ? scopes : ["read"],
+      expiresInDays,
+      idempotencyKey: createIdempotencyKey()
+    }).then(async (res) => {
+      state.apiKeys = (await settingsApi.listApiKeys({ workspaceId: state.workspaceId })).data || [];
+      state.settingsActiveModal = {
+        type: "api-key-revealed",
+        data: {
+          name,
+          oneTimeSecret: res.data.oneTimeSecret,
+          maskedPrefix: res.data.maskedPrefix
+        }
+      };
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Key generation failed"));
+  }
+  if (action === "settings-copy-secret") {
+    const secret = target.getAttribute("data-secret") || "";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(secret).catch(() => {});
+    }
+    toast("Secret copied to clipboard!");
+  }
+  if (action === "settings-revoke-key") {
+    const keyId = target.getAttribute("data-key-id") || "";
+    settingsApi.revokeApiKey(keyId, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+      state.apiKeys = (await settingsApi.listApiKeys({ workspaceId: state.workspaceId })).data || [];
+      toast("API Key revoked.");
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Revocation failed"));
+  }
+  if (action === "settings-open-connector-modal") {
+    const connId = target.getAttribute("data-connector-id");
+    const conn = (state.settingsConnectors || []).find((c) => c.id === connId);
+    state.settingsActiveModal = { type: "connect-connector", data: conn };
+    render();
+  }
+  if (action === "settings-connector-confirm-connect") {
+    const connId = target.getAttribute("data-connector-id") || "";
+    settingsApi.updateConnector(connId, { status: "connected" }, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+      state.settingsConnectors = (await settingsApi.listConnectors({ workspaceId: state.workspaceId })).data || [];
+      state.settingsActiveModal = null;
+      toast("Connector authorized and connected.");
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Connection failed"));
+  }
+  if (action === "settings-connector-toggle") {
+    const connId = target.getAttribute("data-connector-id") || "";
+    const nextStatus = target.getAttribute("data-next-status") || "disconnected";
+    settingsApi.updateConnector(connId, { status: nextStatus }, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+      state.settingsConnectors = (await settingsApi.listConnectors({ workspaceId: state.workspaceId })).data || [];
+      toast(`Connector updated to ${nextStatus}.`);
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Connector toggle failed"));
+  }
+  if (action === "settings-automation-toggle") {
+    const autoId = target.getAttribute("data-auto-id") || "";
+    const nextStatus = target.getAttribute("data-next-status") || "active";
+    settingsApi.updateAutomation(autoId, { status: nextStatus }, { idempotencyKey: createIdempotencyKey() }).then(async () => {
+      state.settingsAutomations = (await settingsApi.listAutomations({ workspaceId: state.workspaceId })).data || [];
+      toast(`Automation is now ${nextStatus}.`);
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Automation update failed"));
+  }
+  if (action === "settings-open-export-modal") {
+    state.settingsActiveModal = { type: "export-data" };
+    render();
+  }
+  if (action === "settings-export-confirm") {
+    const anonymize = /** @type {HTMLInputElement|null} */ (document.querySelector("#export-anonymize"))?.checked ?? true;
+    settingsApi.exportWorkspaceData(state.workspaceId, { anonymize }).then((res) => {
+      const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `synase-workspace-${state.workspaceId}-export.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      state.settingsActiveModal = null;
+      toast("Export snapshot generated and downloaded.");
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Export failed"));
+  }
+  if (action === "settings-open-import-modal") {
+    state.settingsActiveModal = { type: "import-data" };
+    render();
+  }
+  if (action === "settings-import-validate") {
+    const payloadEl = /** @type {HTMLTextAreaElement|null} */ (document.querySelector("#import-json-payload"));
+    const raw = payloadEl?.value.trim() || "{}";
+    try {
+      const parsed = JSON.parse(raw);
+      settingsApi.validateImportData(parsed).then((res) => {
+        const resEl = document.querySelector("#import-validation-result");
+        if (resEl) {
+          resEl.innerHTML = `<div class="settings-alert-info">Schema Valid: ${res.data.valid} · Version ${res.data.schemaVersion} · ${res.data.settingsCount || 0} settings detected.</div>`;
+        }
+        toast("Import snapshot validated.");
+      }).catch((err) => {
+        const resEl = document.querySelector("#import-validation-result");
+        if (resEl) resEl.innerHTML = `<div class="settings-alert-danger">${escapeHtml(err.message)}</div>`;
+      });
+    } catch (err) {
+      const resEl = document.querySelector("#import-validation-result");
+      if (resEl) resEl.innerHTML = `<div class="settings-alert-danger">${escapeHtml(err instanceof Error ? err.message : "Invalid JSON")}</div>`;
+    }
+  }
+  if (action === "settings-open-reset-modal") {
+    state.settingsActiveModal = { type: "confirm-reset" };
+    render();
+  }
+  if (action === "settings-reset-confirm") {
+    settingsApi.resetSettings({ workspaceId: state.workspaceId }).then(async () => {
+      await loadSettings();
+      state.settingsActiveModal = null;
+      toast("Settings restored to system defaults.");
+      render();
+    }).catch((err) => toast(err instanceof Error ? err.message : "Reset failed"));
+  }
+  if (action === "settings-modal-close" || action === "settings-modal-backdrop-click") {
+    state.settingsActiveModal = null;
+    render();
+  }
+
   /* Chat & Work owns its own actions */
   if (work.handleWorkAction(action, target)) return;
 });
@@ -634,6 +831,40 @@ document.addEventListener("change", async (event) => {
       }).catch((err) => toast(err instanceof Error ? err.message : "Update failed."));
     }
   }
+  if (target.getAttribute("data-action") === "settings-select-change") {
+    const id = target.getAttribute("data-setting-id");
+    const val = target.value;
+    if (id) {
+      settingsApi.updateSetting({
+        id,
+        scope: "workspace",
+        scopeId: state.workspaceId,
+        value: val,
+        idempotencyKey: createIdempotencyKey()
+      }).then(async () => {
+        await loadSettings();
+        toast(`Updated ${id}`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Update failed"));
+    }
+  }
+  if (target.getAttribute("data-action") === "settings-input-change") {
+    const id = target.getAttribute("data-setting-id");
+    const val = target.type === "number" ? Number(target.value) : target.value;
+    if (id) {
+      settingsApi.updateSetting({
+        id,
+        scope: "workspace",
+        scopeId: state.workspaceId,
+        value: val,
+        idempotencyKey: createIdempotencyKey()
+      }).then(async () => {
+        await loadSettings();
+        toast(`Updated ${id}`);
+        render();
+      }).catch((err) => toast(err instanceof Error ? err.message : "Update failed"));
+    }
+  }
   if (target.id === "asset-status-filter") {
     const filtered = state.assets.filter((asset) => !target.value || asset.processingStatus === target.value);
     const results = document.querySelector("#asset-results");
@@ -646,6 +877,10 @@ document.addEventListener("input", (event) => {
   if (target instanceof HTMLInputElement && target.id === "project-search") filterProjects();
   if (target instanceof HTMLInputElement && target.id === "product-search-input") {
     state.productSearchQuery = target.value;
+    render();
+  }
+  if (target instanceof HTMLInputElement && target.getAttribute("data-action") === "settings-search-input") {
+    state.settingsSearchQuery = target.value;
     render();
   }
   /* the composer is uncontrolled between renders, so mirror it into state
@@ -1010,6 +1245,7 @@ function loadRouteData() {
   if (path === routes.dashboard) loadDashboard();
   if (path === routes.chat || path.startsWith(`${routes.chat}/`)) work.loadWork();
   if (isIntegrationsRoute(path)) loadIntegrations();
+  if (path.startsWith("/app/settings")) loadSettings();
 }
 
 function onRouteChange() {

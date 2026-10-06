@@ -13,7 +13,8 @@ export const routes = {
   projects: "/app/projects",
   createProject: "/app/projects/create",
   members: "/app/workspaces/ws_synase/members",
-  workspaceSettings: "/app/workspaces/ws_synase/settings"
+  workspaceSettings: "/app/workspaces/ws_synase/settings",
+  settings: "/app/settings"
 };
 
 /**
@@ -47,6 +48,9 @@ export function isActive(path, prefix = false) {
   const cur = currentPath();
   if (path === routes.projects) {
     return cur === "/app/projects" || cur === "/app/projects/create";
+  }
+  if (path === routes.settings) {
+    return cur.startsWith("/app/settings");
   }
   if (path === "/app/activity" && (cur === "/app/activity" || cur === "/app/audit"))
     return true;

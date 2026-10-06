@@ -138,6 +138,17 @@ export const state = {
   workComposer: "",
   workThinking: false,
 
+  // ── settings control plane ──
+  settingsValues: [],
+  effectiveSettings: [],
+  settingsSection: "general",
+  settingsSearchQuery: "",
+  apiKeys: [],
+  settingsConnectors: [],
+  settingsAutomations: [],
+  agentPolicy: null,
+  settingsActiveModal: "",
+
   // ── chrome + transient UI (local) ──
   loading: true,
   sidebarOpen: false,

@@ -42,6 +42,7 @@ import {
 } from "../outputs/pages/index.js";
 import { integrationsPage } from "../integrations/pages/index.js";
 import { chatPage } from "../work/pages/index.js";
+import { settingsControlPlanePage } from "../settings/pages/index.js";
 
 /**
  * Resolves the current path to its page body, wrapped in the shell.
@@ -76,7 +77,14 @@ export function renderPage() {
   if (path.includes("/workspaces/") && path.endsWith("/members"))
     return shell(membersPage());
   if (path.includes("/workspaces/") && path.endsWith("/settings"))
-    return shell(workspaceSettingsPage());
+    return shell(settingsControlPlanePage("workspace"));
+
+  const settingsMatch = path.match(/^\/app\/settings(?:\/([a-z0-9-]+))?$/);
+  if (settingsMatch) {
+    const sec = settingsMatch[1] || "general";
+    state.settingsSection = sec;
+    return shell(settingsControlPlanePage(sec));
+  }
 
   const repository = path.match(/^\/app\/projects\/([^/]+)\/repository$/);
   if (repository) return shell(repositoryPage(repository[1]));

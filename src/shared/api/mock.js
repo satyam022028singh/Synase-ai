@@ -5,6 +5,7 @@ module boundaries moved. Every method returns { data, meta }. */
 
 import { db, page, sleep } from "./db.js";
 import { ApiError } from "./errors.js";
+import { settingsRegistry, getDefinitionsForSection, resolveEffectiveSetting } from "./settingsEngine.js";
 
 const idempotencyStore = new Map();
 
@@ -1068,6 +1069,196 @@ export const mockApi = {
       data: {
         repository: structuredClone(repository),
         receipt: { operation: "work.connect", externalContacted: false, importedRecords: 0, mock: true }
+      }
+    };
+  },
+
+  // ── Settings Control Plane Endpoints ──
+  async getEffectiveSettings(section, context = {}) {
+    await sleep(150);
+    const defs = section ? getDefinitionsForSection(section) : settingsRegistry;
+    const values = db.settingsValues || [];
+    const effective = defs.map((def) => resolveEffectiveSetting(def, values, context));
+    return { data: effective, meta: { total: effective.length, section: section || "all" } };
+  },
+
+  async getSettingDefinitions(section) {
+    await sleep(120);
+    const defs = section ? getDefinitionsForSection(section) : settingsRegistry;
+    return { data: structuredClone(defs), meta: { total: defs.length } };
+  },
+
+  async updateSetting(settingId, payload, { idempotencyKey } = {}) {
+    await sleep(200);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!idempotencyStore) idempotencyStore = new Map();
+    if (idempotencyStore.has(idempotencyKey)) {
+      return structuredClone(idempotencyStore.get(idempotencyKey));
+    }
+
+    const def = settingsRegistry.find((d) => d.id === settingId);
+    if (!def) throw new ApiError("RESOURCE_NOT_FOUND", `Setting ${settingId} not found in registry.`, 404);
+
+    const scope = payload.scope || (def.allowedScopes.includes("workspace") ? "workspace" : def.allowedScopes[0]);
+    const scopeId = payload.scopeId || (scope === "workspace" ? "ws_synase" : scope === "project" ? "prj_platform" : "usr_satyam");
+
+    const existingIndex = db.settingsValues.findIndex((v) => v.definitionId === settingId && v.scope === scope && v.scopeId === scopeId);
+    let record;
+    if (existingIndex !== -1) {
+      record = db.settingsValues[existingIndex];
+      record.value = payload.value;
+      record.version = (record.version || 1) + 1;
+      record.updatedAt = new Date().toISOString();
+    } else {
+      record = {
+        definitionId: settingId,
+        scope,
+        scopeId,
+        value: payload.value,
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        updatedBy: "usr_satyam"
+      };
+      db.settingsValues.push(record);
+    }
+
+    const effective = resolveEffectiveSetting(def, db.settingsValues, { workspaceId: "ws_synase", projectId: "prj_platform", userId: "usr_satyam" });
+    const response = {
+      data: effective,
+      meta: { updated: true, version: record.version, receipt: { operation: "settings.update", mock: true } }
+    };
+    idempotencyStore.set(idempotencyKey, response);
+    return response;
+  },
+
+  async resetSettings(settingIds, { idempotencyKey } = {}) {
+    await sleep(200);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!Array.isArray(settingIds)) throw new ApiError("VALIDATION_ERROR", "settingIds array is required.", 422);
+
+    db.settingsValues = db.settingsValues.filter((v) => !settingIds.includes(v.definitionId));
+    const defs = settingsRegistry.filter((d) => settingIds.includes(d.id));
+    const effective = defs.map((def) => resolveEffectiveSetting(def, db.settingsValues));
+    return { data: effective, meta: { resetCount: settingIds.length } };
+  },
+
+  async listProviders() {
+    await sleep(150);
+    return { data: structuredClone(db.providers || []) };
+  },
+
+  async getAgentPolicy(agentId) {
+    await sleep(150);
+    return { data: structuredClone(db.agentPolicy || null) };
+  },
+
+  async updateAgentPolicy(agentId, patch, { idempotencyKey } = {}) {
+    await sleep(220);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    db.agentPolicy = { ...db.agentPolicy, ...patch };
+    return { data: structuredClone(db.agentPolicy) };
+  },
+
+  async listApiKeys() {
+    await sleep(150);
+    return { data: structuredClone(db.apiKeys || []) };
+  },
+
+  async createApiKey(payload, { idempotencyKey } = {}) {
+    await sleep(250);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    if (!payload?.name?.trim()) throw new ApiError("VALIDATION_ERROR", "Key name is required.", 422);
+
+    const randomSuffix = Math.random().toString(36).slice(2, 6);
+    const prefix = `syn_live_${randomSuffix}`;
+    const secretRandom = Array.from({ length: 32 }, () => Math.floor(Math.random() * 36).toString(36)).join("");
+    const oneTimeSecret = `${prefix}_sec_${secretRandom}`;
+
+    const newKey = {
+      id: `key_${Date.now()}`,
+      name: payload.name.trim(),
+      prefix,
+      scopes: Array.isArray(payload.scopes) && payload.scopes.length ? payload.scopes : ["analysis:read"],
+      createdAt: new Date().toISOString(),
+      lastUsedAt: null,
+      status: "active"
+    };
+    db.apiKeys.unshift(newKey);
+
+    return {
+      data: {
+        key: structuredClone(newKey),
+        oneTimeSecret,
+        secretShownOnce: true
+      }
+    };
+  },
+
+  async revokeApiKey(keyId, { idempotencyKey } = {}) {
+    await sleep(200);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const key = db.apiKeys.find((k) => k.id === keyId);
+    if (!key) throw new ApiError("RESOURCE_NOT_FOUND", `API key ${keyId} not found.`, 404);
+    key.status = "revoked";
+    return { data: { id: keyId, status: "revoked", success: true } };
+  },
+
+  async listConnectors() {
+    await sleep(150);
+    return { data: structuredClone(db.settingsConnectors || []) };
+  },
+
+  async updateConnector(connectorId, patch, { idempotencyKey } = {}) {
+    await sleep(200);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const conn = db.settingsConnectors.find((c) => c.id === connectorId);
+    if (!conn) throw new ApiError("RESOURCE_NOT_FOUND", `Connector ${connectorId} not found.`, 404);
+    Object.assign(conn, patch);
+    return { data: structuredClone(conn) };
+  },
+
+  async listAutomations() {
+    await sleep(150);
+    return { data: structuredClone(db.settingsAutomations || []) };
+  },
+
+  async updateAutomation(id, patch, { idempotencyKey } = {}) {
+    await sleep(200);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    const auto = db.settingsAutomations.find((a) => a.id === id);
+    if (!auto) throw new ApiError("RESOURCE_NOT_FOUND", `Automation ${id} not found.`, 404);
+    Object.assign(auto, patch);
+    return { data: structuredClone(auto) };
+  },
+
+  async getUsageSummary() {
+    await sleep(150);
+    return { data: structuredClone(db.usageSummary || null) };
+  },
+
+  async exportWorkspaceData(options = {}, { idempotencyKey } = {}) {
+    await sleep(350);
+    if (!idempotencyKey) throw new ApiError("IDEMPOTENCY_REQUIRED", "An idempotency key is required.", 400);
+    return {
+      data: {
+        jobId: `job_exp_${Date.now()}`,
+        status: "ready",
+        format: options.format || "json",
+        exportUrl: "data:application/json;charset=utf-8,%7B%22synase%22%3A%22backup%22%7D",
+        completedAt: new Date().toISOString()
+      }
+    };
+  },
+
+  async validateImportData(payload) {
+    await sleep(250);
+    if (!payload) throw new ApiError("VALIDATION_ERROR", "Payload is required.", 422);
+    return {
+      data: {
+        valid: true,
+        detectedSchemaVersion: 1,
+        entitiesDetected: { settings: 12, apiKeys: 2, connectors: 3 },
+        warnings: []
       }
     };
   }

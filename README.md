@@ -117,6 +117,28 @@ Full Model Context Protocol (MCP) server lifecycle inspection:
 * **ChromaDB Semantic Projection**: Ranked memory search over project context with relevance scoring.
 * **Neo4j Graph Topology**: Projected relationship graphs linking requirements, features, repositories, and architectural modules.
 
+### 6. Settings Control Plane (16 Canonical Domains)
+Centralized configuration management engine with deterministic scope cascading:
+* **Scope Precedence & Policy Locks**: `system > workspace > project > agent > task > session > user` with cryptographic policy locks that prevent unauthorized overrides.
+* **16 Canonical Domains**:
+  1. `General`: Profile attributes, timezone, email notifications
+  2. `Workspace & Members`: Organization identity, team members, roles, guest access
+  3. `Appearance & Accessibility`: Google Antigravity dark/light theme, density, reduced motion
+  4. `AI & Models`: Foundation models, temperature determinism, provider fallback, status table
+  5. `Agents & Autonomy`: Autonomy tiers (Assisted / Supervised / Autonomous), confirmation policy, chain limits
+  6. `Tools & Permissions`: Granular RBAC permissions for terminal shell, file mutation, MCP tools
+  7. `Memory & Context`: ChromaDB vector memory, retention windows, auto-compaction threshold
+  8. `Vault & Knowledge`: Document chunk window length, automated knowledge re-indexing
+  9. `API & Developer`: Invariant 19 compliant key management (one-time secret modal), wire tracing
+  10. `Automations`: Parallel task concurrency limits, halt-on-error policy, scheduled background jobs
+  11. `Usage & Limits`: Token consumption quotas, monthly cap ceilings, budget alert thresholds
+  12. `Security & Privacy`: Mandatory MFA enforcement, session idle timeouts, cryptographic audit integration
+  13. `Connectors`: OAuth 2.0 telemetry sources (GitHub, Jira, Linear, Slack)
+  14. `Messaging`: Notification channels, webhook broadcasting, quiet hours policy
+  15. `Data & Import/Export`: JSON snapshot backup export, schema validation & import preview, PII anonymization
+  16. `Advanced`: Experimental capability previews, diagnostic telemetry opt-in, Danger Zone factory reset
+* **Invariant 19 Credential Security**: One-time secret reveals; only masked prefixes (`syn_live_...`) are stored in persistent state.
+
 ---
 
 ## System Architecture
@@ -138,6 +160,7 @@ src/
 │   ├── product/          # Product intelligence views, components, modals, and API facade
 │   ├── devops/           # DevOps intelligence views, findings, test suggestions, and API
 │   ├── mcp/              # MCP V2 runtime observability, discovery, and trace views
+│   ├── settings/         # Settings control plane views, components, modals, engine, and API facade
 │   ├── context/          # Context explorer, semantic memory, and knowledge graph views
 │   ├── outputs/          # Decision reports, export pipeline, and human-in-the-loop approvals
 │   ├── integrations/     # Provider connections, synchronization runs, and immutable audit

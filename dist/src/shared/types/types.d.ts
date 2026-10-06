@@ -346,3 +346,90 @@ export interface DomainApi {
   listConversations(projectId: string): Promise<ApiList<ConversationSession>>;
   listAnalysisRequests(projectId: string): Promise<ApiList<AnalysisRequest>>;
 }
+
+export type SettingsScope = 'system' | 'workspace' | 'project' | 'agent' | 'task' | 'session' | 'user';
+export type SettingsSensitivity = 'public' | 'internal' | 'sensitive' | 'secret';
+
+export type SettingsSection =
+  | 'general'
+  | 'ai-models'
+  | 'agents'
+  | 'memory'
+  | 'tools'
+  | 'connectors'
+  | 'messaging'
+  | 'vault'
+  | 'developer'
+  | 'automations'
+  | 'usage'
+  | 'security'
+  | 'workspace'
+  | 'appearance'
+  | 'data'
+  | 'advanced';
+
+export interface SettingDefinition<T = unknown> {
+  id: string;
+  section: SettingsSection;
+  label: string;
+  description: string;
+  type: 'boolean' | 'string' | 'number' | 'enum' | 'object' | 'list';
+  default: T;
+  allowedScopes: SettingsScope[];
+  sensitivity: SettingsSensitivity;
+  schemaVersion: number;
+  options?: Array<{ label: string; value: string | number }>;
+  permission?: string;
+  resettable?: boolean;
+}
+
+export interface SettingValue<T = unknown> {
+  definitionId: string;
+  scope: SettingsScope;
+  scopeId: string;
+  value: T;
+  version: number;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+export interface EffectiveSetting<T = unknown> {
+  id: string;
+  definition: SettingDefinition<T>;
+  value: T;
+  sourceScope: SettingsScope;
+  sourceId: string;
+  isOverridden: boolean;
+  constrainedByPolicy: boolean;
+}
+
+export interface ApiKeyItem {
+  id: string;
+  name: string;
+  prefix: string;
+  scopes: string[];
+  createdAt: string;
+  lastUsedAt: string | null;
+  status: 'active' | 'revoked';
+}
+
+export interface ConnectorItem {
+  id: string;
+  provider: string;
+  name: string;
+  kind: 'oauth' | 'api_key' | 'webhook';
+  status: 'connected' | 'reauth_required' | 'disconnected';
+  lastSyncAt: string | null;
+  syncInterval: string;
+  scopes: string[];
+}
+
+export interface AutomationItem {
+  id: string;
+  title: string;
+  trigger: string;
+  action: string;
+  schedule: string;
+  status: 'active' | 'paused';
+  lastRunAt: string | null;
+}

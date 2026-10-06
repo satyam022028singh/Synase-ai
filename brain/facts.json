@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-05T19:29:42.005Z",
+  "generatedAt": "2026-10-06T06:23:06.255Z",
   "product": {
     "name": "synase-ai-frontend",
     "version": "0.12.0",
@@ -27,23 +27,23 @@
     },
     "src/app/main.js": {
       "layer": "app",
-      "lines": 1034,
-      "bytes": 47107
+      "lines": 1270,
+      "bytes": 57587
     },
     "src/app/paths.js": {
       "layer": "app",
-      "lines": 69,
-      "bytes": 2016
+      "lines": 73,
+      "bytes": 2131
     },
     "src/app/router.js": {
       "layer": "app",
-      "lines": 124,
-      "bytes": 5369
+      "lines": 132,
+      "bytes": 5695
     },
     "src/app/shell.js": {
       "layer": "app",
       "lines": 104,
-      "bytes": 4982
+      "bytes": 4979
     },
     "src/context/api/index.js": {
       "layer": "context",
@@ -228,10 +228,61 @@
       "bytes": 553,
       "exports": 2
     },
+    "src/settings/api/index.js": {
+      "layer": "settings",
+      "lines": 40,
+      "bytes": 1784
+    },
+    "src/settings/components/index.js": {
+      "layer": "settings",
+      "lines": 749,
+      "bytes": 24143
+    },
+    "src/settings/components/modals.js": {
+      "layer": "settings",
+      "lines": 193,
+      "bytes": 8594
+    },
+    "src/settings/components/settingRow.js": {
+      "layer": "settings",
+      "lines": 104,
+      "bytes": 3287
+    },
+    "src/settings/components/settingsHeader.js": {
+      "layer": "settings",
+      "lines": 53,
+      "bytes": 1653
+    },
+    "src/settings/components/settingsSidebar.js": {
+      "layer": "settings",
+      "lines": 121,
+      "bytes": 5164
+    },
+    "src/settings/engine/registry.js": {
+      "layer": "settings",
+      "lines": 10,
+      "bytes": 204
+    },
+    "src/settings/engine/scopeResolver.js": {
+      "layer": "settings",
+      "lines": 9,
+      "bytes": 192
+    },
+    "src/settings/pages/index.js": {
+      "layer": "settings",
+      "lines": 37,
+      "bytes": 1032
+    },
+    "src/settings/types.d.ts": {
+      "layer": "settings",
+      "lines": 100,
+      "bytes": 2208,
+      "exports": 10
+    },
     "src/shared/api/db.js": {
       "layer": "shared",
-      "lines": 538,
-      "bytes": 40763
+      "lines": 599,
+      "bytes": 45660
     },
     "src/shared/api/errors.js": {
       "layer": "shared",
@@ -255,13 +306,18 @@
     },
     "src/shared/api/mock.js": {
       "layer": "shared",
-      "lines": 1075,
-      "bytes": 56508
+      "lines": 1266,
+      "bytes": 64202
     },
     "src/shared/api/redaction.js": {
       "layer": "shared",
       "lines": 21,
       "bytes": 820
+    },
+    "src/shared/api/settingsEngine.js": {
+      "layer": "shared",
+      "lines": 604,
+      "bytes": 18610
     },
     "src/shared/components/ui.js": {
       "layer": "shared",
@@ -275,14 +331,14 @@
     },
     "src/shared/state/store.js": {
       "layer": "shared",
-      "lines": 176,
-      "bytes": 4883
+      "lines": 187,
+      "bytes": 5157
     },
     "src/shared/types/types.d.ts": {
       "layer": "shared",
-      "lines": 348,
-      "bytes": 13730,
-      "exports": 73
+      "lines": 435,
+      "bytes": 15729,
+      "exports": 82
     },
     "src/shared/utils/format.js": {
       "layer": "shared",
@@ -313,6 +369,11 @@
       "layer": "styles",
       "lines": 1095,
       "bytes": 23701
+    },
+    "src/styles/settings/settings.css": {
+      "layer": "styles",
+      "lines": 435,
+      "bytes": 9856
     },
     "src/styles/work/work.css": {
       "layer": "styles",
@@ -368,6 +429,12 @@
       "lines": 322,
       "bytes": 12042,
       "tests": 12
+    },
+    "test/settings.test.mjs": {
+      "layer": "test",
+      "lines": 151,
+      "bytes": 6710,
+      "tests": 6
     }
   },
   "typeNames": {
@@ -404,6 +471,18 @@
     "src/product/types.d.ts": [
       "ProductSection",
       "ProductFilterState"
+    ],
+    "src/settings/types.d.ts": [
+      "Scope",
+      "Sensitivity",
+      "SettingsSection",
+      "SettingDefinition",
+      "SettingValue",
+      "EffectiveSetting",
+      "ApiKeyItem",
+      "ConnectorItem",
+      "AutomationItem",
+      "AgentPolicy"
     ],
     "src/shared/types/types.d.ts": [
       "PlatformRole",
@@ -478,7 +557,16 @@
       "ApprovalComment",
       "Approval",
       "ReportExportArtifact",
-      "DomainApi"
+      "DomainApi",
+      "SettingsScope",
+      "SettingsSensitivity",
+      "SettingsSection",
+      "SettingDefinition",
+      "SettingValue",
+      "EffectiveSetting",
+      "ApiKeyItem",
+      "ConnectorItem",
+      "AutomationItem"
     ]
   },
   "dbModule": "src/shared/api/db.js",
@@ -525,7 +613,14 @@
     "exportArtifacts",
     "workSessions",
     "workMessages",
-    "workArtifacts"
+    "workArtifacts",
+    "settingsValues",
+    "apiKeys",
+    "settingsConnectors",
+    "settingsAutomations",
+    "agentPolicy",
+    "providers",
+    "usageSummary"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -558,6 +653,7 @@
       "../outputs/api/index.js",
       "../integrations/api/client.js",
       "../home/workspace/dashboard/api.js",
+      "../settings/api/index.js",
       "./actions/work.js",
       "../shared/state/store.js",
       "../shared/utils/format.js",
@@ -590,7 +686,8 @@
       "../context/pages/index.js",
       "../outputs/pages/index.js",
       "../integrations/pages/index.js",
-      "../work/pages/index.js"
+      "../work/pages/index.js",
+      "../settings/pages/index.js"
     ],
     "src/app/shell.js": [
       "../shared/state/store.js",
@@ -742,6 +839,44 @@
       "../../shared/state/store.js",
       "../components/provenanceBadge.js"
     ],
+    "src/settings/api/index.js": [
+      "../../shared/api/index.js"
+    ],
+    "src/settings/components/index.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "./settingsSidebar.js",
+      "./settingsHeader.js",
+      "./settingRow.js",
+      "./modals.js",
+      "../engine/registry.js"
+    ],
+    "src/settings/components/modals.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
+    ],
+    "src/settings/components/settingRow.js": [
+      "../../shared/components/ui.js"
+    ],
+    "src/settings/components/settingsHeader.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js",
+      "./settingsSidebar.js"
+    ],
+    "src/settings/components/settingsSidebar.js": [
+      "../../shared/components/ui.js",
+      "../../shared/state/store.js"
+    ],
+    "src/settings/engine/registry.js": [
+      "../../shared/api/settingsEngine.js"
+    ],
+    "src/settings/engine/scopeResolver.js": [
+      "../../shared/api/settingsEngine.js"
+    ],
+    "src/settings/pages/index.js": [
+      "../../shared/state/store.js",
+      "../components/index.js"
+    ],
     "src/shared/api/index.js": [
       "./mock.js",
       "./errors.js",
@@ -756,7 +891,8 @@
     ],
     "src/shared/api/mock.js": [
       "./db.js",
-      "./errors.js"
+      "./errors.js",
+      "./settingsEngine.js"
     ],
     "src/shared/components/ui.js": [
       "../utils/format.js"
@@ -786,6 +922,7 @@
     "mcp",
     "outputs",
     "product",
+    "settings",
     "shared",
     "styles",
     "test",
@@ -824,6 +961,15 @@
     "src/work/constants.js",
     "src/work/pages/index.js",
     "src/work/components/index.js",
+    "src/settings/api/index.js",
+    "src/settings/engine/registry.js",
+    "src/settings/engine/scopeResolver.js",
+    "src/settings/components/index.js",
+    "src/settings/components/settingsSidebar.js",
+    "src/settings/components/settingsHeader.js",
+    "src/settings/components/settingRow.js",
+    "src/settings/components/modals.js",
+    "src/settings/pages/index.js",
     "src/integrations/api/client.js",
     "src/integrations/api/types.d.ts",
     "src/home/workspace/dashboard/api.js",
@@ -833,7 +979,8 @@
     "src/styles/integrations/integrations.css",
     "src/styles/landing/landing.css",
     "src/styles/work/work.css",
-    "src/styles/product/product.css"
+    "src/styles/product/product.css",
+    "src/styles/settings/settings.css"
   ],
   "entryPoints": {
     "index": [],
@@ -846,6 +993,7 @@
       "./src/styles/integrations/integrations.css",
       "./src/styles/work/work.css",
       "./src/styles/product/product.css",
+      "./src/styles/settings/settings.css",
       "#main",
       "./src/app/main.js"
     ],

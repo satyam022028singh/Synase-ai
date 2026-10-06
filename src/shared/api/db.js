@@ -529,7 +529,68 @@ export const db = {
       createdAt: "2026-09-28T11:44:00Z", updatedAt: "2026-09-28T11:44:00Z", mock: true,
       content: "# API gateway boundary (mock draft)\n\nProposal only. No code was generated, written, or deployed.\n\n- North-south traffic terminates at the gateway; domain services stay internal.\n- Authentication resolves to a session before routing, never after.\n- Every forwarded request carries a correlation id that survives into audit.\n- Rate limits are declared per domain service, not globally.\n\n## Unresolved\n\n- The authentication and session contract is not frozen.\n- Active workspace/project context encoding is undefined.\n- No server exists in this repository to route to."
     }
-  ]
+  ],
+
+  // ── Settings Control Plane Fixtures ──
+  settingsValues: [
+    { definitionId: "general.profile_name", scope: "user", scopeId: "usr_satyam", value: "Alex Turner", version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "general.timezone", scope: "workspace", scopeId: "ws_synase", value: "America/New_York", version: 2, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "ai.default_model", scope: "workspace", scopeId: "ws_synase", value: "gemini-1.5-pro", version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "ai.temperature", scope: "project", scopeId: "prj_platform", value: 0.15, version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "agents.autonomy_level", scope: "workspace", scopeId: "ws_synase", value: "supervised", version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "memory.enabled", scope: "workspace", scopeId: "ws_synase", value: true, version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "tools.shell_execution", scope: "workspace", scopeId: "ws_synase", value: "ask", version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" },
+    { definitionId: "appearance.theme", scope: "user", scopeId: "usr_satyam", value: "dark", version: 1, updatedAt: "2026-09-29T08:00:00Z", updatedBy: "usr_satyam" }
+  ],
+
+  apiKeys: [
+    { id: "key_prod_01", name: "CI Pipeline Scanner", prefix: "syn_live_9f8a", scopes: ["analysis:read", "workflows:run"], createdAt: "2026-09-15T10:00:00Z", lastUsedAt: "2026-10-05T18:22:00Z", status: "active" },
+    { id: "key_dev_02", name: "Local IDE Subagent", prefix: "syn_test_3b1c", scopes: ["*"], createdAt: "2026-09-20T14:12:00Z", lastUsedAt: "2026-10-04T09:15:00Z", status: "active" },
+    { id: "key_dep_03", name: "Legacy Webhook Ingestion", prefix: "syn_live_00ad", scopes: ["inputs:upload"], createdAt: "2026-08-01T08:00:00Z", lastUsedAt: null, status: "revoked" }
+  ],
+
+  settingsConnectors: [
+    { id: "conn_gh", provider: "GitHub", name: "satyam022028singh/Synase-ai", kind: "oauth", status: "connected", lastSyncAt: "2026-10-05T19:30:00Z", syncInterval: "15m", scopes: ["repo:read", "pull_requests:read"] },
+    { id: "conn_jira", provider: "Jira Software", name: "Atlassian Cloud (PROD)", kind: "oauth", status: "connected", lastSyncAt: "2026-10-05T19:00:00Z", syncInterval: "30m", scopes: ["issues:read", "projects:read"] },
+    { id: "conn_linear", provider: "Linear", name: "Core Engineering Workspace", kind: "api_key", status: "reauth_required", lastSyncAt: "2026-10-01T12:00:00Z", syncInterval: "1h", scopes: ["issues:all"] },
+    { id: "conn_slack", provider: "Slack", name: "Engineering Alert Mesh", kind: "webhook", status: "connected", lastSyncAt: "2026-10-05T18:45:00Z", syncInterval: "realtime", scopes: ["chat:write"] }
+  ],
+
+  settingsAutomations: [
+    { id: "auto_arch_review", title: "Nightly Architecture Review", trigger: "cron: 0 2 * * *", action: "devops:architecture:analyze", schedule: "Daily at 02:00 UTC", status: "active", lastRunAt: "2026-10-05T02:00:00Z" },
+    { id: "auto_sec_scan", title: "Continuous Dependency Vulnerability Scan", trigger: "event: repository:push", action: "devops:dependencies:analyze", schedule: "On Git Push", status: "active", lastRunAt: "2026-10-05T19:25:00Z" },
+    { id: "auto_req_sync", title: "Bi-Weekly PRD Requirement Resync", trigger: "cron: 0 0 1,15 * *", action: "product:requirements:analyze", schedule: "1st & 15th of month", status: "paused", lastRunAt: "2026-09-15T00:00:00Z" }
+  ],
+
+  agentPolicy: {
+    autonomy: "supervised",
+    confirmation: "sensitive_only",
+    toolRules: [
+      { toolId: "tools.shell_execution", effect: "ask" },
+      { toolId: "tools.file_mutation", effect: "ask" },
+      { toolId: "tools.git_push", effect: "deny" }
+    ],
+    maxActionChain: 25,
+    allowExternalSideEffects: false
+  },
+
+  providers: [
+    { id: "prov_gemini", name: "Google Gemini", status: "active", latencyMs: 340, tier: "primary", models: ["gemini-1.5-pro", "gemini-1.5-flash"] },
+    { id: "prov_anthropic", name: "Anthropic Claude", status: "active", latencyMs: 520, tier: "fallback", models: ["claude-3-5-sonnet", "claude-3-haiku"] },
+    { id: "prov_openai", name: "OpenAI", status: "active", latencyMs: 410, tier: "secondary", models: ["gpt-4o", "gpt-4o-mini"] },
+    { id: "prov_local", name: "Local Ollama", status: "standby", latencyMs: 80, tier: "private", models: ["llama3:8b", "mistral:7b"] }
+  ],
+
+  usageSummary: {
+    period: "October 2026",
+    tokensConsumed: 12450890,
+    monthlyQuota: 50000000,
+    quotaPercent: 24.9,
+    estimatedCostUsd: 48.25,
+    budgetCeilingUsd: 200.00,
+    activeSubagents: 3,
+    totalWorkflowsRun: 184
+  }
 };
 
 export function page(data) {

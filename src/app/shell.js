@@ -79,7 +79,7 @@ export function shell(content) {
           <div class="nav-label">System</div>
           ${navLink("/app/integrations", "⊞", "Integrations")}
           ${navLink("/app/activity", "↗", "Activity & Audit", true)}
-          ${navLink(routes.workspaceSettings, "⚙", "Settings")}
+          ${navLink(routes.settings, "⚙", "Settings", true)}
         </div>
       </nav>
     </aside>

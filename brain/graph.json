@@ -3,15 +3,15 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-05T19:29:42.005Z",
+    "generatedAt": "2026-10-06T06:23:06.255Z",
     "version": "0.12.0",
-    "sourceLines": 11329,
-    "testLines": 654,
-    "trackedFiles": 69,
-    "architectureLayers": 12,
-    "contractTests": 76,
+    "sourceLines": 14382,
+    "testLines": 805,
+    "trackedFiles": 82,
+    "architectureLayers": 13,
+    "contractTests": 82,
     "typeExports": 96,
-    "dbCollections": 43,
+    "dbCollections": 50,
     "routes": 35,
     "serviceMethods": 103,
     "invariants": 22,
@@ -49,21 +49,21 @@
       "kind": "source-file",
       "label": "main.js",
       "layer": "app",
-      "lines": 1034
+      "lines": 1270
     },
     {
       "id": "src/app/paths.js",
       "kind": "source-file",
       "label": "paths.js",
       "layer": "app",
-      "lines": 69
+      "lines": 73
     },
     {
       "id": "src/app/router.js",
       "kind": "source-file",
       "label": "router.js",
       "layer": "app",
-      "lines": 124
+      "lines": 132
     },
     {
       "id": "src/app/shell.js",
@@ -328,11 +328,82 @@
       "exports": 2
     },
     {
+      "id": "src/settings/api/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "settings",
+      "lines": 40
+    },
+    {
+      "id": "src/settings/components/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "settings",
+      "lines": 749
+    },
+    {
+      "id": "src/settings/components/modals.js",
+      "kind": "source-file",
+      "label": "modals.js",
+      "layer": "settings",
+      "lines": 193
+    },
+    {
+      "id": "src/settings/components/settingRow.js",
+      "kind": "source-file",
+      "label": "settingRow.js",
+      "layer": "settings",
+      "lines": 104
+    },
+    {
+      "id": "src/settings/components/settingsHeader.js",
+      "kind": "source-file",
+      "label": "settingsHeader.js",
+      "layer": "settings",
+      "lines": 53
+    },
+    {
+      "id": "src/settings/components/settingsSidebar.js",
+      "kind": "source-file",
+      "label": "settingsSidebar.js",
+      "layer": "settings",
+      "lines": 121
+    },
+    {
+      "id": "src/settings/engine/registry.js",
+      "kind": "source-file",
+      "label": "registry.js",
+      "layer": "settings",
+      "lines": 10
+    },
+    {
+      "id": "src/settings/engine/scopeResolver.js",
+      "kind": "source-file",
+      "label": "scopeResolver.js",
+      "layer": "settings",
+      "lines": 9
+    },
+    {
+      "id": "src/settings/pages/index.js",
+      "kind": "source-file",
+      "label": "index.js",
+      "layer": "settings",
+      "lines": 37
+    },
+    {
+      "id": "src/settings/types.d.ts",
+      "kind": "type-module",
+      "label": "types.d.ts",
+      "layer": "settings",
+      "lines": 100,
+      "exports": 10
+    },
+    {
       "id": "src/shared/api/db.js",
       "kind": "source-file",
       "label": "db.js",
       "layer": "shared",
-      "lines": 538
+      "lines": 599
     },
     {
       "id": "src/shared/api/errors.js",
@@ -367,7 +438,7 @@
       "kind": "source-file",
       "label": "mock.js",
       "layer": "shared",
-      "lines": 1075
+      "lines": 1266
     },
     {
       "id": "src/shared/api/redaction.js",
@@ -375,6 +446,13 @@
       "label": "redaction.js",
       "layer": "shared",
       "lines": 21
+    },
+    {
+      "id": "src/shared/api/settingsEngine.js",
+      "kind": "source-file",
+      "label": "settingsEngine.js",
+      "layer": "shared",
+      "lines": 604
     },
     {
       "id": "src/shared/components/ui.js",
@@ -395,15 +473,15 @@
       "kind": "source-file",
       "label": "store.js",
       "layer": "shared",
-      "lines": 176
+      "lines": 187
     },
     {
       "id": "src/shared/types/types.d.ts",
       "kind": "type-module",
       "label": "types.d.ts",
       "layer": "shared",
-      "lines": 348,
-      "exports": 73
+      "lines": 435,
+      "exports": 82
     },
     {
       "id": "src/shared/utils/format.js",
@@ -446,6 +524,13 @@
       "label": "product.css",
       "layer": "styles",
       "lines": 1095
+    },
+    {
+      "id": "src/styles/settings/settings.css",
+      "kind": "source-file",
+      "label": "settings.css",
+      "layer": "styles",
+      "lines": 435
     },
     {
       "id": "src/styles/work/work.css",
@@ -521,6 +606,14 @@
       "layer": "test",
       "lines": 322,
       "contractTests": 12
+    },
+    {
+      "id": "test/settings.test.mjs",
+      "kind": "test-file",
+      "label": "settings.test.mjs",
+      "layer": "test",
+      "lines": 151,
+      "contractTests": 6
     },
     {
       "id": "l0-composition",
@@ -3963,7 +4056,7 @@
       "kind": "script",
       "label": "build.mjs",
       "role": "Recreates dist/, copies src/, writes SHA-256 manifest",
-      "assets": 42,
+      "assets": 52,
       "command": "node scripts/build.mjs"
     },
     {
@@ -3979,7 +4072,7 @@
       "label": "node --test",
       "role": "Contract suite",
       "command": "node --test test/*.test.mjs",
-      "cases": 76
+      "cases": 82
     },
     {
       "id": "scr-brain",
@@ -3993,7 +4086,7 @@
       "kind": "architecture-layer",
       "label": "src/app",
       "files": 6,
-      "lines": 1700,
+      "lines": 1948,
       "importsNothingOutsideShared": false
     },
     {
@@ -4053,27 +4146,35 @@
       "importsNothingOutsideShared": false
     },
     {
+      "id": "arch-settings",
+      "kind": "architecture-layer",
+      "label": "src/settings",
+      "files": 10,
+      "lines": 1416,
+      "importsNothingOutsideShared": false
+    },
+    {
       "id": "arch-shared",
       "kind": "architecture-layer",
       "label": "src/shared",
-      "files": 12,
-      "lines": 2430,
+      "files": 13,
+      "lines": 3384,
       "importsNothingOutsideShared": true
     },
     {
       "id": "arch-styles",
       "kind": "architecture-layer",
       "label": "src/styles",
-      "files": 6,
-      "lines": 4123,
+      "files": 7,
+      "lines": 4558,
       "importsNothingOutsideShared": false
     },
     {
       "id": "arch-test",
       "kind": "architecture-layer",
       "label": "src/test",
-      "files": 5,
-      "lines": 654,
+      "files": 6,
+      "lines": 805,
       "importsNothingOutsideShared": false
     },
     {
@@ -7518,6 +7619,51 @@
     },
     {
       "from": "scr-build",
+      "to": "src/settings/api/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/engine/registry.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/engine/scopeResolver.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/components/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/components/settingsSidebar.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/components/settingsHeader.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/components/settingRow.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/components/modals.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/settings/pages/index.js",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
       "to": "src/integrations/api/client.js",
       "rel": "bundles"
     },
@@ -7564,6 +7710,11 @@
     {
       "from": "scr-build",
       "to": "src/styles/product/product.css",
+      "rel": "bundles"
+    },
+    {
+      "from": "scr-build",
+      "to": "src/styles/settings/settings.css",
       "rel": "bundles"
     },
     {
@@ -7624,6 +7775,11 @@
     {
       "from": "scr-test",
       "to": "test/product.test.mjs",
+      "rel": "runs"
+    },
+    {
+      "from": "scr-test",
+      "to": "test/settings.test.mjs",
       "rel": "runs"
     },
     {
@@ -7878,6 +8034,61 @@
     },
     {
       "from": "synase-ai",
+      "to": "arch-settings",
+      "rel": "organised-as"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/api/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/modals.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/settingRow.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/settingsHeader.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/components/settingsSidebar.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/engine/registry.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/engine/scopeResolver.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/pages/index.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-settings",
+      "to": "src/settings/types.d.ts",
+      "rel": "contains"
+    },
+    {
+      "from": "synase-ai",
       "to": "arch-shared",
       "rel": "organised-as"
     },
@@ -7914,6 +8125,11 @@
     {
       "from": "arch-shared",
       "to": "src/shared/api/redaction.js",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-shared",
+      "to": "src/shared/api/settingsEngine.js",
       "rel": "contains"
     },
     {
@@ -7973,6 +8189,11 @@
     },
     {
       "from": "arch-styles",
+      "to": "src/styles/settings/settings.css",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-styles",
       "to": "src/styles/work/work.css",
       "rel": "contains"
     },
@@ -8004,6 +8225,11 @@
     {
       "from": "arch-test",
       "to": "test/product.test.mjs",
+      "rel": "contains"
+    },
+    {
+      "from": "arch-test",
+      "to": "test/settings.test.mjs",
       "rel": "contains"
     },
     {

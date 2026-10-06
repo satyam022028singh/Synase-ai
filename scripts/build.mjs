@@ -28,11 +28,15 @@ const files = [
   "src/context/api/index.js", "src/outputs/api/index.js",
   "src/work/api/index.js", "src/work/constants.js", "src/work/pages/index.js",
   "src/work/components/index.js",
+  "src/settings/api/index.js", "src/settings/engine/registry.js", "src/settings/engine/scopeResolver.js",
+  "src/settings/components/index.js", "src/settings/components/settingsSidebar.js",
+  "src/settings/components/settingsHeader.js", "src/settings/components/settingRow.js",
+  "src/settings/components/modals.js", "src/settings/pages/index.js",
   "src/integrations/api/client.js", "src/integrations/api/types.d.ts",
   "src/home/workspace/dashboard/api.js", "src/home/workspace/dashboard/types.d.ts",
   "src/styles/app.css", "src/styles/home/dashboard.css",
   "src/styles/integrations/integrations.css", "src/styles/landing/landing.css",
-  "src/styles/work/work.css", "src/styles/product/product.css"
+  "src/styles/work/work.css", "src/styles/product/product.css", "src/styles/settings/settings.css"
 ];
 const manifest = {};
 for (const file of files) {
