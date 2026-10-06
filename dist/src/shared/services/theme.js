@@ -6,6 +6,7 @@ const KEY = 'synase-theme';
 const DARK = 'dark';
 
 export function currentTheme() {
+  if (typeof document === 'undefined') return 'light';
   return document.documentElement.getAttribute('data-theme') === DARK
     ? DARK
     : 'light';
@@ -13,13 +14,15 @@ export function currentTheme() {
 
 export function setTheme(theme) {
   const next = theme === DARK ? DARK : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  try {
-    localStorage.setItem(KEY, next);
-  } catch {
-    /* private mode: the attribute still applies for this page view */
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem(KEY, next);
+    } catch {
+      /* private mode: the attribute still applies for this page view */
+    }
+    syncToggles();
   }
-  syncToggles();
   return next;
 }
 

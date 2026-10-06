@@ -64,6 +64,17 @@ export function renderPage() {
   const chat = path.match(/^\/app\/chat(?:\/([^/]+))?$/);
   if (chat) return chatPage();
 
+  /* Settings renders standalone: full-page experience, owns the viewport.
+     No console shell sidebar or double-box clustering. */
+  const settingsMatch = path.match(/^\/app\/settings(?:\/([a-z0-9-]+))?$/);
+  if (settingsMatch) {
+    const sec = settingsMatch[1] || "general";
+    state.settingsSection = sec;
+    return settingsControlPlanePage(sec);
+  }
+  if (path.includes("/workspaces/") && path.endsWith("/settings"))
+    return settingsControlPlanePage("workspace");
+
   if (state.loading) return shell(loading());
 
   /* declared owner: Work view = decision dashboard (was src/phase12.js) */
@@ -76,15 +87,6 @@ export function renderPage() {
   if (path === routes.createProject) return shell(createProjectPage());
   if (path.includes("/workspaces/") && path.endsWith("/members"))
     return shell(membersPage());
-  if (path.includes("/workspaces/") && path.endsWith("/settings"))
-    return shell(settingsControlPlanePage("workspace"));
-
-  const settingsMatch = path.match(/^\/app\/settings(?:\/([a-z0-9-]+))?$/);
-  if (settingsMatch) {
-    const sec = settingsMatch[1] || "general";
-    state.settingsSection = sec;
-    return shell(settingsControlPlanePage(sec));
-  }
 
   const repository = path.match(/^\/app\/projects\/([^/]+)\/repository$/);
   if (repository) return shell(repositoryPage(repository[1]));

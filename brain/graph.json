@@ -3,9 +3,9 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-06T06:23:06.255Z",
+    "generatedAt": "2026-10-06T07:13:31.218Z",
     "version": "0.12.0",
-    "sourceLines": 14382,
+    "sourceLines": 14991,
     "testLines": 805,
     "trackedFiles": 82,
     "architectureLayers": 13,
@@ -63,7 +63,7 @@
       "kind": "source-file",
       "label": "router.js",
       "layer": "app",
-      "lines": 132
+      "lines": 134
     },
     {
       "id": "src/app/shell.js",
@@ -388,7 +388,7 @@
       "kind": "source-file",
       "label": "index.js",
       "layer": "settings",
-      "lines": 37
+      "lines": 71
     },
     {
       "id": "src/settings/types.d.ts",
@@ -466,7 +466,7 @@
       "kind": "source-file",
       "label": "theme.js",
       "layer": "shared",
-      "lines": 63
+      "lines": 66
     },
     {
       "id": "src/shared/state/store.js",
@@ -530,7 +530,7 @@
       "kind": "source-file",
       "label": "settings.css",
       "layer": "styles",
-      "lines": 435
+      "lines": 1005
     },
     {
       "id": "src/styles/work/work.css",
@@ -4086,7 +4086,7 @@
       "kind": "architecture-layer",
       "label": "src/app",
       "files": 6,
-      "lines": 1948,
+      "lines": 1950,
       "importsNothingOutsideShared": false
     },
     {
@@ -4150,7 +4150,7 @@
       "kind": "architecture-layer",
       "label": "src/settings",
       "files": 10,
-      "lines": 1416,
+      "lines": 1450,
       "importsNothingOutsideShared": false
     },
     {
@@ -4158,7 +4158,7 @@
       "kind": "architecture-layer",
       "label": "src/shared",
       "files": 13,
-      "lines": 3384,
+      "lines": 3387,
       "importsNothingOutsideShared": true
     },
     {
@@ -4166,7 +4166,7 @@
       "kind": "architecture-layer",
       "label": "src/styles",
       "files": 7,
-      "lines": 4558,
+      "lines": 5128,
       "importsNothingOutsideShared": false
     },
     {
