@@ -79,7 +79,9 @@ for (const entry of ENTITY_MAP) {
     ? "p11"
     : entry.fixture.includes("dashboard/api.js")
       ? "p12"
-      : "core";
+      : entry.fixture.includes("settings")
+        ? "settings"
+        : "core";
   const id = `ent-${scope}-${entry.name.toLowerCase()}`;
   if (emitted.has(id)) continue;
   emitted.add(id);
@@ -88,7 +90,9 @@ for (const entry of ENTITY_MAP) {
       ? "src/integrations/api/types.d.ts"
       : scope === "p12"
         ? "src/home/workspace/dashboard/types.d.ts"
-        : "src/shared/types/types.d.ts";
+        : scope === "settings"
+          ? "src/settings/types.d.ts"
+          : "src/shared/types/types.d.ts";
   add({
     id,
     kind: "entity",
@@ -140,7 +144,7 @@ for (const route of ROUTES) {
     backendSupported: false
   });
   link(route.module, route.id, "routes-to");
-  const service = route.phase === 11 ? "svc-p11" : route.phase === 12 ? "svc-p12" : "svc-mock";
+  const service = route.phase === 11 ? "svc-p11" : route.phase === 12 ? "svc-p12" : route.phase === 15 ? "svc-settings" : "svc-mock";
   link(route.id, service, "reads-from");
 }
 
@@ -225,6 +229,7 @@ const FILE_ROLES = {
   "src/styles/app.css": { role: "Core design system", detail: "Light and dark theme tokens, shell, cards, tables, forms, status pills" },
   "src/styles/home/dashboard.css": { role: "Dashboard component styles", detail: "Dashboard metrics, attention queue, readiness, safety panel" },
   "src/styles/integrations/integrations.css": { role: "Integrations component styles", detail: "Integration, activity, and audit layouts" },
+  "src/styles/settings/settings.css": { role: "Settings Control Plane styles", detail: "Clean white canvas layout, sidebar, modals, form controls, and status pills" },
   "src/styles/landing/landing.css": { role: "Landing page styles", detail: "Extracted from the former inline style block" }
 };
 for (const asset of facts.buildAssets) {
@@ -240,6 +245,7 @@ for (const script of ["scr-build", "scr-serve", "scr-test", "scr-brain"]) link("
 link("scr-test", "svc-mock", "covers");
 link("scr-test", "svc-p11", "covers");
 link("scr-test", "svc-p12", "covers");
+link("scr-test", "svc-settings", "covers");
 for (const testFile of Object.keys(facts.files).filter((path) => path.startsWith("test/"))) link("scr-test", testFile, "runs");
 
 /* architecture layers discovered on disk, so a new folder shows up immediately */

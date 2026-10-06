@@ -3,18 +3,18 @@
   "generator": "scripts/brain.mjs",
   "regeneratedBy": "npm run brain",
   "facts": {
-    "generatedAt": "2026-10-06T07:13:31.218Z",
+    "generatedAt": "2026-10-06T07:25:43.545Z",
     "version": "0.12.0",
     "sourceLines": 14991,
     "testLines": 805,
     "trackedFiles": 82,
     "architectureLayers": 13,
     "contractTests": 82,
-    "typeExports": 96,
+    "typeExports": 106,
     "dbCollections": 50,
-    "routes": 35,
-    "serviceMethods": 103,
-    "invariants": 22,
+    "routes": 37,
+    "serviceMethods": 137,
+    "invariants": 24,
     "gaps": 12,
     "risks": 10,
     "openRisks": 8,
@@ -665,7 +665,7 @@
       "phases": "0-10",
       "role": "Deterministic in-memory domain service. Owns the entire mock db fixture.",
       "fixture": "db (src/shared/api/db.js)",
-      "methodCount": 90,
+      "methodCount": 107,
       "methods": [
         "login",
         "register",
@@ -756,7 +756,24 @@
         "exportReport",
         "decideApproval",
         "addApprovalComment",
-        "cancelApproval"
+        "cancelApproval",
+        "getEffectiveSettings",
+        "getSettingDefinitions",
+        "updateSetting",
+        "resetSettings",
+        "listProviders",
+        "getAgentPolicy",
+        "updateAgentPolicy",
+        "listApiKeys",
+        "createApiKey",
+        "revokeApiKey",
+        "listConnectors",
+        "updateConnector",
+        "listAutomations",
+        "updateAutomation",
+        "getUsageSummary",
+        "exportWorkspaceData",
+        "validateImportData"
       ],
       "helpers": [
         "ApiError",
@@ -1577,6 +1594,159 @@
       "requiresIdempotencyKey": true
     },
     {
+      "id": "svc-mock.getEffectiveSettings",
+      "kind": "service-method",
+      "label": "getEffectiveSettings",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.getSettingDefinitions",
+      "kind": "service-method",
+      "label": "getSettingDefinitions",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.updateSetting",
+      "kind": "service-method",
+      "label": "updateSetting",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.resetSettings",
+      "kind": "service-method",
+      "label": "resetSettings",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.listProviders",
+      "kind": "service-method",
+      "label": "listProviders",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.getAgentPolicy",
+      "kind": "service-method",
+      "label": "getAgentPolicy",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.updateAgentPolicy",
+      "kind": "service-method",
+      "label": "updateAgentPolicy",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.listApiKeys",
+      "kind": "service-method",
+      "label": "listApiKeys",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.createApiKey",
+      "kind": "service-method",
+      "label": "createApiKey",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.revokeApiKey",
+      "kind": "service-method",
+      "label": "revokeApiKey",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.listConnectors",
+      "kind": "service-method",
+      "label": "listConnectors",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.updateConnector",
+      "kind": "service-method",
+      "label": "updateConnector",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.listAutomations",
+      "kind": "service-method",
+      "label": "listAutomations",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.updateAutomation",
+      "kind": "service-method",
+      "label": "updateAutomation",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.getUsageSummary",
+      "kind": "service-method",
+      "label": "getUsageSummary",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-mock.exportWorkspaceData",
+      "kind": "service-method",
+      "label": "exportWorkspaceData",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-mock.validateImportData",
+      "kind": "service-method",
+      "label": "validateImportData",
+      "service": "svc-mock",
+      "module": "src/shared/api/mock.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
       "id": "svc-p11",
       "kind": "service",
       "label": "phase11Api",
@@ -1739,6 +1909,192 @@
       "service": "svc-p12",
       "module": "src/home/workspace/dashboard/api.js",
       "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings",
+      "kind": "service",
+      "label": "settingsApi",
+      "module": "src/settings/api/index.js",
+      "phases": "15",
+      "role": "Settings control plane facade. Manages hierarchical configuration, credentials, connectors, policies, and automations.",
+      "fixture": "db.settingsValues, db.apiKeys, db.settingsConnectors, db.settingsAutomations, db.agentPolicy, db.usageSummary",
+      "methodCount": 17,
+      "methods": [
+        "getEffectiveSettings",
+        "getSettingDefinitions",
+        "updateSetting",
+        "resetSettings",
+        "listProviders",
+        "getAgentPolicy",
+        "updateAgentPolicy",
+        "listApiKeys",
+        "createApiKey",
+        "revokeApiKey",
+        "listConnectors",
+        "updateConnector",
+        "listAutomations",
+        "updateAutomation",
+        "getUsageSummary",
+        "exportWorkspaceData",
+        "validateImportData"
+      ],
+      "helpers": [
+        "createSettingsApi",
+        " createIdempotencyKey"
+      ]
+    },
+    {
+      "id": "svc-settings.getEffectiveSettings",
+      "kind": "service-method",
+      "label": "getEffectiveSettings",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.getSettingDefinitions",
+      "kind": "service-method",
+      "label": "getSettingDefinitions",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.updateSetting",
+      "kind": "service-method",
+      "label": "updateSetting",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.resetSettings",
+      "kind": "service-method",
+      "label": "resetSettings",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.listProviders",
+      "kind": "service-method",
+      "label": "listProviders",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.getAgentPolicy",
+      "kind": "service-method",
+      "label": "getAgentPolicy",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.updateAgentPolicy",
+      "kind": "service-method",
+      "label": "updateAgentPolicy",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.listApiKeys",
+      "kind": "service-method",
+      "label": "listApiKeys",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.createApiKey",
+      "kind": "service-method",
+      "label": "createApiKey",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.revokeApiKey",
+      "kind": "service-method",
+      "label": "revokeApiKey",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.listConnectors",
+      "kind": "service-method",
+      "label": "listConnectors",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.updateConnector",
+      "kind": "service-method",
+      "label": "updateConnector",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.listAutomations",
+      "kind": "service-method",
+      "label": "listAutomations",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.updateAutomation",
+      "kind": "service-method",
+      "label": "updateAutomation",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.getUsageSummary",
+      "kind": "service-method",
+      "label": "getUsageSummary",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": false,
+      "requiresIdempotencyKey": false
+    },
+    {
+      "id": "svc-settings.exportWorkspaceData",
+      "kind": "service-method",
+      "label": "exportWorkspaceData",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
+      "requiresIdempotencyKey": true
+    },
+    {
+      "id": "svc-settings.validateImportData",
+      "kind": "service-method",
+      "label": "validateImportData",
+      "service": "svc-settings",
+      "module": "src/settings/api/index.js",
+      "mutation": true,
       "requiresIdempotencyKey": false
     },
     {
@@ -2495,6 +2851,116 @@
       "divergence": "Third activity shape: flat actor plus audit:false flag."
     },
     {
+      "id": "ent-settings-settingdefinition",
+      "kind": "entity",
+      "label": "SettingDefinition",
+      "fixture": "settings engine registry",
+      "service": "svc-settings",
+      "methods": [
+        "getSettingDefinitions"
+      ],
+      "renderedBy": [
+        "settingsControlPlanePage",
+        "settingRow"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-settingvalue",
+      "kind": "entity",
+      "label": "SettingValue",
+      "fixture": "db.settingsValues",
+      "service": "svc-settings",
+      "methods": [
+        "getEffectiveSettings",
+        "updateSetting",
+        "resetSettings"
+      ],
+      "renderedBy": [
+        "settingsControlPlanePage",
+        "settingRow"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-effectivesetting",
+      "kind": "entity",
+      "label": "EffectiveSetting",
+      "fixture": "derived settings scopeResolver",
+      "service": "svc-settings",
+      "methods": [
+        "getEffectiveSettings",
+        "updateSetting"
+      ],
+      "renderedBy": [
+        "settingsControlPlanePage",
+        "settingRow"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-apikeyitem",
+      "kind": "entity",
+      "label": "ApiKeyItem",
+      "fixture": "db.apiKeys (settings)",
+      "service": "svc-settings",
+      "methods": [
+        "listApiKeys",
+        "createApiKey",
+        "revokeApiKey"
+      ],
+      "renderedBy": [
+        "settingsDeveloperSection",
+        "apiKeyModal"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-connectoritem",
+      "kind": "entity",
+      "label": "ConnectorItem",
+      "fixture": "db.settingsConnectors",
+      "service": "svc-settings",
+      "methods": [
+        "listConnectors",
+        "updateConnector"
+      ],
+      "renderedBy": [
+        "settingsConnectorsSection"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-automationitem",
+      "kind": "entity",
+      "label": "AutomationItem",
+      "fixture": "db.settingsAutomations",
+      "service": "svc-settings",
+      "methods": [
+        "listAutomations",
+        "updateAutomation"
+      ],
+      "renderedBy": [
+        "settingsAutomationsSection"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
+      "id": "ent-settings-agentpolicy",
+      "kind": "entity",
+      "label": "AgentPolicy",
+      "fixture": "db.agentPolicy (settings)",
+      "service": "svc-settings",
+      "methods": [
+        "getAgentPolicy",
+        "updateAgentPolicy"
+      ],
+      "renderedBy": [
+        "settingsAgentsSection"
+      ],
+      "declaredIn": "src/settings/types.d.ts"
+    },
+    {
       "id": "ent-untyped-devopsSummary",
       "kind": "entity-untyped",
       "label": "DevOpsSummary aggregate",
@@ -2831,9 +3297,7 @@
       "navSection": "system",
       "shellWrapped": true,
       "status": "mock",
-      "backendSupported": false,
-      "navLabel": "Settings",
-      "navHref": "#/app/workspaces/:workspaceId/settings"
+      "backendSupported": false
     },
     {
       "id": "r-intel-product",
@@ -3106,6 +3570,36 @@
       "backendSupported": false
     },
     {
+      "id": "r-settings",
+      "kind": "route",
+      "label": "#/app/settings",
+      "path": "/app/settings",
+      "match": "^/app/settings(?:/([a-z0-9-]+))?$",
+      "view": "settingsControlPlanePage()",
+      "module": "src/settings/pages/index.js",
+      "phase": 15,
+      "navSection": "settings",
+      "shellWrapped": false,
+      "status": "mock",
+      "backendSupported": false,
+      "navLabel": "Settings",
+      "navHref": "#/app/settings"
+    },
+    {
+      "id": "r-settings-section",
+      "kind": "route",
+      "label": "#/app/settings/:section",
+      "path": "/app/settings/:section",
+      "match": "^/app/settings/([a-z0-9-]+)$",
+      "view": "settingsControlPlanePage(section)",
+      "module": "src/settings/pages/index.js",
+      "phase": 15,
+      "navSection": "settings",
+      "shellWrapped": false,
+      "status": "mock",
+      "backendSupported": false
+    },
+    {
       "id": "nav-assist",
       "kind": "nav-section",
       "label": "Assist",
@@ -3253,6 +3747,32 @@
         "work"
       ],
       "within": "r-chat"
+    },
+    {
+      "id": "t-settings",
+      "kind": "in-page-tab",
+      "label": "state.settingsSection",
+      "state": "state.settingsSection",
+      "param": "#/app/settings/:section",
+      "values": [
+        "general",
+        "workspace",
+        "members",
+        "roles",
+        "ai-models",
+        "routing",
+        "mcp-connectors",
+        "knowledge-sources",
+        "agent-policies",
+        "approvals-guardrails",
+        "api-keys",
+        "webhooks",
+        "integrations",
+        "audit-logs",
+        "usage-billing",
+        "advanced"
+      ],
+      "within": "r-settings"
     },
     {
       "id": "inv-01",
@@ -3485,6 +4005,28 @@
         "work/components/index.js workArtifactPanel"
       ],
       "layer": "l1-view"
+    },
+    {
+      "id": "inv-23",
+      "kind": "invariant",
+      "label": "One-time secret reveal",
+      "statement": "Full secret values for API keys and credentials are shown exactly once in the creation receipt (secretShownOnce: true) and never persisted or queryable via list methods.",
+      "enforcedBy": [
+        "src/shared/api/mock.js createApiKey",
+        "test/settings.test.mjs"
+      ],
+      "layer": "l3-adapter"
+    },
+    {
+      "id": "inv-24",
+      "kind": "invariant",
+      "label": "Strict scope precedence hierarchy",
+      "statement": "Hierarchical configuration resolves through deterministic precedence (user > session > task > agent > project > workspace > system) with schema default fallback.",
+      "enforcedBy": [
+        "src/settings/engine/scopeResolver.js",
+        "test/settings.test.mjs"
+      ],
+      "layer": "l3-adapter"
     },
     {
       "id": "gap-01",
@@ -3782,6 +4324,22 @@
       "status": "active"
     },
     {
+      "id": "dec-13",
+      "kind": "decision",
+      "label": "Settings renders outside console chrome",
+      "decision": "/app/settings renders as a dedicated full-page control plane without the console shell sidebar or nested bounding boxes. Features clean white canvas and top navigation back to console.",
+      "consequence": "No boxed-inside-box clustering. Clear operational focus for system configuration. Cost: Settings owns its own header and sidebar.",
+      "status": "active"
+    },
+    {
+      "id": "dec-14",
+      "kind": "decision",
+      "label": "Deterministic scope precedence resolver",
+      "decision": "Settings values are resolved via pure hierarchical order (user > session > task > agent > project > workspace > system).",
+      "consequence": "Predictable override behavior across all 16 domains. Prevents configuration drift. Cost: Requires explicit scope metadata on all definition entries.",
+      "status": "active"
+    },
+    {
       "id": "ph-0",
       "kind": "phase",
       "label": "Phase 0",
@@ -3918,9 +4476,18 @@
     },
     {
       "id": "ph-15",
-      "kind": "phase-planned",
+      "kind": "phase",
       "label": "Phase 15",
       "number": 15,
+      "name": "Settings Control Plane",
+      "status": "implemented",
+      "capability": "16-domain full-page hierarchical settings control plane outside console shell, scope precedence resolution, API key one-time reveals, connectors, agent policies, automations, and clean white theme"
+    },
+    {
+      "id": "ph-16",
+      "kind": "phase-planned",
+      "label": "Phase 16",
+      "number": 16,
       "name": "Contract registry and freeze",
       "status": "planned",
       "prereq": null,
@@ -3936,13 +4503,13 @@
       ]
     },
     {
-      "id": "ph-16",
+      "id": "ph-17",
       "kind": "phase-planned",
-      "label": "Phase 16",
-      "number": 16,
+      "label": "Phase 17",
+      "number": 17,
       "name": "Auth and session lifecycle",
       "status": "planned",
-      "prereq": "ph-15",
+      "prereq": "ph-16",
       "rationale": "Replace the hardcoded authenticated flag with a real session contract, capability fields beyond roles, and explicit active-context encoding.",
       "deliverables": [
         "SessionProvider at the composition root",
@@ -3956,13 +4523,13 @@
       ]
     },
     {
-      "id": "ph-17",
+      "id": "ph-18",
       "kind": "phase-planned",
-      "label": "Phase 17",
-      "number": 17,
+      "label": "Phase 18",
+      "number": 18,
       "name": "Backend aggregate endpoints",
       "status": "planned",
-      "prereq": "ph-15",
+      "prereq": "ph-16",
       "rationale": "Give the dashboard real workspace-scoped aggregates so cross-domain pages stop needing browser-side relational reconstruction.",
       "deliverables": [
         "GET /api/v1/dashboard implemented server-side",
@@ -3975,13 +4542,13 @@
       ]
     },
     {
-      "id": "ph-18",
+      "id": "ph-19",
       "kind": "phase-planned",
-      "label": "Phase 18",
-      "number": 18,
+      "label": "Phase 19",
+      "number": 19,
       "name": "Authoritative workflow streaming",
       "status": "planned",
-      "prereq": "ph-16",
+      "prereq": "ph-17",
       "rationale": "Replace db.workflowScripts with a real SSE channel that carries authoritative event and snapshot state with replay and heartbeat.",
       "deliverables": [
         "SSE envelope + X-Request-ID correlation",
@@ -3993,13 +4560,13 @@
       ]
     },
     {
-      "id": "ph-19",
+      "id": "ph-20",
       "kind": "phase-planned",
-      "label": "Phase 19",
-      "number": 19,
+      "label": "Phase 20",
+      "number": 20,
       "name": "Signed input pipeline",
       "status": "planned",
-      "prereq": "ph-17",
+      "prereq": "ph-18",
       "rationale": "Replace the mock-upload: URL with signed initiation and completion, keeping security scan and extraction as distinct states.",
       "deliverables": [
         "initiateUpload/completeUpload against storage",
@@ -4011,13 +4578,13 @@
       ]
     },
     {
-      "id": "ph-20",
+      "id": "ph-21",
       "kind": "phase-planned",
-      "label": "Phase 20",
-      "number": 20,
+      "label": "Phase 21",
+      "number": 21,
       "name": "Governed audit and notifications",
       "status": "planned",
-      "prereq": "ph-18",
+      "prereq": "ph-19",
       "rationale": "Move audit from a read-only fixture to a governed append-only store with a stated retention policy, and add a delivery channel.",
       "deliverables": [
         "append-only audit with retention statement",
@@ -4309,6 +4876,36 @@
     },
     {
       "from": "l1-view",
+      "to": "src/settings/pages/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/settings/components/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/settings/components/modals.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/settings/components/settingRow.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/settings/components/settingsHeader.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
+      "to": "src/settings/components/settingsSidebar.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l1-view",
       "to": "l0-composition",
       "rel": "calls-into"
     },
@@ -4354,6 +4951,11 @@
     },
     {
       "from": "l2-service",
+      "to": "src/settings/api/index.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l2-service",
       "to": "l1-view",
       "rel": "calls-into"
     },
@@ -4380,6 +4982,16 @@
     {
       "from": "l3-adapter",
       "to": "src/home/workspace/dashboard/api.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l3-adapter",
+      "to": "src/settings/engine/registry.js",
+      "rel": "implemented-by"
+    },
+    {
+      "from": "l3-adapter",
+      "to": "src/settings/engine/scopeResolver.js",
       "rel": "implemented-by"
     },
     {
@@ -4873,6 +5485,91 @@
       "rel": "exposes-method"
     },
     {
+      "from": "svc-mock",
+      "to": "svc-mock.getEffectiveSettings",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.getSettingDefinitions",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateSetting",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.resetSettings",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.listProviders",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.getAgentPolicy",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateAgentPolicy",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.listApiKeys",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.createApiKey",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.revokeApiKey",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.listConnectors",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateConnector",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.listAutomations",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.updateAutomation",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.getUsageSummary",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.exportWorkspaceData",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-mock",
+      "to": "svc-mock.validateImportData",
+      "rel": "exposes-method"
+    },
+    {
       "from": "src/integrations/api/client.js",
       "to": "svc-p11",
       "rel": "exports"
@@ -4948,6 +5645,96 @@
       "rel": "exposes-method"
     },
     {
+      "from": "src/settings/api/index.js",
+      "to": "svc-settings",
+      "rel": "exports"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.getEffectiveSettings",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.getSettingDefinitions",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.updateSetting",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.resetSettings",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.listProviders",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.getAgentPolicy",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.updateAgentPolicy",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.listApiKeys",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.createApiKey",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.revokeApiKey",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.listConnectors",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.updateConnector",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.listAutomations",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.updateAutomation",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.getUsageSummary",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.exportWorkspaceData",
+      "rel": "exposes-method"
+    },
+    {
+      "from": "svc-settings",
+      "to": "svc-settings.validateImportData",
+      "rel": "exposes-method"
+    },
+    {
       "from": "src/shared/types/types.d.ts",
       "to": "l2-service",
       "rel": "declares-for"
@@ -4959,6 +5746,11 @@
     },
     {
       "from": "src/home/workspace/dashboard/types.d.ts",
+      "to": "l2-service",
+      "rel": "declares-for"
+    },
+    {
+      "from": "src/settings/types.d.ts",
       "to": "l2-service",
       "rel": "declares-for"
     },
@@ -5973,6 +6765,151 @@
       "rel": "read-via"
     },
     {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-settingdefinition",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-settingdefinition",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-settingdefinition",
+      "to": "svc-settings.getSettingDefinitions",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-settingvalue",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-settingvalue",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-settingvalue",
+      "to": "svc-settings.getEffectiveSettings",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-settingvalue",
+      "to": "svc-settings.updateSetting",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-settingvalue",
+      "to": "svc-settings.resetSettings",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-effectivesetting",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-effectivesetting",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-effectivesetting",
+      "to": "svc-settings.getEffectiveSettings",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-effectivesetting",
+      "to": "svc-settings.updateSetting",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-apikeyitem",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-apikeyitem",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-apikeyitem",
+      "to": "svc-settings.listApiKeys",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-apikeyitem",
+      "to": "svc-settings.createApiKey",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-apikeyitem",
+      "to": "svc-settings.revokeApiKey",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-connectoritem",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-connectoritem",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-connectoritem",
+      "to": "svc-settings.listConnectors",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-connectoritem",
+      "to": "svc-settings.updateConnector",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-automationitem",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-automationitem",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-automationitem",
+      "to": "svc-settings.listAutomations",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-automationitem",
+      "to": "svc-settings.updateAutomation",
+      "rel": "read-via"
+    },
+    {
+      "from": "src/settings/types.d.ts",
+      "to": "ent-settings-agentpolicy",
+      "rel": "declares"
+    },
+    {
+      "from": "svc-settings",
+      "to": "ent-settings-agentpolicy",
+      "rel": "exposes"
+    },
+    {
+      "from": "ent-settings-agentpolicy",
+      "to": "svc-settings.getAgentPolicy",
+      "rel": "read-via"
+    },
+    {
+      "from": "ent-settings-agentpolicy",
+      "to": "svc-settings.updateAgentPolicy",
+      "rel": "read-via"
+    },
+    {
       "from": "svc-mock",
       "to": "ent-untyped-devopsSummary",
       "rel": "exposes"
@@ -6418,6 +7355,26 @@
       "rel": "reads-from"
     },
     {
+      "from": "src/settings/pages/index.js",
+      "to": "r-settings",
+      "rel": "routes-to"
+    },
+    {
+      "from": "r-settings",
+      "to": "svc-settings",
+      "rel": "reads-from"
+    },
+    {
+      "from": "src/settings/pages/index.js",
+      "to": "r-settings-section",
+      "rel": "routes-to"
+    },
+    {
+      "from": "r-settings-section",
+      "to": "svc-settings",
+      "rel": "reads-from"
+    },
+    {
       "from": "src/app/shell.js",
       "to": "nav-assist",
       "rel": "renders-nav"
@@ -6529,7 +7486,7 @@
     },
     {
       "from": "nav-system",
-      "to": "r-workspace-settings",
+      "to": "r-settings",
       "rel": "links-to"
     },
     {
@@ -6610,6 +7567,16 @@
     {
       "from": "r-chat",
       "to": "t-surface",
+      "rel": "contains-tab"
+    },
+    {
+      "from": "src/settings/pages/index.js",
+      "to": "t-settings",
+      "rel": "declares-tab"
+    },
+    {
+      "from": "r-settings",
+      "to": "t-settings",
       "rel": "contains-tab"
     },
     {
@@ -6830,6 +7797,26 @@
     {
       "from": "synase-ai",
       "to": "inv-22",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-23",
+      "to": "l3-adapter",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-23",
+      "rel": "guarantees"
+    },
+    {
+      "from": "inv-24",
+      "to": "l3-adapter",
+      "rel": "governs"
+    },
+    {
+      "from": "synase-ai",
+      "to": "inv-24",
       "rel": "guarantees"
     },
     {
@@ -7094,6 +8081,16 @@
     },
     {
       "from": "synase-ai",
+      "to": "dec-13",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
+      "to": "dec-14",
+      "rel": "decided"
+    },
+    {
+      "from": "synase-ai",
       "to": "ph-0",
       "rel": "delivered-phase"
     },
@@ -7343,62 +8340,57 @@
       "rel": "surfaced-route"
     },
     {
+      "from": "synase-ai",
+      "to": "ph-15",
+      "rel": "delivered-phase"
+    },
+    {
       "from": "ph-15",
+      "to": "r-settings",
+      "rel": "surfaced-route"
+    },
+    {
+      "from": "ph-15",
+      "to": "r-settings-section",
+      "rel": "surfaced-route"
+    },
+    {
+      "from": "ph-16",
       "to": "gap-02",
       "rel": "resolves"
     },
     {
-      "from": "ph-15",
+      "from": "ph-16",
       "to": "gap-11",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
-      "to": "ph-15",
-      "rel": "precedes"
-    },
-    {
       "from": "ph-15",
-      "to": "ph-16",
-      "rel": "unblocks"
-    },
-    {
-      "from": "ph-16",
-      "to": "gap-01",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-16",
-      "to": "gap-05",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-16",
-      "to": "gap-06",
-      "rel": "resolves"
-    },
-    {
-      "from": "ph-14",
       "to": "ph-16",
       "rel": "precedes"
     },
     {
-      "from": "ph-15",
+      "from": "ph-16",
       "to": "ph-17",
       "rel": "unblocks"
     },
     {
       "from": "ph-17",
-      "to": "gap-04",
+      "to": "gap-01",
       "rel": "resolves"
     },
     {
       "from": "ph-17",
-      "to": "gap-03",
+      "to": "gap-05",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
+      "from": "ph-17",
+      "to": "gap-06",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-15",
       "to": "ph-17",
       "rel": "precedes"
     },
@@ -7409,11 +8401,16 @@
     },
     {
       "from": "ph-18",
-      "to": "gap-07",
+      "to": "gap-04",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
+      "from": "ph-18",
+      "to": "gap-03",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-15",
       "to": "ph-18",
       "rel": "precedes"
     },
@@ -7424,11 +8421,11 @@
     },
     {
       "from": "ph-19",
-      "to": "gap-08",
+      "to": "gap-07",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
+      "from": "ph-15",
       "to": "ph-19",
       "rel": "precedes"
     },
@@ -7439,22 +8436,37 @@
     },
     {
       "from": "ph-20",
+      "to": "gap-08",
+      "rel": "resolves"
+    },
+    {
+      "from": "ph-15",
+      "to": "ph-20",
+      "rel": "precedes"
+    },
+    {
+      "from": "ph-19",
+      "to": "ph-21",
+      "rel": "unblocks"
+    },
+    {
+      "from": "ph-21",
       "to": "gap-12",
       "rel": "resolves"
     },
     {
-      "from": "ph-20",
+      "from": "ph-21",
       "to": "gap-09",
       "rel": "resolves"
     },
     {
-      "from": "ph-20",
+      "from": "ph-21",
       "to": "gap-10",
       "rel": "resolves"
     },
     {
-      "from": "ph-14",
-      "to": "ph-20",
+      "from": "ph-15",
+      "to": "ph-21",
       "rel": "precedes"
     },
     {
@@ -7750,6 +8762,11 @@
     {
       "from": "scr-test",
       "to": "svc-p12",
+      "rel": "covers"
+    },
+    {
+      "from": "scr-test",
+      "to": "svc-settings",
       "rel": "covers"
     },
     {

@@ -32,16 +32,16 @@ Measured shape at generation time:
 | Measure | Value |
 | --- | --- |
 | Version | `0.12.0` |
-| Source lines (src + HTML) | 7,991 |
-| Tracked files across 12 architecture layers | 57 |
-| Test lines | 332 |
-| Contract tests | 64 |
-| Declared types across three `.d.ts` files | 96 |
-| Mock fixture collections in `db` | 42 |
-| Routes | 35 |
-| Domain service methods | 87 across 3 services |
-| Typed entities | 46, plus 7 with no interface at all |
-| Safety invariants | 22 |
+| Source lines (src + HTML) | 14,991 |
+| Tracked files across 13 architecture layers | 82 |
+| Test lines | 805 |
+| Contract tests | 82 |
+| Declared types across four `.d.ts` files | 106 |
+| Mock fixture collections in `db` | 50 |
+| Routes | 37 |
+| Domain service methods | 137 across 4 services |
+| Typed entities | 56, plus 6 with no interface at all |
+| Safety invariants | 24 |
 | Known contract gaps | 12 |
 | Structural risks | 10, of which 2 resolved |
 
@@ -52,9 +52,9 @@ Measured shape at generation time:
 ```
 Route
   → application shell          L0  src/app/main.js, router.js, shell.js, paths.js, actions/work.js
-  → domain view templates      L1  src/{home,product,devops,mcp,context,outputs,integrations,work}
+  → domain view templates      L1  src/{home,product,devops,mcp,context,outputs,integrations,work,settings}
   → domain service surface     L2  src/<domain>/api/index.js — named facades
-  → mock or live adapter       L3  shared/api/mock.js + db.js; live fails closed
+  → mock or live adapter       L3  shared/api/mock.js + db.js, settings/engine/*; live fails closed
   → shared HTTP/SSE transport  L4  only exercised by tests today
   → /api/v1                    L5  does not exist
 ```
@@ -62,7 +62,7 @@ Route
 Module layout is a strict stack: `app/` → domains → `shared/`. Two of the three
 rules below are mechanically checkable:
 
-- **No domain imports another domain.** Product, DevOps and MCP are siblings.
+- **No domain imports another domain.** Product, DevOps, MCP, and Settings are siblings.
   Cross-domain needs are lifted into `shared/`.
 - **`shared/` imports nothing outside itself.** It is a leaf layer.
 - **Frontend domain models do not mirror persistence tables.** If a view needs a
@@ -72,20 +72,21 @@ rules below are mechanically checkable:
 
 See [ARCHITECTURE.md](../ARCHITECTURE.md) for the full dependency rules.
 
-### The three services
+### The four services
 
 | Service | File | Scope | Methods | Fixture |
 | --- | --- | --- | --- | --- |
-| `mockApi` | `src/shared/api/mock.js` | Phases 0–10 | 74 | `db`, 39 collections |
+| `mockApi` | `src/shared/api/mock.js` | Phases 0–10, 15 | 91 | `db`, 50 collections |
 | `phase11Api` | `src/integrations/api/client.js` | Integrations, activity, audit | 11 | module-private arrays + `receipts` Map |
 | `phase12Api` | `src/home/workspace/dashboard/api.js` | Dashboard aggregate, readiness | 2 | frozen `dashboard` fixture |
+| `settingsApi` | `src/settings/api/index.js` | Settings Control Plane (Phase 15) | 17 | `db.settingsValues`, keys, connectors, policies, registry |
 
 Each domain additionally exposes a narrow facade (`devopsApi`, `mcpApi`,
-`outputsApi`, …) built from `mockApi`. There is still exactly one implementation
+`outputsApi`, `settingsApi`, …) built from `mockApi`. There is still exactly one implementation
 of every method; only the surface is partitioned.
 
 `phase12Api` is the only service with a live adapter factory,
-`createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })`. Phases 0–11 have no
+`createPhase12Service({ mode, baseUrl, fetchImpl, timeoutMs })`. Phases 0–11 and 15 have no
 live path whatsoever. Live mode is never enabled from an environment variable, and
 `src/shared/api/live.js` exports a `liveApi` that always throws and has no caller.
 
@@ -93,7 +94,7 @@ live path whatsoever. Live mode is never enabled from an environment variable, a
 
 ## 3. Routing: one router, one listener
 
-`src/app/router.js` owns `renderPage()` and resolves all 35 routes. Three auth routes
+`src/app/router.js` owns `renderPage()` and resolves all 37 routes. Three auth routes
 render without the shell; everything else is wrapped in `shell()`. A single delegated
 `click` / `change` / `input` / `submit` listener in `src/app/main.js` handles every
 action, and views never attach listeners of their own.
@@ -106,6 +107,11 @@ land there. It renders **outside** the shell — no platform sidebar or topbar �
 the router checks it before the loading branch so the console chrome never flashes.
 `/app/dashboard` is the Work view and stays inside the shell. A surface toggle sits in
 the chat header and above the dashboard.
+
+`/app/settings` is the Settings Control Plane: it also renders **outside** the console
+shell chrome as a dedicated full-page control plane on a clean white canvas (`#ffffff`),
+avoiding nested boxed-in-a-box clustering while providing deep navigation across all 16
+configuration domains and top navigation (`← Back to Console`) back to `/app/dashboard`.
 
 The chat controller lives in `src/app/actions/work.js` with `render`/`toast` injected,
 because importing them back would create a cycle with `main.js`.
@@ -122,7 +128,7 @@ because importing them back would create a cycle with `main.js`.
 
 ## 4. Domain model
 
-Fourteen capability areas, each with fixtures, service methods, and a rendering view:
+Fifteen capability areas, each with fixtures, service methods, and a rendering view:
 
 **Workspace** — `Workspace`, `WorkspaceMember`, `Project`, `ProjectMember`. Projects
 are the unit of scoping for nearly everything else.
@@ -164,6 +170,8 @@ audit mutation, and the suite asserts that.
 `selected_project_mock` with `aggregateContractStatus: "unresolved"`, because the real
 aggregate endpoint does not exist.
 
+**Settings Control Plane** — `SettingDefinition`, `SettingValue`, `EffectiveSetting`, `ApiKeyItem`, `ConnectorItem`, `AutomationItem`, `AgentPolicy`. Manages 16 canonical domains across 5 categories (`general`, `workspace`, `members`, `roles`, `ai-models`, `routing`, `mcp-connectors`, `knowledge-sources`, `agent-policies`, `approvals-guardrails`, `api-keys`, `webhooks`, `integrations`, `audit-logs`, `usage-billing`, `advanced`). Resolves hierarchical configuration through strict scope precedence (`user` > `session` > `task` > `agent` > `project` > `workspace` > `system`) with fallback to schema default.
+
 ### Three shapes named `ActivityItem`
 
 This is worth knowing before you import it:
@@ -177,16 +185,16 @@ This is worth knowing before you import it:
 One concept, three incompatible contracts, and a name collision across two type
 modules. If you build a real backend, collapse these into one envelope first.
 
-### Seven entities with no interface
+### Six entities with no interface
 
-`devopsSummary`, `productStrategy`, `dependencies`, `testSuggestions`, `mcpDirectories`,
+`devopsSummary`, `dependencies`, `testSuggestions`, `mcpDirectories`,
 `discoveryRuns`, `workflowScripts` are served by real methods and rendered by real
 views, but exist in no `.d.ts` file. They are the most likely source of silent drift
 when a real backend arrives. They are tagged `entity-untyped` in the graph.
 
 ---
 
-## 5. The 22 invariants
+## 5. The 24 invariants
 
 These are the project's actual product. Each is asserted by a test rather than
 documented and hoped for.
@@ -213,6 +221,8 @@ documented and hoped for.
 20. No domain imports another domain, and `shared/` imports nothing outside itself
 21. The work surface calls no model or tool — `modelInvoked`, `toolInvoked`, `externalContacted` and `downstreamExecuted` are always false
 22. Chat & Work artifacts are always `ai_suggested` and render as a proposal, never as confirmed state
+23. Full secret values for API keys and credentials are shown exactly once in the creation receipt (`secretShownOnce: true`) and never persisted or queryable via list methods
+24. Hierarchical configuration resolves through deterministic precedence (`user` > `session` > `task` > `agent` > `project` > `workspace` > `system`) with schema default fallback
 
 Query them all with `npm run brain:query invariant`.
 
@@ -298,36 +308,38 @@ script.
 | `dec-10` One fixture store, partitioned API surface | Still exactly one implementation of every method, with an explicit per-domain facade. Cost: one extra indirection. |
 | `dec-11` Chat renders outside the console shell | Signing in opens only the chat canvas, and the console chrome can never flash first. Cost: the chat carries its own header. |
 | `dec-12` Three composer controls, not one cascading menu | `+` is Agent Mode only; layer and effort own their popovers, and the artifact panel collapses without losing its selection. Cost: three popovers, each with its own anchor. |
+| `dec-13` Settings renders outside console chrome | Dedicated full-page control plane without console shell sidebar or nested boxes. Clean white canvas with top navigation back to console. Cost: Settings owns its own header and sidebar. |
+| `dec-14` Deterministic scope precedence resolver | Pure hierarchical order (`user` > `session` > `task` > `agent` > `project` > `workspace` > `system`). Predictable override behavior across all 16 domains. |
 
 ---
 
 ## 9. Where to go next
 
-Phases 0–14 ship. Everything below is planned, ordered, and traces back to the gaps
+Phases 0–15 ship. Everything below is planned, ordered, and traces back to the gaps
 it closes.
 
-**Phase 15 — Contract registry and freeze.** Publish authoritative DTO, error,
+**Phase 16 — Contract registry and freeze.** Publish authoritative DTO, error,
 pagination, and versioning contracts before writing any adapter code. Turns 12 gaps
 into tracked documents with tests. No prerequisites. *Start here.*
 
-**Phase 16 — Auth and session lifecycle.** Requires 15. Replaces the hardcoded
+**Phase 17 — Auth and session lifecycle.** Requires 16. Replaces the hardcoded
 `authenticated: true` with a real session contract, adds capability fields
 beyond roles, and defines active-context encoding. Closes `gap-01`, `gap-05`, `gap-06`.
 
-**Phase 17 — Backend aggregate endpoints.** Requires 15. Real workspace-scoped
+**Phase 18 — Backend aggregate endpoints.** Requires 16. Real workspace-scoped
 aggregates so cross-domain pages stop needing browser-side relational reconstruction;
 server-side pagination. Closes `gap-04`, `gap-03`, and flips
 `aggregateContractStatus` from `unresolved` to resolved.
 
-**Phase 18 — Authoritative workflow streaming.** Requires 16. Replaces
+**Phase 19 — Authoritative workflow streaming.** Requires 17. Replaces
 `db.workflowScripts` with a real SSE channel carrying event and snapshot state, replay,
 and heartbeat. Closes `gap-07`.
 
-**Phase 19 — Signed input pipeline.** Requires 17. Replaces the `mock-upload:` URL
+**Phase 20 — Signed input pipeline.** Requires 18. Replaces the `mock-upload:` URL
 with signed initiation and completion, keeping scan and extraction as distinct states.
 Closes `gap-08`.
 
-**Phase 20 — Governed audit and notifications.** Requires 18. Append-only audit with a
+**Phase 21 — Governed audit and notifications.** Requires 19. Append-only audit with a
 stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `gap-10`.
 
 ---
@@ -338,7 +350,7 @@ stated retention policy, plus a delivery channel. Closes `gap-12`, `gap-09`, `ga
    receipts should say so in the UI, as the existing surfaces do.
 2. **Never claim what you cannot prove.** If a green build is the only evidence, the
    claim is "frontend builds", not "backend connected".
-3. **Keep the invariant count at 22 or make it 23.** If your change breaks one, fix the
+3. **Keep the invariant count at 24 or make it 25.** If your change breaks one, fix the
    code. If it adds a guarantee, add an invariant and a test in the same commit.
 4. **Do not infer gap behavior from fixtures.** The fixtures are examples, not specs.
 5. **Respect the dependency direction.** `app/` → domains → `shared/`. A domain must
@@ -362,7 +374,7 @@ npm run brain:query route mcp/models   # route, view, matcher, service, tabs
 npm run brain:query entity approval    # fixture, methods, views, caveats
 npm run brain:query service            # service surfaces and their risks
 npm run brain:query trace svc-p12 2    # downstream impact of a change
-npm run brain:query invariant          # the 22 guarantees
+npm run brain:query invariant          # the 24 guarantees
 npm run brain:query gap                # the 12 gaps and who plans them
 npm run brain:query risk               # the 10 risks, most severe first
 npm run brain:query phase              # shipped and planned phases
